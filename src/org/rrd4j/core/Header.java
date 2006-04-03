@@ -52,14 +52,15 @@ public class Header implements RrdUpdater {
 	private RrdLong lastUpdateTime;
 
 	Header(RrdDb parentDb, RrdDef rrdDef) throws IOException {
-		boolean shouldInitialize = rrdDef != null;
 		this.parentDb = parentDb;
-		signature = new RrdString(this);	 		// NOT constant, may be cached
+
+        signature = new RrdString(this);	 		// NOT constant, may be cached
 		step = new RrdLong(this, true); 			// constant, may be cached
 		dsCount = new RrdInt(this, true); 			// constant, may be cached
 		arcCount = new RrdInt(this, true); 			// constant, may be cached
 		lastUpdateTime = new RrdLong(this);
-		if(shouldInitialize) {
+
+        if(rrdDef != null) {
 			signature.set(DEFAULT_SIGNATURE);
 			step.set(rrdDef.getStep());
 			dsCount.set(rrdDef.getDsCount());

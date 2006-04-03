@@ -72,22 +72,18 @@ public abstract class RrdBackendFactory {
 	private static RrdBackendFactory defaultFactory;
 
 	static {
-		try {
-			RrdFileBackendFactory fileFactory = new RrdFileBackendFactory();
-			registerFactory(fileFactory);
-			RrdMemoryBackendFactory memoryFactory = new RrdMemoryBackendFactory();
-			registerFactory(memoryFactory);
-			RrdNioBackendFactory nioFactory = new RrdNioBackendFactory();
-			registerFactory(nioFactory);
-			RrdSafeFileBackendFactory safeFactory = new RrdSafeFileBackendFactory();
-			registerFactory(safeFactory);
-			selectDefaultFactory();
-		} catch (RrdException e) {
-			throw new RuntimeException("FATAL: Cannot register RRD backend factories: " + e);
-		}
+        RrdFileBackendFactory fileFactory = new RrdFileBackendFactory();
+        registerFactory(fileFactory);
+        RrdMemoryBackendFactory memoryFactory = new RrdMemoryBackendFactory();
+        registerFactory(memoryFactory);
+        RrdNioBackendFactory nioFactory = new RrdNioBackendFactory();
+        registerFactory(nioFactory);
+        RrdSafeFileBackendFactory safeFactory = new RrdSafeFileBackendFactory();
+        registerFactory(safeFactory);
+        selectDefaultFactory();
 	}
 
-	private static void selectDefaultFactory() throws RrdException {
+	private static void selectDefaultFactory() {
 		String version = System.getProperty("java.version");
 		if(version == null || version.startsWith("1.3.") ||
 				version.startsWith("1.4.0") || version.startsWith("1.4.1")) {
@@ -114,34 +110,28 @@ public abstract class RrdBackendFactory {
 	 * RRD data is stored in memory, it gets lost as soon as JVM exits.
 	 * </ul>
 	 * @return Backend factory for the given factory name
-	 * @throws RrdException Thrown if no factory with the given name
-	 * is available.
 	 */
-	public static synchronized RrdBackendFactory getFactory(String name) throws RrdException {
+	public static synchronized RrdBackendFactory getFactory(String name) {
 		RrdBackendFactory factory = factories.get(name);
 		if(factory != null) {
 			return factory;
 		}
 		else {
-			throw new RrdException("No backend factory found with the name specified [" + name + "]");
+			throw new IllegalArgumentException("No backend factory found with the name specified [" + name + "]");
 		}
 	}
 
 	/**
 	 * Registers new (custom) backend factory within the Rrd4j framework.
 	 * @param factory Factory to be registered
-	 * @throws RrdException Thrown if the name of the specified factory is already
-	 * used.
 	 */
-	public static synchronized void registerFactory(RrdBackendFactory factory)
-		throws RrdException {
+	public static synchronized void registerFactory(RrdBackendFactory factory) {
 		String name = factory.getFactoryName();
 		if(!factories.containsKey(name)) {
 			factories.put(name, factory);
 		}
 		else {
-			throw new RrdException("Backend factory of this name2 (" + name +
-				") already exists and cannot be registered");
+			throw new IllegalArgumentException("Backend factory '" + name + "' cannot be registered twice");
 		}
 	}
 
@@ -149,11 +139,8 @@ public abstract class RrdBackendFactory {
 	 * Registers new (custom) backend factory within the Rrd4j framework and sets this
 	 * factory as the default.
 	 * @param factory Factory to be registered and set as default
-	 * @throws RrdException Thrown if the name of the specified factory is already
-	 * used.
 	 */
-	public static synchronized void registerAndSetAsDefaultFactory(RrdBackendFactory factory)
-			throws RrdException {
+	public static synchronized void registerAndSetAsDefaultFactory(RrdBackendFactory factory) {
 		registerFactory(factory);
 		setDefaultFactory(factory.getFactoryName());
 	}
@@ -174,16 +161,14 @@ public abstract class RrdBackendFactory {
 	 * different RRD backends: "FILE" (java.io.* based), "SAFE" (java.io.* based - use this
 	 * backend if RRD files may be accessed from several JVMs at the same time),
 	 * "NIO" (java.nio.* based) and "MEMORY" (byte[] based).
-	 * @throws RrdException Thrown if invalid factory name is supplied or not called before
-	 * the first RRD is created.
 	 */
-	public static void setDefaultFactory(String factoryName) throws RrdException {
+	public static void setDefaultFactory(String factoryName) {
 		// We will allow this only if no RRDs are created
-		if(!RrdBackend.isInstanceCreated()) {
+		if (!RrdBackend.isInstanceCreated()) {
 			defaultFactory = getFactory(factoryName);
 		}
 		else {
-			throw new RrdException("Could not change the default backend factory. " +
+			throw new IllegalStateException("Could not change the default backend factory. " +
 					"This method must be called before the first RRD gets created");
 		}
 	}
