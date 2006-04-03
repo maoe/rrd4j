@@ -38,7 +38,7 @@ import java.io.IOException;
  * @author Sasa Markovic*
  */
 public class Header implements RrdUpdater {
-	static final int SIGNATURE_LENGTH = 2;
+	static final int SIGNATURE_LENGTH = 5;
 	static final String SIGNATURE = "RRD4J";
 
 	static final String DEFAULT_SIGNATURE = "RRD4J, version 0.1";
