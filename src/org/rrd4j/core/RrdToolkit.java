@@ -60,12 +60,11 @@ public class RrdToolkit {
 	 * @param destPath      path to a new RRD file (will be created)
 	 * @param newDatasource Datasource definition to be added to the new RRD file
 	 * @throws IOException  Thrown in case of I/O error
-	 * @throws RrdException Thrown in case of Rrd4j specific error
 	 */
 	public static void addDatasource(String sourcePath, String destPath, DsDef newDatasource)
-			throws IOException, RrdException {
+			throws IOException {
 		if (Util.sameFilePath(sourcePath, destPath)) {
-			throw new RrdException("Source and destination paths are the same");
+			throw new IllegalArgumentException("Source and destination paths are the same");
 		}
 		RrdDb rrdSource = new RrdDb(sourcePath);
 		try {

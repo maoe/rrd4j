@@ -52,7 +52,7 @@ class RrdToolReader extends DataImporter {
 		return rrd.getHeader().getDSCount();
 	}
 
-	int getArcCount() throws RrdException, IOException {
+	int getArcCount() throws IOException {
 		return rrd.getNumArchives();
 	}
 
@@ -101,19 +101,19 @@ class RrdToolReader extends DataImporter {
 		return rrd.getArchive(arcIndex).getPdpCount();
 	}
 
-	int getRows(int arcIndex) throws RrdException, IOException {
+	int getRows(int arcIndex) throws IOException {
 		return rrd.getArchive(arcIndex).getRowCount();
 	}
 
-	double getStateAccumValue(int arcIndex, int dsIndex) throws RrdException, IOException {
+	double getStateAccumValue(int arcIndex, int dsIndex) throws IOException {
 		return rrd.getArchive(arcIndex).getCDPStatusBlock(dsIndex).getValue();
 	}
 
-	int getStateNanSteps(int arcIndex, int dsIndex) throws RrdException, IOException {
+	int getStateNanSteps(int arcIndex, int dsIndex) throws IOException {
 		return rrd.getArchive(arcIndex).getCDPStatusBlock(dsIndex).getUnknownDatapoints();
 	}
 
-	double[] getValues(int arcIndex, int dsIndex) throws RrdException, IOException {
+	double[] getValues(int arcIndex, int dsIndex) throws IOException {
 		return rrd.getArchive(arcIndex).getValues()[dsIndex];
 	}
 

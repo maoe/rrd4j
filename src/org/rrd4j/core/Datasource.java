@@ -79,7 +79,7 @@ public class Datasource implements RrdUpdater {
         }
     }
 
-    Datasource(RrdDb parentDb, DataImporter reader, int dsIndex) throws IOException, RrdException {
+    Datasource(RrdDb parentDb, DataImporter reader, int dsIndex) throws IOException {
         this(parentDb, null);
         dsName.set(reader.getDsName(dsIndex));
         dsType.set(reader.getDsType(dsIndex));
@@ -312,19 +312,18 @@ public class Datasource implements RrdUpdater {
      * @param other New Datasource object to copy state to
      *
      * @throws IOException  Thrown in case of I/O error
-     * @throws RrdException Thrown if supplied argument is not a Datasource object
      */
-    public void copyStateTo(RrdUpdater other) throws IOException, RrdException {
+    public void copyStateTo(RrdUpdater other) throws IOException {
         if (!(other instanceof Datasource)) {
-            throw new RrdException(
+            throw new IllegalArgumentException(
                     "Cannot copy Datasource object to " + other.getClass().getName());
         }
         Datasource datasource = (Datasource) other;
         if (!datasource.dsName.get().equals(dsName.get())) {
-            throw new RrdException("Incomaptible datasource names");
+            throw new IllegalArgumentException("Incompatible datasource names");
         }
         if (!datasource.dsType.get().equals(dsType.get())) {
-            throw new RrdException("Incomaptible datasource types");
+            throw new IllegalArgumentException("Incompatible datasource types");
         }
         datasource.lastValue.set(lastValue.get());
         datasource.nanSeconds.set(nanSeconds.get());
@@ -342,7 +341,7 @@ public class Datasource implements RrdUpdater {
         try {
             return parentDb.getDsIndex(dsName.get());
         }
-        catch (RrdException e) {
+        catch (IllegalArgumentException e) {
             return -1;
         }
     }

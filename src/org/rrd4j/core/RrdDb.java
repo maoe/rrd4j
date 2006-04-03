@@ -119,11 +119,9 @@ public class RrdDb implements RrdUpdater {
      * </pre>
      *
      * @param rrdDef Object describing the structure of the new RRD file.
-     *
-     * @throws IOException  Thrown in case of I/O error.
-     * @throws RrdException Thrown if invalid RrdDef object is supplied.
+     * @throws IOException Thrown in case of I/O error.
      */
-    public RrdDb(RrdDef rrdDef) throws RrdException, IOException {
+    public RrdDb(RrdDef rrdDef) throws IOException {
         this(rrdDef, RrdFileBackendFactory.getDefaultFactory());
     }
 
@@ -157,13 +155,18 @@ public class RrdDb implements RrdUpdater {
      *
      * @param rrdDef  RRD definition object
      * @param factory The factory which will be used to create storage for this RRD
-     *
-     * @throws RrdException Thrown if invalid factory or definition is supplied
-     * @throws IOException  Thrown in case of I/O error
+     * @throws IOException Thrown in case of I/O error
      * @see RrdBackendFactory
      */
-    public RrdDb(RrdDef rrdDef, RrdBackendFactory factory) throws RrdException, IOException {
-        rrdDef.validate();
+    public RrdDb(RrdDef rrdDef, RrdBackendFactory factory) throws IOException {
+
+        if (!rrdDef.hasDatasources()) {
+            throw new IllegalArgumentException("No RRD datasource specified. At least one is needed.");
+        }
+        if (!rrdDef.hasArchives()) {
+            throw new IllegalArgumentException("No RRD archive specified. At least one is needed.");
+        }
+
         String path = rrdDef.getPath();
         backend = factory.open(path, false);
         try {
@@ -200,11 +203,9 @@ public class RrdDb implements RrdUpdater {
      *                 (read-only access), specify <code>true</code>. If you try to update RRD file
      *                 open in read-only mode (<code>readOnly</code> set to <code>true</code>),
      *                 <code>IOException</code> will be thrown.
-     *
-     * @throws IOException  Thrown in case of I/O error.
-     * @throws RrdException Thrown in case of Rrd4j specific error.
+     * @throws IOException Thrown in case of I/O error.
      */
-    public RrdDb(String path, boolean readOnly) throws IOException, RrdException {
+    public RrdDb(String path, boolean readOnly) throws IOException {
         this(path, readOnly, RrdBackendFactory.getDefaultFactory());
     }
 
@@ -220,14 +221,11 @@ public class RrdDb implements RrdUpdater {
      *                 open in read-only mode (<code>readOnly</code> set to <code>true</code>),
      *                 <code>IOException</code> will be thrown.
      * @param factory  Backend factory which will be used for this RRD.
-     *
      * @throws FileNotFoundException Thrown if the requested file does not exist.
      * @throws IOException           Thrown in case of general I/O error (bad RRD file, for example).
-     * @throws RrdException          Thrown in case of Rrd4j specific error.
      * @see RrdBackendFactory
      */
-    public RrdDb(String path, boolean readOnly, RrdBackendFactory factory)
-            throws FileNotFoundException, IOException, RrdException {
+    public RrdDb(String path, boolean readOnly, RrdBackendFactory factory) throws FileNotFoundException, IOException {
         // opens existing RRD file - throw exception if the file does not exist...
         if (!factory.exists(path)) {
             throw new FileNotFoundException("Could not open " + path + " [non existent]");
@@ -254,10 +252,6 @@ public class RrdDb implements RrdUpdater {
                 archives[i] = new Archive(this, null);
             }
         }
-        catch (RrdException e) {
-            backend.close();
-            throw e;
-        }
         catch (IOException e) {
             backend.close();
             throw e;
@@ -269,11 +263,9 @@ public class RrdDb implements RrdUpdater {
      * (backend) type (file on the disk).
      *
      * @param path Path to existing RRD.
-     *
-     * @throws IOException  Thrown in case of I/O error.
-     * @throws RrdException Thrown in case of Rrd4j specific error.
+     * @throws IOException Thrown in case of I/O error.
      */
-    public RrdDb(String path) throws IOException, RrdException {
+    public RrdDb(String path) throws IOException {
         this(path, false);
     }
 
@@ -283,12 +275,10 @@ public class RrdDb implements RrdUpdater {
      *
      * @param path    Path to existing RRD.
      * @param factory Backend factory used to create this RRD.
-     *
-     * @throws IOException  Thrown in case of I/O error.
-     * @throws RrdException Thrown in case of Rrd4j specific error.
+     * @throws IOException Thrown in case of I/O error.
      * @see RrdBackendFactory
      */
-    public RrdDb(String path, RrdBackendFactory factory) throws IOException, RrdException {
+    public RrdDb(String path, RrdBackendFactory factory) throws IOException {
         this(path, false, factory);
     }
 
@@ -343,11 +333,9 @@ public class RrdDb implements RrdUpdater {
      * @param rrdPath      Path to a RRD file which will be created
      * @param externalPath Path to an external file which should be imported, with an optional
      *                     <code>xml:/</code> or <code>rrdtool:/</code> prefix.
-     *
-     * @throws IOException  Thrown in case of I/O error
-     * @throws RrdException Thrown in case of Rrd4j specific error
+     * @throws IOException Thrown in case of I/O error
      */
-    public RrdDb(String rrdPath, String externalPath) throws IOException, RrdException {
+    public RrdDb(String rrdPath, String externalPath) throws IOException {
         this(rrdPath, externalPath, RrdBackendFactory.getDefaultFactory());
     }
 
@@ -400,13 +388,10 @@ public class RrdDb implements RrdUpdater {
      * @param externalPath Path to an external file which should be imported, with an optional
      *                     <code>xml:/</code> or <code>rrdtool:/</code> prefix.
      * @param factory      Backend factory which will be used to create storage (backend) for this RRD.
-     *
-     * @throws IOException  Thrown in case of I/O error
-     * @throws RrdException Thrown in case of Rrd4j specific error
+     * @throws IOException Thrown in case of I/O error
      * @see RrdBackendFactory
      */
-    public RrdDb(String rrdPath, String externalPath, RrdBackendFactory factory)
-            throws IOException, RrdException {
+    public RrdDb(String rrdPath, String externalPath, RrdBackendFactory factory) throws IOException {
         DataImporter reader;
         if (externalPath.startsWith(PREFIX_RRDTool)) {
             String rrdToolPath = externalPath.substring(PREFIX_RRDTool.length());
@@ -437,10 +422,6 @@ public class RrdDb implements RrdUpdater {
             reader.release();
             // XMLReader is a rather huge DOM tree, release memory ASAP
             reader = null;
-        }
-        catch (RrdException e) {
-            backend.close();
-            throw e;
         }
         catch (IOException e) {
             backend.close();
@@ -482,7 +463,6 @@ public class RrdDb implements RrdUpdater {
      * Returns Datasource object for the given datasource index.
      *
      * @param dsIndex Datasource index (zero based)
-     *
      * @return Datasource object
      */
     public Datasource getDatasource(int dsIndex) {
@@ -493,7 +473,6 @@ public class RrdDb implements RrdUpdater {
      * Returns Archive object for the given archive index.
      *
      * @param arcIndex Archive index (zero based)
-     *
      * @return Archive object
      */
     public Archive getArchive(int arcIndex) {
@@ -504,7 +483,6 @@ public class RrdDb implements RrdUpdater {
      * <p>Returns an array of datasource names defined in RRD.</p>
      *
      * @return Array of datasource names.
-     *
      * @throws IOException Thrown in case of I/O error.
      */
     public String[] getDsNames() throws IOException {
@@ -527,9 +505,7 @@ public class RrdDb implements RrdUpdater {
      * store sample in the RRD associated with it.</p>
      *
      * @param time Sample timestamp rounded to the nearest second (without milliseconds).
-     *
      * @return Fresh sample with the given timestamp and all data source values set to 'unknown'.
-     *
      * @throws IOException Thrown in case of I/O error.
      */
     public Sample createSample(long time) throws IOException {
@@ -548,7 +524,6 @@ public class RrdDb implements RrdUpdater {
      *
      * @return Fresh sample with the current timestamp and all
      *         data source values set to 'unknown'.
-     *
      * @throws IOException Thrown in case of I/O error.
      */
     public Sample createSample() throws IOException {
@@ -568,9 +543,7 @@ public class RrdDb implements RrdUpdater {
      * @param resolution Fetch resolution (see RRDTool's
      *                   <a href="../../../../man/rrdfetch.html" target="man">rrdfetch man page</a> for an
      *                   explanation of this parameter.
-     *
      * @return Request object that should be used to actually fetch data from RRD.
-     *
      * @throws RrdException In case of Rrd4j related error (invalid consolidation function or
      *                      invalid time span).
      */
@@ -592,9 +565,7 @@ public class RrdDb implements RrdUpdater {
      *                   {@link ConsolFun} class).
      * @param fetchStart Starting timestamp for fetch request.
      * @param fetchEnd   Ending timestamp for fetch request.
-     *
      * @return Request object that should be used to actually fetch data from RRD.
-     *
      * @throws RrdException In case of Rrd4j related error (invalid consolidation function or
      *                      invalid time span).
      */
@@ -684,9 +655,7 @@ public class RrdDb implements RrdUpdater {
      * @param consolFun  Consolidation function of the datasource.
      * @param startTime  Start time of the time period in seconds.
      * @param resolution Requested fetch resolution.
-     *
      * @return Reference to the best matching archive.
-     *
      * @throws IOException Thrown in case of I/O related error.
      */
     public Archive findStartMatchArchive(String consolFun, long startTime, long resolution) throws IOException {
@@ -727,7 +696,6 @@ public class RrdDb implements RrdUpdater {
      * string can be printed to <code>stdout</code> and/or used for debugging purposes.</p>
      *
      * @return String representing internal RRD state.
-     *
      * @throws IOException Thrown in case of I/O related error.
      */
     public synchronized String dump() throws IOException {
@@ -755,29 +723,23 @@ public class RrdDb implements RrdUpdater {
      * used by rrd4j.graph package and has no value outside of it.</p>
      *
      * @param dsName Data source name.
-     *
      * @return Internal index of the given data source name in this RRD.
-     *
-     * @throws RrdException Thrown in case of Rrd4j related error (invalid data source name,
-     *                      for example)
-     * @throws IOException  Thrown in case of I/O error.
+     * @throws IOException Thrown in case of I/O error.
      */
-    public int getDsIndex(String dsName) throws RrdException, IOException {
+    public int getDsIndex(String dsName) throws IOException {
         for (int i = 0; i < datasources.length; i++) {
             if (datasources[i].getDsName().equals(dsName)) {
                 return i;
             }
         }
-        throw new RrdException("Unknown datasource name: " + dsName);
+        throw new IllegalArgumentException("Unknown datasource name: " + dsName);
     }
 
     /**
      * Checks presence of a specific datasource.
      *
      * @param dsName Datasource name to check
-     *
      * @return <code>true</code> if datasource is present in this RRD, <code>false</code> otherwise
-     *
      * @throws IOException Thrown in case of I/O error.
      */
     public boolean containsDs(String dsName) throws IOException {
@@ -803,7 +765,6 @@ public class RrdDb implements RrdUpdater {
      * purposes or debugging.</p>
      *
      * @param destination Output stream to receive XML data
-     *
      * @throws IOException Thrown in case of I/O related error
      */
     public synchronized void dumpXml(OutputStream destination) throws IOException {
@@ -838,7 +799,6 @@ public class RrdDb implements RrdUpdater {
      * purposes or debugging.</p>
      *
      * @return Internal RRD state in XML format.
-     *
      * @throws IOException  Thrown in case of I/O related error
      * @throws RrdException Thrown in case of Rrd4j specific error
      */
@@ -852,7 +812,6 @@ public class RrdDb implements RrdUpdater {
      * This method is just an alias for {@link #getXml() getXml} method.
      *
      * @return Internal RRD state in XML format.
-     *
      * @throws IOException  Thrown in case of I/O related error
      * @throws RrdException Thrown in case of Rrd4j specific error
      */
@@ -876,7 +835,6 @@ public class RrdDb implements RrdUpdater {
      * <code>rrdtool restore copy.rrd original.xml</code>
      *
      * @param filename Path to XML file which will be created.
-     *
      * @throws IOException  Thrown in case of I/O related error.
      * @throws RrdException Thrown in case of Rrd4j related error.
      */
@@ -928,10 +886,8 @@ public class RrdDb implements RrdUpdater {
      * </pre>
      *
      * @return RRD definition.
-     *
-     * @throws RrdException Thrown in case of Rrd4j specific error.
      */
-    public synchronized RrdDef getRrdDef() throws RrdException, IOException {
+    public synchronized RrdDef getRrdDef() throws IOException {
         // set header
         long startTime = header.getLastUpdateTime();
         long step = header.getStep();
@@ -961,13 +917,11 @@ public class RrdDb implements RrdUpdater {
      * Copies object's internal state to another RrdDb object.
      *
      * @param other New RrdDb object to copy state to
-     *
-     * @throws IOException  Thrown in case of I/O error
-     * @throws RrdException Thrown if supplied argument is not a compatible RrdDb object
+     * @throws IOException Thrown in case of I/O error
      */
-    public synchronized void copyStateTo(RrdUpdater other) throws IOException, RrdException {
+    public synchronized void copyStateTo(RrdUpdater other) throws IOException {
         if (!(other instanceof RrdDb)) {
-            throw new RrdException("Cannot copy RrdDb object to " + other.getClass().getName());
+            throw new IllegalArgumentException("Cannot copy RrdDb object to " + other.getClass().getName());
         }
         RrdDb otherRrd = (RrdDb) other;
         header.copyStateTo(otherRrd.header);
@@ -989,17 +943,15 @@ public class RrdDb implements RrdUpdater {
      * Returns Datasource object corresponding to the given datasource name.
      *
      * @param dsName Datasource name
-     *
      * @return Datasource object corresponding to the give datasource name or null
      *         if not found.
-     *
      * @throws IOException Thrown in case of I/O error
      */
     public Datasource getDatasource(String dsName) throws IOException {
         try {
             return getDatasource(getDsIndex(dsName));
         }
-        catch (RrdException e) {
+        catch (IllegalArgumentException e) {
             return null;
         }
     }
@@ -1010,9 +962,7 @@ public class RrdDb implements RrdUpdater {
      *
      * @param consolFun Consolidation function
      * @param steps     Number of archive steps
-     *
      * @return Requested Archive object
-     *
      * @throws IOException  Thrown in case of I/O error
      * @throws RrdException Thrown if no such archive could be found
      */
@@ -1031,9 +981,7 @@ public class RrdDb implements RrdUpdater {
      *
      * @param consolFun Consolidation function
      * @param steps     Number of archive steps
-     *
      * @return Requested Archive object or null if no such archive could be found
-     *
      * @throws IOException Thrown in case of I/O error
      */
     public Archive getArchive(ConsolFun consolFun, int steps) throws IOException {
@@ -1051,7 +999,6 @@ public class RrdDb implements RrdUpdater {
      * memory or with custom backends.
      *
      * @return Canonical path to RRD file;
-     *
      * @throws IOException Thrown in case of I/O error or if the underlying backend is
      *                     not derived from RrdFileBackend.
      */
@@ -1095,7 +1042,6 @@ public class RrdDb implements RrdUpdater {
      * Returns an array of bytes representing the whole RRD.
      *
      * @return All RRD bytes
-     *
      * @throws IOException Thrown in case of I/O related error.
      */
     public synchronized byte[] getBytes() throws IOException {
@@ -1107,7 +1053,6 @@ public class RrdDb implements RrdUpdater {
      * {@link RrdBackendFactory#setDefaultFactory(String)}.<p>
      *
      * @param factoryName Name of the backend factory to be set as default.
-     *
      * @throws RrdException Thrown if invalid factory name is supplied, or not called
      *                      before the first backend object (before the first RrdDb object) is created.
      */
@@ -1120,7 +1065,6 @@ public class RrdDb implements RrdUpdater {
      * to the first datasource defined in the RrdDb and so on.
      *
      * @return Array of last datasource values
-     *
      * @throws IOException Thrown in case of I/O error
      */
     public synchronized double[] getLastDatasourceValues() throws IOException {
@@ -1135,9 +1079,7 @@ public class RrdDb implements RrdUpdater {
      * Returns the last stored value for the given datasource.
      *
      * @param dsName Datasource name
-     *
      * @return Last stored value for the given datasource
-     *
      * @throws IOException  Thrown in case of I/O error
      * @throws RrdException Thrown if no datasource in this RrdDb matches the given datasource name
      */
@@ -1170,7 +1112,6 @@ public class RrdDb implements RrdUpdater {
      * the archives.
      *
      * @return last time when some of the archives in this RRD was updated
-     *
      * @throws IOException Thrown in case of I/O error
      */
     public long getLastArchiveUpdateTime() throws IOException {
@@ -1197,7 +1138,7 @@ public class RrdDb implements RrdUpdater {
         System.out.println("Current timestamp: " + time + ": " + new Date(time * 1000L));
         System.out.println("------------------------------------------------------------------");
         System.out.println("For the latest information visit: http://www.rrd4j.org");
-		System.out.println("(C) 2003-2006 Sasa Markovic. All rights reserved.");
-	}
+        System.out.println("(C) 2003-2006 Sasa Markovic. All rights reserved.");
+    }
 
 }

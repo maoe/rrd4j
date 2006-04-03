@@ -24,16 +24,15 @@
  */
 package org.rrd4j.inspector;
 
-import org.rrd4j.core.DsDef;
-import org.rrd4j.core.RrdException;
 import org.rrd4j.DsType;
+import org.rrd4j.core.DsDef;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.WindowEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.awt.event.WindowEvent;
 
 class EditDatasourceDialog extends JDialog {
     private static final int FIELD_SIZE = 20;
@@ -216,8 +215,8 @@ class EditDatasourceDialog extends JDialog {
         try {
             return new DsDef(name, type, heartbeat, min, max);
         }
-        catch (RrdException e) {
-            // should not be hear ever!
+        catch (Exception e) {
+            // should not be here ever!
             Util.error(this, e);
             return null;
         }

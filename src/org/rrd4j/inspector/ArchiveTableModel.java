@@ -25,11 +25,12 @@
 
 package org.rrd4j.inspector;
 
-import org.rrd4j.core.*;
+import org.rrd4j.core.ArcState;
+import org.rrd4j.core.Archive;
+import org.rrd4j.core.RrdDb;
 
 import javax.swing.table.AbstractTableModel;
 import java.io.File;
-import java.io.IOException;
 import java.util.Date;
 
 class ArchiveTableModel extends AbstractTableModel {
@@ -100,10 +101,7 @@ class ArchiveTableModel extends AbstractTableModel {
 						rrd.close();
 					}
 				}
-				catch (IOException e) {
-					Util.error(null, e);
-				}
-				catch (RrdException e) {
+				catch (Exception e) {
 					Util.error(null, e);
 				}
 			}

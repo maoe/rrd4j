@@ -37,21 +37,21 @@ class XmlReader extends DataImporter {
 	private Element root;
 	private Node[] dsNodes, arcNodes;
 
-    XmlReader(String xmlFilePath) throws IOException, RrdException {
+    XmlReader(String xmlFilePath) throws IOException {
 		root = Util.Xml.getRootElement(new File(xmlFilePath));
 		dsNodes = Util.Xml.getChildNodes(root, "ds");
 		arcNodes = Util.Xml.getChildNodes(root, "rra");
 	}
 
-	String getVersion() throws RrdException {
+	String getVersion() {
 		return Util.Xml.getChildValue(root, "version");
 	}
 
-	long getLastUpdateTime() throws RrdException {
+	long getLastUpdateTime() {
 		return Util.Xml.getChildValueAsLong(root, "lastupdate");
 	}
 
-	long getStep() throws RrdException {
+	long getStep() {
 		return Util.Xml.getChildValueAsLong(root, "step");
 	}
 
@@ -63,69 +63,69 @@ class XmlReader extends DataImporter {
 		return arcNodes.length;
 	}
 
-    String getDsName(int dsIndex) throws RrdException {
+    String getDsName(int dsIndex) {
 		return Util.Xml.getChildValue(dsNodes[dsIndex], "name");
 	}
 
-	String getDsType(int dsIndex) throws RrdException {
+	String getDsType(int dsIndex) {
 		return Util.Xml.getChildValue(dsNodes[dsIndex], "type");
 	}
 
-	long getHeartbeat(int dsIndex) throws RrdException {
+	long getHeartbeat(int dsIndex) {
 		return Util.Xml.getChildValueAsLong(dsNodes[dsIndex], "minimal_heartbeat");
 	}
 
-	double getMinValue(int dsIndex) throws RrdException {
+	double getMinValue(int dsIndex) {
 		return Util.Xml.getChildValueAsDouble(dsNodes[dsIndex], "min");
 	}
 
-	double getMaxValue(int dsIndex) throws RrdException {
+	double getMaxValue(int dsIndex) {
 		return Util.Xml.getChildValueAsDouble(dsNodes[dsIndex], "max");
 	}
 
-	double getLastValue(int dsIndex) throws RrdException {
+	double getLastValue(int dsIndex) {
 		return Util.Xml.getChildValueAsDouble(dsNodes[dsIndex], "last_ds");
 	}
 
-	double getAccumValue(int dsIndex) throws RrdException {
+	double getAccumValue(int dsIndex) {
 		return Util.Xml.getChildValueAsDouble(dsNodes[dsIndex], "value");
 	}
 
-	long getNanSeconds(int dsIndex) throws RrdException {
+	long getNanSeconds(int dsIndex) {
 		return Util.Xml.getChildValueAsLong(dsNodes[dsIndex], "unknown_sec");
 	}
 
-    ConsolFun getConsolFun(int arcIndex) throws RrdException {
+    ConsolFun getConsolFun(int arcIndex) {
 		return ConsolFun.valueOf(Util.Xml.getChildValue(arcNodes[arcIndex], "cf"));
 	}
 
-	double getXff(int arcIndex) throws RrdException {
+	double getXff(int arcIndex) {
 		return Util.Xml.getChildValueAsDouble(arcNodes[arcIndex], "xff");
 	}
 
-	int getSteps(int arcIndex) throws RrdException {
+	int getSteps(int arcIndex) {
 		return Util.Xml.getChildValueAsInt(arcNodes[arcIndex], "pdp_per_row");
 	}
 
-	double getStateAccumValue(int arcIndex, int dsIndex) throws RrdException {
+	double getStateAccumValue(int arcIndex, int dsIndex) {
         Node cdpNode = Util.Xml.getFirstChildNode(arcNodes[arcIndex], "cdp_prep");
         Node[] dsNodes = Util.Xml.getChildNodes(cdpNode, "ds");
 		return Util.Xml.getChildValueAsDouble(dsNodes[dsIndex], "value");
 	}
 
-	int getStateNanSteps(int arcIndex, int dsIndex) throws RrdException {
+	int getStateNanSteps(int arcIndex, int dsIndex) {
         Node cdpNode = Util.Xml.getFirstChildNode(arcNodes[arcIndex], "cdp_prep");
         Node[] dsNodes = Util.Xml.getChildNodes(cdpNode, "ds");
 		return Util.Xml.getChildValueAsInt(dsNodes[dsIndex], "unknown_datapoints");
 	}
 
-	int getRows(int arcIndex) throws RrdException {
+	int getRows(int arcIndex) {
 		Node dbNode = Util.Xml.getFirstChildNode(arcNodes[arcIndex], "database");
         Node[] rows = Util.Xml.getChildNodes(dbNode, "row");
 		return rows.length;
 	}
 
-	double[] getValues(int arcIndex, int dsIndex) throws RrdException {
+	double[] getValues(int arcIndex, int dsIndex) {
 		Node dbNode = Util.Xml.getFirstChildNode(arcNodes[arcIndex], "database");
         Node[] rows = Util.Xml.getChildNodes(dbNode, "row");
 		double[] values = new double[rows.length];

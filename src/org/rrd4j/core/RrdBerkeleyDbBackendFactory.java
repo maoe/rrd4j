@@ -59,12 +59,12 @@ public final class RrdBerkeleyDbBackendFactory extends RrdBackendFactory  {
         }
     }
 
-    public void delete(String uniqueKey) throws RrdException {
+    public void delete(String uniqueKey) {
         try {
             rrdDatabase.delete(null, new DatabaseEntry(uniqueKey.getBytes("UTF-8")));
         }
         catch (DatabaseException de) {
-            throw new RrdException(de.getMessage());
+            throw new RuntimeException(de.getMessage());
         }
         catch (IOException ie) {
             throw new IllegalArgumentException(uniqueKey + ": " + ie.getMessage(), ie);

@@ -68,11 +68,11 @@ public class Header implements RrdUpdater {
 		}
 	}
 
-	Header(RrdDb parentDb, DataImporter reader) throws IOException, RrdException {
+	Header(RrdDb parentDb, DataImporter reader) throws IOException {
 		this(parentDb, (RrdDef) null);
 		String version = reader.getVersion();
 		if(!version.equals(RRDTOOL_VERSION)) {
-			throw new RrdException("Could not unserialize xml version " + version);
+			throw new IllegalArgumentException("Could not unserialize xml version " + version);
 		}
 		signature.set(DEFAULT_SIGNATURE);
 		step.set(reader.getStep());
@@ -172,11 +172,10 @@ public class Header implements RrdUpdater {
 	 * Copies object's internal state to another Header object.
 	 * @param other New Header object to copy state to
 	 * @throws IOException Thrown in case of I/O error
-	 * @throws RrdException Thrown if supplied argument is not a Header object
 	 */
-	public void copyStateTo(RrdUpdater other) throws IOException, RrdException {
+	public void copyStateTo(RrdUpdater other) throws IOException {
 		if(!(other instanceof Header)) {
-			throw new RrdException(
+			throw new IllegalArgumentException(
 				"Cannot copy Header object to " + other.getClass().getName());
 		}
 		Header header = (Header) other;
@@ -197,10 +196,10 @@ public class Header implements RrdUpdater {
 		return signature.get().startsWith(SIGNATURE);
 	}
 
-	void validateHeader() throws IOException, RrdException {
+	void validateHeader() throws IOException {
 		if(!isRrd4jHeader()) {
 			String msg = "Invalid file header. File [" + parentDb.getCanonicalPath() + "] is not a Rrd4j RRD file";
-			throw new RrdException(msg);
+			throw new IOException(msg);
 		}
 	}
 

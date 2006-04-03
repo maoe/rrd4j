@@ -76,7 +76,7 @@ public class Archive implements RrdUpdater {
     }
 
     // read from XML
-    Archive(RrdDb parentDb, DataImporter reader, int arcIndex) throws IOException, RrdException {
+    Archive(RrdDb parentDb, DataImporter reader, int arcIndex) throws IOException {
         this(parentDb, new ArcDef(
                 reader.getConsolFun(arcIndex), reader.getXff(arcIndex),
                 reader.getSteps(arcIndex), reader.getRows(arcIndex)));
@@ -367,19 +367,18 @@ public class Archive implements RrdUpdater {
      * @param other New Archive object to copy state to
      *
      * @throws IOException  Thrown in case of I/O error
-     * @throws RrdException Thrown if supplied argument is not an Archive object
      */
-    public void copyStateTo(RrdUpdater other) throws IOException, RrdException {
+    public void copyStateTo(RrdUpdater other) throws IOException {
         if (!(other instanceof Archive)) {
-            throw new RrdException(
+            throw new IllegalArgumentException(
                     "Cannot copy Archive object to " + other.getClass().getName());
         }
         Archive arc = (Archive) other;
         if (!arc.consolFun.get().equals(consolFun.get())) {
-            throw new RrdException("Incompatible consolidation functions");
+            throw new IllegalArgumentException("Incompatible consolidation functions");
         }
         if (arc.steps.get() != steps.get()) {
-            throw new RrdException("Incompatible number of steps");
+            throw new IllegalArgumentException("Incompatible number of steps");
         }
         int count = parentDb.getHeader().getDsCount();
         for (int i = 0; i < count; i++) {

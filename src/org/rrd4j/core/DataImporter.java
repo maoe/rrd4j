@@ -32,36 +32,36 @@ import java.io.IOException;
 abstract class DataImporter {
 
 	// header
-	abstract String getVersion() throws RrdException, IOException;
-	abstract long getLastUpdateTime() throws RrdException, IOException;
-	abstract long getStep() throws RrdException, IOException;
-	abstract int getDsCount() throws RrdException, IOException;
-	abstract int getArcCount() throws RrdException, IOException;
+	abstract String getVersion() throws IOException;
+	abstract long getLastUpdateTime() throws IOException;
+	abstract long getStep() throws IOException;
+	abstract int getDsCount() throws IOException;
+	abstract int getArcCount() throws IOException;
 
 	// datasource
-	abstract String getDsName(int dsIndex) throws RrdException, IOException;
-	abstract String getDsType(int dsIndex) throws RrdException, IOException;
-	abstract long getHeartbeat(int dsIndex) throws RrdException, IOException;
-	abstract double getMinValue(int dsIndex) throws RrdException, IOException;
-	abstract double getMaxValue(int dsIndex) throws RrdException, IOException;
+	abstract String getDsName(int dsIndex) throws IOException;
+	abstract String getDsType(int dsIndex) throws IOException;
+	abstract long getHeartbeat(int dsIndex) throws IOException;
+	abstract double getMinValue(int dsIndex) throws IOException;
+	abstract double getMaxValue(int dsIndex) throws IOException;
 
 	// datasource state
-	abstract double getLastValue(int dsIndex) throws RrdException, IOException;
-	abstract double getAccumValue(int dsIndex) throws RrdException, IOException;
-	abstract long getNanSeconds(int dsIndex) throws RrdException, IOException;
+	abstract double getLastValue(int dsIndex) throws IOException;
+	abstract double getAccumValue(int dsIndex) throws IOException;
+	abstract long getNanSeconds(int dsIndex) throws IOException;
 
     // archive
-	abstract ConsolFun getConsolFun(int arcIndex) throws RrdException, IOException;
-	abstract double getXff(int arcIndex) throws RrdException, IOException;
-	abstract int getSteps(int arcIndex) throws RrdException, IOException;
-	abstract int getRows(int arcIndex) throws RrdException, IOException;
+	abstract ConsolFun getConsolFun(int arcIndex) throws IOException;
+	abstract double getXff(int arcIndex) throws IOException;
+	abstract int getSteps(int arcIndex) throws IOException;
+	abstract int getRows(int arcIndex) throws IOException;
 
 	// archive state
-	abstract double getStateAccumValue(int arcIndex, int dsIndex) throws RrdException, IOException;
-	abstract int getStateNanSteps(int arcIndex, int dsIndex) throws RrdException, IOException;
-	abstract double[] getValues(int arcIndex, int dsIndex) throws RrdException, IOException;
+	abstract double getStateAccumValue(int arcIndex, int dsIndex) throws IOException;
+	abstract int getStateNanSteps(int arcIndex, int dsIndex) throws IOException;
+	abstract double[] getValues(int arcIndex, int dsIndex) throws IOException;
 
-	long getEstimatedSize() throws RrdException, IOException {
+	long getEstimatedSize() throws IOException {
 		int dsCount = getDsCount();
 		int arcCount = getArcCount();
 		int rowCount = 0;
@@ -71,7 +71,7 @@ abstract class DataImporter {
 		return RrdDef.calculateSize(dsCount, arcCount, rowCount);
 	}
 
-	void release() throws RrdException, IOException {
+	void release() throws IOException {
 		// NOP
 	}
 

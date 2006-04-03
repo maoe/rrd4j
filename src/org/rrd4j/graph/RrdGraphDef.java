@@ -123,14 +123,8 @@ public class RrdGraphDef implements RrdGraphConstants {
 	 * default starting time is 'end-1day'.
 	 */
 	public RrdGraphDef() {
-		try {
-			setTimeSpan(Util.getTimestamps(DEFAULT_START, DEFAULT_END));
-		}
-		catch (RrdException e) {
-			throw new RuntimeException(e);
-		}
+        setTimeSpan(Util.getTimestamps(DEFAULT_START, DEFAULT_END));
 	}
-
 
 	/**
 	 * Sets the time when the graph should begin. Time in seconds since epoch

@@ -149,12 +149,9 @@ class GraphFrame extends JFrame {
 				rrdDb.close();
 			}
 		}
-		catch (IOException e) {
+		catch (Exception e) {
 			Util.error(this, e);
-		}
-		catch (RrdException e) {
-			Util.error(this, e);
-		}
+        }
 	}
 
 	private void constructUI() {

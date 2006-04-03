@@ -24,12 +24,10 @@
  */
 package org.rrd4j.inspector;
 
-import org.rrd4j.core.RrdDb;
 import org.rrd4j.core.Datasource;
-import org.rrd4j.core.RrdException;
+import org.rrd4j.core.RrdDb;
 
 import javax.swing.table.AbstractTableModel;
-import java.io.IOException;
 import java.io.File;
 
 class DatasourceTableModel extends AbstractTableModel {
@@ -105,10 +103,7 @@ class DatasourceTableModel extends AbstractTableModel {
 						rrd.close();
 					}
 				}
-				catch (IOException e) {
-					Util.error(null, e);
-				}
-				catch (RrdException e) {
+				catch (Exception e) {
 					Util.error(null, e);
 				}
 			}

@@ -62,15 +62,23 @@ public class ArcDef {
      * @param xff       X-files factor, between 0 and 1.
      * @param steps     Number of archive steps.
      * @param rows      Number of archive rows.
-     *
-     * @throws RrdException Thrown if any parameter has illegal value.
      */
-    public ArcDef(ConsolFun consolFun, double xff, int steps, int rows) throws RrdException {
+    public ArcDef(ConsolFun consolFun, double xff, int steps, int rows) {
+        if (consolFun == null) {
+            throw new IllegalArgumentException("Null consolidation function specified");
+        }
+        if (Double.isNaN(xff) || xff < 0.0 || xff >= 1.0) {
+            throw new IllegalArgumentException("Invalid xff, must be >= 0 and < 1: " + xff);
+        }
+        if (steps < 1 || rows < 2) {
+            throw new IllegalArgumentException("Invalid steps/rows settings: " + steps + "/" + rows +
+                    ". Minimal values allowed are steps=1, rows=2");
+        }
+
         this.consolFun = consolFun;
         this.xff = xff;
         this.steps = steps;
         this.rows = rows;
-        validate();
     }
 
     /**
@@ -107,19 +115,6 @@ public class ArcDef {
      */
     public int getRows() {
         return rows;
-    }
-
-    private void validate() throws RrdException {
-        if (consolFun == null) {
-            throw new RrdException("Null consolidation function specified");
-        }
-        if (Double.isNaN(xff) || xff < 0.0 || xff >= 1.0) {
-            throw new RrdException("Invalid xff, must be >= 0 and < 1: " + xff);
-        }
-        if (steps < 1 || rows < 2) {
-            throw new RrdException("Invalid steps/rows settings: " + steps + "/" + rows +
-                    ". Minimal values allowed are steps=1, rows=2");
-        }
     }
 
     /**

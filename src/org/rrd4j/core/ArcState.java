@@ -108,12 +108,10 @@ public class ArcState implements RrdUpdater {
 	 * Copies object's internal state to another ArcState object.
 	 * @param other New ArcState object to copy state to
 	 * @throws IOException Thrown in case of I/O error
-	 * @throws RrdException Thrown if supplied argument is not an ArcState object
 	 */
-	public void copyStateTo(RrdUpdater other) throws IOException, RrdException {
+	public void copyStateTo(RrdUpdater other) throws IOException {
 		if(!(other instanceof ArcState)) {
-			throw new RrdException(
-				"Cannot copy ArcState object to " + other.getClass().getName());
+			throw new IllegalArgumentException("Cannot copy ArcState object to " + other.getClass().getName());
 		}
 		ArcState arcState = (ArcState) other;
 		arcState.accumValue.set(accumValue.get());

@@ -96,10 +96,7 @@ class HeaderTableModel extends AbstractTableModel {
 			}
 			fireTableDataChanged();
 		}
-		catch (IOException e) {
-			Util.error(null, e);
-		}
-		catch (RrdException e) {
+		catch (Exception e) {
 			Util.error(null, e);
 		}
 	}

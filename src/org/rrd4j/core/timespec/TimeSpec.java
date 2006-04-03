@@ -25,7 +25,6 @@
 
 package org.rrd4j.core.timespec;
 
-import org.rrd4j.core.RrdException;
 import org.rrd4j.core.Util;
 
 import java.util.Calendar;
@@ -67,29 +66,29 @@ public class TimeSpec {
 		wday = date.get(Calendar.DAY_OF_WEEK) - Calendar.SUNDAY;
 	}
 
-	GregorianCalendar getTime() throws RrdException {
-		GregorianCalendar gc;
-		// absoulte time, this is easy
-		if(type ==  TYPE_ABSOLUTE) {
-			gc = new GregorianCalendar(year + 1900, month, day, hour, min, sec);
-		}
-		// relative time, we need a context to evaluate it
-		else if(context != null && context.type == TYPE_ABSOLUTE) {
-			gc = context.getTime();
-		}
-		// how would I guess what time it was?
-		else {
-			throw new RrdException("Relative times like '" +
-					dateString + "' require proper absolute context to be evaluated");
-		}
-		gc.add(Calendar.YEAR, dyear);
-		gc.add(Calendar.MONTH, dmonth);
-		gc.add(Calendar.DAY_OF_MONTH, dday);
-		gc.add(Calendar.HOUR_OF_DAY, dhour);
-		gc.add(Calendar.MINUTE, dmin);
-		gc.add(Calendar.SECOND, dsec);
-		return gc;
-	}
+    GregorianCalendar getTime() {
+        GregorianCalendar gc;
+        // absoulte time, this is easy
+        if (type == TYPE_ABSOLUTE) {
+            gc = new GregorianCalendar(year + 1900, month, day, hour, min, sec);
+        }
+        // relative time, we need a context to evaluate it
+        else if (context != null && context.type == TYPE_ABSOLUTE) {
+            gc = context.getTime();
+        }
+        // how would I guess what time it was?
+        else {
+            throw new IllegalStateException("Relative times like '" +
+                    dateString + "' require proper absolute context to be evaluated");
+        }
+        gc.add(Calendar.YEAR, dyear);
+        gc.add(Calendar.MONTH, dmonth);
+        gc.add(Calendar.DAY_OF_MONTH, dday);
+        gc.add(Calendar.HOUR_OF_DAY, dhour);
+        gc.add(Calendar.MINUTE, dmin);
+        gc.add(Calendar.SECOND, dsec);
+        return gc;
+    }
 
 	/**
 	 * Returns the corresponding timestamp (seconds since Epoch). Example:<p>
@@ -99,9 +98,8 @@ public class TimeSpec {
 	 * System.out.println("Timestamp was: " + ts.getTimestamp();
 	 * </pre>
 	 * @return Timestamp (in seconds, no milliseconds)
-	 * @throws RrdException Thrown if this TimeSpec object does not represent absolute time.
 	 */
-	public long getTimestamp() throws RrdException {
+	public long getTimestamp() {
 		return Util.getTimestamp(getTime());
 	}
 
@@ -126,11 +124,10 @@ public class TimeSpec {
 	 * @param spec1 Starting time specification
 	 * @param spec2 Ending time specification
 	 * @return Two element array containing Calendar objects
-	 * @throws RrdException Thrown if relative time references cannot be resolved
 	 */
-	public static Calendar[] getTimes(TimeSpec spec1, TimeSpec spec2) throws RrdException {
+	public static Calendar[] getTimes(TimeSpec spec1, TimeSpec spec2) {
 		if(spec1.type == TYPE_START || spec2.type == TYPE_END) {
-			throw new RrdException("Recursive time specifications not allowed");
+			throw new IllegalArgumentException("Recursive time specifications not allowed");
 		}
 		spec1.context = spec2;
 		spec2.context = spec1;
@@ -153,9 +150,8 @@ public class TimeSpec {
 	 * @param spec1 Starting time specification
 	 * @param spec2 Ending time specification
 	 * @return array containing two timestamps (in seconds since epoch)
-	 * @throws RrdException Thrown if relative time references cannot be resolved
 	 */
-	public static long[] getTimestamps(TimeSpec spec1, TimeSpec spec2) throws RrdException {
+	public static long[] getTimestamps(TimeSpec spec1, TimeSpec spec2) {
 		Calendar[] gcs = getTimes(spec1, spec2);
 		return new long[] {
 			Util.getTimestamp(gcs[0]), Util.getTimestamp(gcs[1])

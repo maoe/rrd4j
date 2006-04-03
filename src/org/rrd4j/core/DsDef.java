@@ -30,7 +30,7 @@ import org.rrd4j.DsType;
 /**
  * Class to represent single data source definition within the RRD.
  * Datasource definition consists of the following five elements:
- *
+ * <p/>
  * <ul>
  * <li>data source name
  * <li>data soruce type
@@ -55,10 +55,10 @@ public class DsDef {
      * <p>Creates new data source definition object. This object should be passed as argument
      * to {@link RrdDef#addDatasource(DsDef) addDatasource()}
      * method of {@link RrdDb RrdDb} object.</p>
-     *
+     * <p/>
      * <p>For the complete explanation of all source definition parameters, see RRDTool's
      * <a href="../../../../man/rrdcreate.html" target="man">rrdcreate man page</a></p>
-     *
+     * <p/>
      * <p><b>IMPORTANT NOTE:</b> If datasource name ends with '!', corresponding archives will never
      * store NaNs as datasource values. In that case, NaN datasource values will be silently
      * replaced with zeros by the framework.</p>
@@ -70,17 +70,34 @@ public class DsDef {
      * @param heartbeat Hearbeat
      * @param minValue  Minimal value. Use <code>Double.NaN</code> if unknown.
      * @param maxValue  Maximal value. Use <code>Double.NaN</code> if unknown.
-     *
-     * @throws RrdException Thrown if any parameter has illegal value.
      */
-    public DsDef(String dsName, DsType dsType, long heartbeat,
-                 double minValue, double maxValue) throws RrdException {
+    public DsDef(String dsName, DsType dsType, long heartbeat, double minValue, double maxValue) {
+        if (dsName == null) {
+            throw new IllegalArgumentException("Null datasource name specified");
+        }
+        if (dsName.length() == 0) {
+            throw new IllegalArgumentException("Datasource name length equal to zero");
+        }
+        if (dsName.length() > RrdPrimitive.STRING_LENGTH) {
+            throw new IllegalArgumentException("Datasource name [" + dsName + "] to long (" +
+                    dsName.length() + " chars found, only " + RrdPrimitive.STRING_LENGTH + " allowed");
+        }
+        if (dsType == null) {
+            throw new IllegalArgumentException("Null datasource type specified");
+        }
+        if (heartbeat <= 0) {
+            throw new IllegalArgumentException("Invalid heartbeat, must be positive: " + heartbeat);
+        }
+        if (!Double.isNaN(minValue) && !Double.isNaN(maxValue) && minValue >= maxValue) {
+            throw new IllegalArgumentException("Invalid min/max values specified: " +
+                    minValue + "/" + maxValue);
+        }
+
         this.dsName = dsName;
         this.dsType = dsType;
         this.heartbeat = heartbeat;
         this.minValue = minValue;
         this.maxValue = maxValue;
-        validate();
     }
 
     /**
@@ -128,29 +145,6 @@ public class DsDef {
         return maxValue;
     }
 
-    private void validate() throws RrdException {
-        if (dsName == null) {
-            throw new RrdException("Null datasource name specified");
-        }
-        if (dsName.length() == 0) {
-            throw new RrdException("Datasource name length equal to zero");
-        }
-        if (dsName.length() > RrdPrimitive.STRING_LENGTH) {
-            throw new RrdException("Datasource name [" + dsName + "] to long (" +
-                    dsName.length() + " chars found, only " + RrdPrimitive.STRING_LENGTH + " allowed");
-        }
-        if (dsType == null) {
-            throw new RrdException("Null datasource type specified");
-        }
-        if (heartbeat <= 0) {
-            throw new RrdException("Invalid heartbeat, must be positive: " + heartbeat);
-        }
-        if (!Double.isNaN(minValue) && !Double.isNaN(maxValue) && minValue >= maxValue) {
-            throw new RrdException("Invalid min/max values specified: " +
-                    minValue + "/" + maxValue);
-        }
-    }
-
     /**
      * Returns string representing source definition (RRDTool format).
      *
@@ -168,7 +162,6 @@ public class DsDef {
      * It is not possible to create RRD with two equal archive definitions.
      *
      * @param obj Archive definition to compare with.
-     *
      * @return <code>true</code> if archive definitions are equal,
      *         <code>false</code> otherwise.
      */

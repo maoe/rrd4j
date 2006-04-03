@@ -25,15 +25,14 @@
 
 package org.rrd4j.inspector;
 
-import org.rrd4j.core.RrdException;
-import org.rrd4j.core.ArcDef;
 import org.rrd4j.ConsolFun;
+import org.rrd4j.core.ArcDef;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.WindowEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
 
 class EditArchiveDialog extends JDialog {
 	private static final int FIELD_SIZE = 20;
@@ -187,8 +186,8 @@ class EditArchiveDialog extends JDialog {
 		try {
 			return new ArcDef(consolFun, xff, steps, rows);
 		}
-		catch(RrdException e) {
-			// should not be hear ever!
+		catch(Exception e) {
+			// should not be here ever!
 			Util.error(this, e);
 			return null;
 		}

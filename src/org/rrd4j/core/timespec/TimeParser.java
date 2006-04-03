@@ -28,7 +28,6 @@
  */
 package org.rrd4j.core.timespec;
 
-import org.rrd4j.core.RrdException;
 import org.rrd4j.core.Util;
 
 /**
@@ -56,14 +55,14 @@ public class TimeParser {
 		spec = new TimeSpec(dateString);
 	}
 
-	private void expectToken(int desired, String errorMessage) throws RrdException {
+	private void expectToken(int desired, String errorMessage) {
 		token = scanner.nextToken();
 		if (token.id != desired) {
-			throw new RrdException(errorMessage);
+			throw new IllegalArgumentException(errorMessage);
 		}
 	}
 
-	private void plusMinus(int doop) throws RrdException {
+	private void plusMinus(int doop) {
 		if (doop >= 0) {
 			op = doop;
 			expectToken(TimeToken.NUMBER, "There should be number after " +
@@ -121,7 +120,7 @@ public class TimeParser {
         }
 	}
 
-	private void timeOfDay() throws RrdException {
+	private void timeOfDay() {
 		int hour, minute = 0;
 		/* save token status in case we must abort */
 		scanner.saveState();
@@ -140,15 +139,14 @@ public class TimeParser {
 			expectToken(TimeToken.NUMBER, "Parsing HH:MM syntax, expecting MM as number, got none");
 			minute = Integer.parseInt(token.value);
 			if (minute > 59) {
-				throw new RrdException("Parsing HH:MM syntax, got MM = " +
-						minute + " (>59!)");
+				throw new IllegalArgumentException("Parsing HH:MM syntax, got MM = " + minute + " (>59!)");
 			}
 			token = scanner.nextToken();
 		}
 		/* check if an AM or PM specifier was given */
 		if (token.id == TimeToken.AM || token.id == TimeToken.PM) {
 			if (hour > 12) {
-				throw new RrdException("There cannot be more than 12 AM or PM hours");
+				throw new IllegalArgumentException("There cannot be more than 12 AM or PM hours");
 			}
 			if (token.id == TimeToken.PM) {
 				if (hour != 12) {
@@ -176,27 +174,26 @@ public class TimeParser {
 		}
 	}
 
-	private void assignDate(long mday, long mon, long year) throws RrdException {
+	private void assignDate(long mday, long mon, long year) {
 		if (year > 138) {
 			if (year > 1970) {
 				year -= 1900;
 			} else {
-				throw new RrdException("Invalid year " + year +
-						" (should be either 00-99 or >1900)");
+				throw new IllegalArgumentException("Invalid year " + year + " (should be either 00-99 or >1900)");
 			}
 		} else if (year >= 0 && year < 38) {
 			year += 100;	     /* Allow year 2000-2037 to be specified as   */
 		}					     /* 00-37 until the problem of 2038 year will */
 		/* arise for unices with 32-bit time_t     */
 		if (year < 70) {
-			throw new RrdException("Won't handle dates before epoch (01/01/1970), sorry");
+			throw new IllegalArgumentException("Won't handle dates before epoch (01/01/1970), sorry");
 		}
 		spec.year = (int) year;
 		spec.month = (int) mon;
 		spec.day = (int) mday;
 	}
 
-	private void day() throws RrdException {
+	private void day() {
 		long mday = 0, wday, mon, year = spec.year;
 		switch (token.id) {
 			case TimeToken.YESTERDAY:
@@ -286,11 +283,10 @@ public class TimeParser {
 				}
 				mon--;
 				if (mon < 0 || mon > 11) {
-					throw new RrdException("Did you really mean month " + (mon + 1));
+					throw new IllegalArgumentException("Did you really mean month " + (mon + 1));
 				}
 				if (mday < 1 || mday > 31) {
-					throw new RrdException("I'm afraid that " + mday +
-							" is not a valid day of the month");
+					throw new IllegalArgumentException("I'm afraid that " + mday + " is not a valid day of the month");
 				}
 				assignDate(mday, mon, year);
 				break;
@@ -300,9 +296,8 @@ public class TimeParser {
 	/**
 	 * Parses the input string specified in the constructor.
 	 * @return Object representing parsed date/time.
-	 * @throws RrdException Thrown if the date string cannot be parsed.
 	 */
-	public TimeSpec parse() throws RrdException {
+	public TimeSpec parse() {
 		long now = Util.getTime();
 		int hr = 0;
 		/* this MUST be initialized to zero for midnight/noon/teatime */
@@ -329,9 +324,9 @@ public class TimeParser {
 					break;
 				}
 				if (time_reference != TimeToken.NOW) {
-					throw new RrdException("Words 'start' or 'end' MUST be followed by +|- offset");
+					throw new IllegalArgumentException("Words 'start' or 'end' MUST be followed by +|- offset");
 				} else if (token.id != TimeToken.EOF) {
-					throw new RrdException("If 'now' is followed by a token it must be +|- offset");
+					throw new IllegalArgumentException("If 'now' is followed by a token it must be +|- offset");
 				}
 				break;
 				/* Only absolute time specifications below */
@@ -381,7 +376,7 @@ public class TimeParser {
 				day();
 				break;
 			default:
-				throw new RrdException("Unparsable time: " + token.value);
+				throw new IllegalArgumentException("Unparsable time: " + token.value);
 		}
 
 		/*
@@ -405,7 +400,7 @@ public class TimeParser {
 		}
 		/* now we should be at EOF */
 		if (token.id != TimeToken.EOF) {
-			throw new RrdException("Unparsable trailing text: " + token.value);
+			throw new IllegalArgumentException("Unparsable trailing text: " + token.value);
 		}
 		return spec;
 	}

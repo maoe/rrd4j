@@ -60,13 +60,15 @@ import java.util.*;
 public class RrdDef {
 	/** default RRD step to be used if not specified in constructor (300 seconds) */
 	public static final long DEFAULT_STEP = 300L;
-	/** if not specified in constructor, starting timestamp will be set to the
+
+    /** if not specified in constructor, starting timestamp will be set to the
 	 * current timestamp plus DEFAULT_INITIAL_SHIFT seconds (-10) */
 	public static final long DEFAULT_INITIAL_SHIFT = -10L;
 
 	private String path;
 	private long startTime = Util.getTime() + DEFAULT_INITIAL_SHIFT;
 	private long step = DEFAULT_STEP;
+
     private ArrayList<DsDef> dsDefs = new ArrayList<DsDef>();
 	private ArrayList<ArcDef> arcDefs = new ArrayList<ArcDef>();
 
@@ -76,11 +78,10 @@ public class RrdDef {
 	 * <code>RrdDb</code> constructor, new RRD will be created using the
 	 * specified path. </p>
 	 * @param path Path to new RRD.
-	 * @throws RrdException Thrown if name is invalid (null or empty).
 	 */
-	public RrdDef(String path) throws RrdException {
+	public RrdDef(String path) {
 		if(path == null || path.length() == 0) {
-			throw new RrdException("No path specified");
+			throw new IllegalArgumentException("No path specified");
 		}
 		this.path = path;
 	}
@@ -89,12 +90,11 @@ public class RrdDef {
 	 * <p>Creates new RRD definition object with the given path and step.</p>
 	 * @param path Path to new RRD.
 	 * @param step RRD step.
-	 * @throws RrdException Thrown if supplied parameters are invalid.
 	 */
-	public RrdDef(String path, long step) throws RrdException {
+	public RrdDef(String path, long step) {
 		this(path);
 		if(step <= 0) {
-			throw new RrdException("Invalid RRD step specified: " + step);
+			throw new IllegalArgumentException("Invalid RRD step specified: " + step);
 		}
 		this.step = step;
 	}
@@ -105,12 +105,11 @@ public class RrdDef {
 	 * @param path Path to new RRD.
 	 * @param startTime RRD starting timestamp.
 	 * @param step RRD step.
-	 * @throws RrdException Thrown if supplied parameters are invalid.
 	 */
-	public RrdDef(String path, long startTime, long step) throws RrdException {
+	public RrdDef(String path, long startTime, long step) {
 		this(path, step);
 		if(startTime < 0) {
-			throw new RrdException("Invalid RRD start time specified: " + startTime);
+			throw new IllegalArgumentException("Invalid RRD start time specified: " + startTime);
 		}
 		this.startTime = startTime;
 	}
@@ -182,12 +181,10 @@ public class RrdDef {
 	/**
 	 * Adds single datasource definition represented with object of class <code>DsDef</code>.
 	 * @param dsDef Datasource definition.
-	 * @throws RrdException Thrown if new datasource definition uses already used data
-	 * source name.
 	 */
-	public void addDatasource(DsDef dsDef) throws RrdException {
+	public void addDatasource(DsDef dsDef) {
 		if(dsDefs.contains(dsDef)) {
-			throw new RrdException("Datasource already defined: " + dsDef.dump());
+			throw new IllegalArgumentException("Datasource already defined: " + dsDef.dump());
 		}
 		dsDefs.add(dsDef);
 	}
@@ -291,12 +288,12 @@ public class RrdDef {
 	/**
 	 * Adds single archive definition represented with object of class <code>ArcDef</code>.
 	 * @param arcDef Archive definition.
-	 * @throws RrdException Thrown if archive with the same consolidation function
+	 * @throws IllegalArgumentException Thrown if archive with the same consolidation function
 	 * and the same number of steps is already added.
 	 */
-	public void addArchive(ArcDef arcDef) throws RrdException {
+	public void addArchive(ArcDef arcDef) {
 		if(arcDefs.contains(arcDef)) {
-			throw new RrdException("Archive already defined: " + arcDef.dump());
+			throw new IllegalArgumentException("Archive already defined: " + arcDef.dump());
 		}
 		arcDefs.add(arcDef);
 	}
@@ -385,16 +382,7 @@ public class RrdDef {
 		addArchive(new ArcDef(consolFun, xff, steps, rows));
 	}
 
-	void validate() throws RrdException {
-        if(dsDefs.size() == 0) {
-			throw new RrdException("No RRD datasource specified. At least one is needed.");
-		}
-    	if(arcDefs.size() == 0) {
-			throw new RrdException("No RRD archive specified. At least one is needed.");
-		}
-	}
-
-	/**
+    /**
 	 * Returns all data source definition objects specified so far.
 	 * @return Array of data source definition objects
 	 */
@@ -627,7 +615,15 @@ public class RrdDef {
 		return true;
 	}
 
-	/**
+    public boolean hasDatasources() {
+        return !dsDefs.isEmpty();
+    }
+
+    public boolean hasArchives() {
+        return !arcDefs.isEmpty();
+    }
+
+    /**
 	 * Removes all datasource definitions.
 	 */
 	public void removeDatasources() {

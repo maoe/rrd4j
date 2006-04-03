@@ -134,7 +134,7 @@ public class Robin implements RrdUpdater {
         StringBuilder buffer = new StringBuilder("Robin " + pointer.get() + "/" + rows + ": ");
         double[] values = getValues();
         for (double value : values) {
-            buffer.append(Util.formatDouble(value, true) + " ");
+            buffer.append(Util.formatDouble(value, true)).append(" ");
         }
         buffer.append("\n");
         return buffer.toString();
@@ -214,11 +214,10 @@ public class Robin implements RrdUpdater {
      * @param other New Robin object to copy state to
      *
      * @throws IOException  Thrown in case of I/O error
-     * @throws RrdException Thrown if supplied argument is not a Robin object
      */
-    public void copyStateTo(RrdUpdater other) throws IOException, RrdException {
+    public void copyStateTo(RrdUpdater other) throws IOException {
         if (!(other instanceof Robin)) {
-            throw new RrdException(
+            throw new IllegalArgumentException(
                     "Cannot copy Robin object to " + other.getClass().getName());
         }
         Robin robin = (Robin) other;
