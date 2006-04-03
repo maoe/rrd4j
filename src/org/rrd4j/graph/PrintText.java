@@ -24,9 +24,8 @@
  */
 package org.rrd4j.graph;
 
-import org.rrd4j.core.RrdException;
-import org.rrd4j.core.Util;
 import org.rrd4j.ConsolFun;
+import org.rrd4j.core.Util;
 import org.rrd4j.data.DataProcessor;
 
 import java.util.regex.Matcher;
@@ -51,7 +50,7 @@ class PrintText extends CommentText {
 		return !includedInGraph;
 	}
 
-	void resolveText(DataProcessor dproc, ValueScaler valueScaler) throws RrdException {
+	void resolveText(DataProcessor dproc, ValueScaler valueScaler) {
 		super.resolveText(dproc, valueScaler);
 		if (resolvedText != null) {
 			double value = dproc.getAggregate(srcName, consolFun);

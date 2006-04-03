@@ -25,7 +25,6 @@
 
 package org.rrd4j.data;
 
-import org.rrd4j.core.RrdException;
 import org.rrd4j.core.Util;
 
 import java.util.Calendar;
@@ -95,7 +94,7 @@ class RpnCalculator {
 	private long[] timestamps;
 	private double timeStep;
 
-	RpnCalculator(String rpnExpression, String sourceName, DataProcessor dataProcessor) throws RrdException {
+	RpnCalculator(String rpnExpression, String sourceName, DataProcessor dataProcessor) {
 		this.rpnExpression = rpnExpression;
 		this.sourceName = sourceName;
 		this.dataProcessor = dataProcessor;
@@ -109,7 +108,7 @@ class RpnCalculator {
 		}
 	}
 
-	private Token createToken(String parsedText) throws RrdException {
+	private Token createToken(String parsedText) {
 		Token token = new Token();
 		if (Util.isDouble(parsedText)) {
 			token.id = TKN_NUM;
@@ -280,7 +279,7 @@ class RpnCalculator {
 		return token;
 	}
 
-	double[] calculateValues() throws RrdException {
+	double[] calculateValues() {
 		for (int slot = 0; slot < timestamps.length; slot++) {
 			resetStack();
             for (Token token : tokens) {
@@ -477,13 +476,13 @@ class RpnCalculator {
                         push(Math.floor(pop() * Math.random()));
                         break;
                     default:
-                        throw new RrdException("Unexpected RPN token encountered, token.id=" + token.id);
+                        throw new IllegalArgumentException("Unexpected RPN token encountered, token.id=" + token.id);
                 }
             }
 			calculatedValues[slot] = pop();
 			// check if stack is empty only on the first try
 			if (slot == 0 && !isStackEmpty()) {
-				throw new RrdException("Stack not empty at the end of calculation. " +
+				throw new IllegalArgumentException("Stack not empty at the end of calculation. " +
 						"Probably bad RPN expression [" + rpnExpression + "]");
 			}
 		}
@@ -495,15 +494,15 @@ class RpnCalculator {
 		return calendar.get(field);
 	}
 
-	private void push(double x) throws RrdException {
+	private void push(double x) {
 		stack.push(x);
 	}
 
-	private double pop() throws RrdException {
+	private double pop() {
 		return stack.pop();
 	}
 
-	private double peek() throws RrdException {
+	private double peek() {
 		return stack.peek();
 	}
 
@@ -520,23 +519,23 @@ class RpnCalculator {
 		private double[] stack = new double[MAX_STACK_SIZE];
 		private int pos = 0;
 
-		void push(double x) throws RrdException {
+		void push(double x) {
 			if (pos >= MAX_STACK_SIZE) {
-				throw new RrdException("PUSH failed, RPN stack full [" + MAX_STACK_SIZE + "]");
+				throw new IllegalArgumentException("PUSH failed, RPN stack full [" + MAX_STACK_SIZE + "]");
 			}
 			stack[pos++] = x;
 		}
 
-		double pop() throws RrdException {
+		double pop() {
 			if (pos <= 0) {
-				throw new RrdException("POP failed, RPN stack is empty ");
+				throw new IllegalArgumentException("POP failed, RPN stack is empty ");
 			}
 			return stack[--pos];
 		}
 
-		double peek() throws RrdException {
+		double peek() {
 			if (pos <= 0) {
-				throw new RrdException("PEEK failed, RPN stack is empty ");
+				throw new IllegalArgumentException("PEEK failed, RPN stack is empty ");
 			}
 			return stack[pos - 1];
 		}

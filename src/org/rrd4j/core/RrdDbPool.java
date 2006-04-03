@@ -49,19 +49,20 @@ public class RrdDbPool {
 	 * Creates a single instance of the class on the first call, or returns already existing one.
 	 *
 	 * @return Single instance of this class
-	 * @throws RrdException Thrown if the default RRD backend is not derived from the {@link RrdFileBackendFactory}
+	 * @throws RuntimeException Thrown if the default RRD backend is not derived from the {@link RrdFileBackendFactory}
 	 */
-	public synchronized static RrdDbPool getInstance() throws RrdException {
+	public synchronized static RrdDbPool getInstance() {
 		if (instance == null) {
 			instance = new RrdDbPool();
 		}
 		return instance;
 	}
 
-	private RrdDbPool() throws RrdException {
+	private RrdDbPool() {
 		RrdBackendFactory factory = RrdBackendFactory.getDefaultFactory();
-		if (!(factory instanceof RrdFileBackendFactory)) {
-			throw new RrdException("Cannot create instance of " + getClass().getName() + " with " +
+
+        if (!(factory instanceof RrdFileBackendFactory)) {
+			throw new RuntimeException("Cannot create instance of " + getClass().getName() + " with " +
 					"a default backend factory not derived from RrdFileBackendFactory");
 		}
 	}
@@ -80,16 +81,15 @@ public class RrdDbPool {
 	 * @param path Path to existing RRD file
 	 * @return reference for the give RRD file
 	 * @throws IOException  Thrown in case of I/O error
-	 * @throws RrdException Thrown in case of Rrd4j specific error
 	 */
-	public synchronized RrdDb requestRrdDb(String path) throws IOException, RrdException {
+	public synchronized RrdDb requestRrdDb(String path) throws IOException {
 		String canonicalPath = Util.getCanonicalPath(path);
 		while (!rrdMap.containsKey(canonicalPath) && rrdMap.size() >= capacity) {
 			try {
 				wait();
 			}
 			catch (InterruptedException e) {
-				throw new RrdException(e);
+				throw new RuntimeException(e);
 			}
 		}
 		if (rrdMap.containsKey(canonicalPath)) {
@@ -177,16 +177,15 @@ public class RrdDbPool {
 	 *
 	 * @param rrdDb RrdDb reference to be returned to the pool
 	 * @throws IOException  Thrown in case of I/O error
-	 * @throws RrdException Thrown in case of Rrd4j specific error
 	 */
-	public synchronized void release(RrdDb rrdDb) throws IOException, RrdException {
+	public synchronized void release(RrdDb rrdDb) throws IOException {
 		// null pointer should not kill the thread, just ignore it
 		if (rrdDb == null) {
 			return;
 		}
 		String canonicalPath = Util.getCanonicalPath(rrdDb.getPath());
 		if (!rrdMap.containsKey(canonicalPath)) {
-			throw new RrdException("Could not release [" + canonicalPath + "], the file was never requested");
+			throw new IllegalStateException("Could not release [" + canonicalPath + "], the file was never requested");
 		}
 		RrdEntry entry = rrdMap.get(canonicalPath);
 		if (--entry.count <= 0) {

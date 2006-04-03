@@ -49,14 +49,29 @@ public class FetchRequest {
 	private long resolution;
 	private String[] filter;
 
-	FetchRequest(RrdDb parentDb, ConsolFun consolFun, long fetchStart, long fetchEnd,
-		long resolution) throws RrdException {
+	FetchRequest(RrdDb parentDb, ConsolFun consolFun, long fetchStart, long fetchEnd, long resolution) {
+        if (consolFun == null) {
+            throw new IllegalArgumentException("Null consolidation function in fetch request");
+        }
+        if (fetchStart < 0) {
+            throw new IllegalArgumentException("Invalid start time in fetch request: " + fetchStart);
+        }
+        if (fetchEnd < 0) {
+            throw new IllegalArgumentException("Invalid end time in fetch request: " + fetchEnd);
+        }
+        if (fetchStart > fetchEnd) {
+            throw new IllegalArgumentException("Invalid start/end time in fetch request: " + fetchStart +
+                    " > " + fetchEnd);
+        }
+        if (resolution <= 0) {
+            throw new IllegalArgumentException("Invalid resolution in fetch request: " + resolution);
+        }
+
 		this.parentDb = parentDb;
 		this.consolFun = consolFun;
 		this.fetchStart = fetchStart;
 		this.fetchEnd = fetchEnd;
 		this.resolution = resolution;
-		validate();
 	}
 
 	/**
@@ -139,25 +154,6 @@ public class FetchRequest {
 		return resolution;
 	}
 
-	private void validate() throws RrdException {
-		if(consolFun == null) {
-			throw new RrdException("Null consolidation function in fetch request");
-		}
-		if(fetchStart < 0) {
-			throw new RrdException("Invalid start time in fetch request: " + fetchStart);
-		}
-		if(fetchEnd < 0) {
-			throw new RrdException("Invalid end time in fetch request: " + fetchEnd);
-		}
-		if(fetchStart > fetchEnd) {
-			throw new RrdException("Invalid start/end time in fetch request: " + fetchStart +
-				" > " + fetchEnd);
-		}
-		if(resolution <= 0) {
-			throw new RrdException("Invalid resolution in fetch request: " + resolution);
-		}
-	}
-
 	/**
 	 * Dumps the content of fetch request using the syntax of RRDTool's fetch command.
 	 * @return Fetch request dump.
@@ -176,10 +172,9 @@ public class FetchRequest {
 	 * Returns data from the underlying RRD and puts it in a single
 	 * {@link org.rrd4j.core.FetchData FetchData} object.
 	 * @return FetchData object filled with timestamps and datasource values.
-	 * @throws RrdException Thrown in case of Rrd4j specific error.
 	 * @throws IOException Thrown in case of I/O error.
 	 */
-	public FetchData fetchData() throws RrdException, IOException {
+	public FetchData fetchData() throws IOException {
 		return parentDb.fetchData(this);
 	}
 

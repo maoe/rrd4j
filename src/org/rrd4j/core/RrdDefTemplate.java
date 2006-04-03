@@ -193,13 +193,13 @@ public class RrdDefTemplate extends XmlTemplate {
 			String startStr = getChildValue(root, "start");
 			Calendar startGc = Util.getCalendar(startStr);
 			rrdDef.setStartTime(startGc);
-		} catch (RrdException e) {
+		} catch (Exception e) {
 			// START is not mandatory
 		}
 		try {
 			long step = getChildValueAsLong(root, "step");
 			rrdDef.setStep(step);
-		} catch (RrdException e) {
+		} catch (Exception e) {
 			// STEP is not mandatory
 		}
 		// datsources

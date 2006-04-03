@@ -285,7 +285,7 @@ public class Archive implements RrdUpdater {
         return robins[dsIndex];
     }
 
-    FetchData fetchData(FetchRequest request) throws IOException, RrdException {
+    FetchData fetchData(FetchRequest request) throws IOException {
         long arcStep = getArcStep();
         long fetchStart = Util.normalize(request.getFetchStart(), arcStep);
         long fetchEnd = Util.normalize(request.getFetchEnd(), arcStep);

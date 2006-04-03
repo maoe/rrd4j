@@ -543,12 +543,9 @@ public class RrdDb implements RrdUpdater {
      * @param resolution Fetch resolution (see RRDTool's
      *                   <a href="../../../../man/rrdfetch.html" target="man">rrdfetch man page</a> for an
      *                   explanation of this parameter.
-     * @return Request object that should be used to actually fetch data from RRD.
-     * @throws RrdException In case of Rrd4j related error (invalid consolidation function or
-     *                      invalid time span).
+     * @return Request object that should be used to actually fetch data from RRD
      */
-    public FetchRequest createFetchRequest(ConsolFun consolFun, long fetchStart, long fetchEnd,
-                                           long resolution) throws RrdException {
+    public FetchRequest createFetchRequest(ConsolFun consolFun, long fetchStart, long fetchEnd, long resolution) {
         return new FetchRequest(this, consolFun, fetchStart, fetchEnd, resolution);
     }
 
@@ -566,22 +563,19 @@ public class RrdDb implements RrdUpdater {
      * @param fetchStart Starting timestamp for fetch request.
      * @param fetchEnd   Ending timestamp for fetch request.
      * @return Request object that should be used to actually fetch data from RRD.
-     * @throws RrdException In case of Rrd4j related error (invalid consolidation function or
-     *                      invalid time span).
      */
-    public FetchRequest createFetchRequest(ConsolFun consolFun, long fetchStart, long fetchEnd)
-            throws RrdException {
+    public FetchRequest createFetchRequest(ConsolFun consolFun, long fetchStart, long fetchEnd) {
         return createFetchRequest(consolFun, fetchStart, fetchEnd, 1);
     }
 
-    synchronized void store(Sample sample) throws IOException, RrdException {
+    synchronized void store(Sample sample) throws IOException {
         if (closed) {
-            throw new RrdException("RRD already closed, cannot store this  sample");
+            throw new IllegalStateException("RRD already closed, cannot store this  sample");
         }
         long newTime = sample.getTime();
         long lastTime = header.getLastUpdateTime();
         if (lastTime >= newTime) {
-            throw new RrdException("Bad sample timestamp " + newTime +
+            throw new IllegalArgumentException("Bad sample timestamp " + newTime +
                     ". Last update time was " + lastTime + ", at least one second step is required");
         }
         double[] newValues = sample.getValues();
@@ -592,15 +586,15 @@ public class RrdDb implements RrdUpdater {
         header.setLastUpdateTime(newTime);
     }
 
-    synchronized FetchData fetchData(FetchRequest request) throws IOException, RrdException {
+    synchronized FetchData fetchData(FetchRequest request) throws IOException {
         if (closed) {
-            throw new RrdException("RRD already closed, cannot fetch data");
+            throw new IllegalStateException("RRD already closed, cannot fetch data");
         }
         Archive archive = findMatchingArchive(request);
         return archive.fetchData(request);
     }
 
-    public Archive findMatchingArchive(FetchRequest request) throws RrdException, IOException {
+    public Archive findMatchingArchive(FetchRequest request) throws IOException {
         ConsolFun consolFun = request.getConsolFun();
         long fetchStart = request.getFetchStart();
         long fetchEnd = request.getFetchEnd();
@@ -644,7 +638,7 @@ public class RrdDb implements RrdUpdater {
             return bestPartialMatch;
         }
         else {
-            throw new RrdException("RRD file does not contain RRA:" + consolFun + " archive");
+            throw new IllegalStateException("RRD file does not contain RRA: " + consolFun + " archive");
         }
     }
 
@@ -711,7 +705,7 @@ public class RrdDb implements RrdUpdater {
     }
 
     void archive(Datasource datasource, double value, long numUpdates)
-            throws IOException, RrdException {
+            throws IOException {
         int dsIndex = getDsIndex(datasource.getDsName());
         for (Archive archive : archives) {
             archive.archive(dsIndex, value, numUpdates);
@@ -800,9 +794,8 @@ public class RrdDb implements RrdUpdater {
      *
      * @return Internal RRD state in XML format.
      * @throws IOException  Thrown in case of I/O related error
-     * @throws RrdException Thrown in case of Rrd4j specific error
      */
-    public synchronized String getXml() throws IOException, RrdException {
+    public synchronized String getXml() throws IOException {
         ByteArrayOutputStream destination = new ByteArrayOutputStream(XML_INITIAL_BUFFER_CAPACITY);
         dumpXml(destination);
         return destination.toString();
@@ -813,9 +806,8 @@ public class RrdDb implements RrdUpdater {
      *
      * @return Internal RRD state in XML format.
      * @throws IOException  Thrown in case of I/O related error
-     * @throws RrdException Thrown in case of Rrd4j specific error
      */
-    public synchronized String exportXml() throws IOException, RrdException {
+    public synchronized String exportXml() throws IOException {
         return getXml();
     }
 
@@ -836,9 +828,8 @@ public class RrdDb implements RrdUpdater {
      *
      * @param filename Path to XML file which will be created.
      * @throws IOException  Thrown in case of I/O related error.
-     * @throws RrdException Thrown in case of Rrd4j related error.
      */
-    public synchronized void dumpXml(String filename) throws IOException, RrdException {
+    public synchronized void dumpXml(String filename) throws IOException {
         OutputStream outputStream = null;
         try {
             outputStream = new FileOutputStream(filename, false);
@@ -855,9 +846,8 @@ public class RrdDb implements RrdUpdater {
      * This method is just an alias for {@link #dumpXml(String) dumpXml(String)} method.
      *
      * @throws IOException  Thrown in case of I/O related error
-     * @throws RrdException Thrown in case of Rrd4j specific error
      */
-    public synchronized void exportXml(String filename) throws IOException, RrdException {
+    public synchronized void exportXml(String filename) throws IOException {
         dumpXml(filename);
     }
 

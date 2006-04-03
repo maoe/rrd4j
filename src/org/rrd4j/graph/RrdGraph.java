@@ -24,7 +24,6 @@
  */
 package org.rrd4j.graph;
 
-import org.rrd4j.core.RrdException;
 import org.rrd4j.core.Util;
 import org.rrd4j.data.DataProcessor;
 
@@ -58,9 +57,8 @@ public class RrdGraph implements RrdGraphConstants {
      * @param gdef Graph definition
      *
      * @throws IOException  Thrown in case of I/O error
-     * @throws RrdException Thrown in case of Rrd4j related error
      */
-    public RrdGraph(RrdGraphDef gdef) throws IOException, RrdException {
+    public RrdGraph(RrdGraphDef gdef) throws IOException {
         this.gdef = gdef;
         worker = new ImageWorker(1, 1); // Dummy worker, just to start with something
         try {
@@ -82,7 +80,7 @@ public class RrdGraph implements RrdGraphConstants {
         return info;
     }
 
-    private void createGraph() throws RrdException, IOException {
+    private void createGraph() throws IOException {
         boolean lazy = lazyCheck();
         if (!lazy || gdef.printStatementCount() != 0) {
             fetchData();
@@ -230,7 +228,7 @@ public class RrdGraph implements RrdGraphConstants {
         }
     }
 
-    private void drawData() throws RrdException {
+    private void drawData() {
         worker.setAntiAliasing(gdef.antiAliasing);
         worker.clip(im.xorigin + 1, im.yorigin - gdef.height - 1, gdef.width - 1, gdef.height + 2);
         double areazero = mapper.ytr((im.minval > 0.0) ? im.minval : (im.maxval < 0.0) ? im.maxval : 0.0);
@@ -261,7 +259,7 @@ public class RrdGraph implements RrdGraphConstants {
                 }
                 else {
                     // should not be here
-                    throw new RrdException("Unknown plot source: " + source.getClass().getName());
+                    throw new IllegalStateException("Unknown plot source: " + source.getClass().getName());
                 }
                 lastY = y;
             }
@@ -313,13 +311,13 @@ public class RrdGraph implements RrdGraphConstants {
         }
     }
 
-    private void initializeLimits() throws RrdException {
+    private void initializeLimits() {
         im.xsize = gdef.width;
         im.ysize = gdef.height;
         im.unitslength = gdef.unitsLength;
         if (gdef.onlyGraph) {
             if (im.ysize > 64) {
-                throw new RrdException("Cannot create graph only, height too big");
+                throw new IllegalArgumentException("Cannot create graph only, height too big");
             }
             im.xorigin = 0;
         }
@@ -517,7 +515,7 @@ public class RrdGraph implements RrdGraphConstants {
         }
     }
 
-    private void calculatePlotValues() throws RrdException {
+    private void calculatePlotValues() {
         for (PlotElement pe : gdef.plotElements) {
             if (pe instanceof SourcedPlotElement) {
                 ((SourcedPlotElement) pe).assignValues(dproc);
@@ -525,14 +523,14 @@ public class RrdGraph implements RrdGraphConstants {
         }
     }
 
-    private void resolveTextElements() throws RrdException {
+    private void resolveTextElements() {
         ValueScaler valueScaler = new ValueScaler(gdef.base);
         for (CommentText comment : gdef.comments) {
             comment.resolveText(dproc, valueScaler);
         }
     }
 
-    private void fetchData() throws RrdException, IOException {
+    private void fetchData() throws IOException {
         dproc = new DataProcessor(gdef.startTime, gdef.endTime);
         dproc.setPoolUsed(gdef.poolUsed);
         if (gdef.step > 0) {

@@ -24,7 +24,6 @@
  */
 package org.rrd4j.graph;
 
-import org.rrd4j.core.RrdException;
 import org.rrd4j.data.DataProcessor;
 
 class CommentText implements RrdGraphConstants {
@@ -39,7 +38,7 @@ class CommentText implements RrdGraphConstants {
 		this.text = text;
 	}
 
-	void resolveText(DataProcessor dproc, ValueScaler valueScaler) throws RrdException {
+	void resolveText(DataProcessor dproc, ValueScaler valueScaler) {
 		resolvedText = text;
 		marker = "";
 		if(resolvedText != null) {

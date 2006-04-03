@@ -116,10 +116,7 @@ class GraphFrame extends JFrame {
 				}
 			}
 		}
-		catch (IOException e) {
-			Util.error(this, e);
-		}
-		catch (RrdException e) {
+		catch (Exception e) {
 			Util.error(this, e);
 		}
 	}

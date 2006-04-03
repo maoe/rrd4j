@@ -24,7 +24,6 @@
  */
 package org.rrd4j.graph;
 
-import org.rrd4j.core.RrdException;
 import org.rrd4j.data.DataProcessor;
 
 import java.awt.*;
@@ -37,7 +36,7 @@ class Stack extends SourcedPlotElement {
 		this.parent = parent;
 	}
 
-	void assignValues(DataProcessor dproc) throws RrdException {
+	void assignValues(DataProcessor dproc) {
 		double[] parentValues = parent.getValues();
 		double[] procValues = dproc.getValues(srcName);
 		values = new double[procValues.length];

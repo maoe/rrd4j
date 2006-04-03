@@ -24,7 +24,6 @@
  */
 package org.rrd4j.graph;
 
-import org.rrd4j.core.RrdException;
 import org.rrd4j.core.Util;
 import org.rrd4j.data.DataProcessor;
 
@@ -39,7 +38,7 @@ class SourcedPlotElement extends PlotElement {
 		this.srcName = srcName;
 	}
 
-	void assignValues(DataProcessor dproc) throws RrdException {
+	void assignValues(DataProcessor dproc) {
 		values = dproc.getValues(srcName);
 	}
 

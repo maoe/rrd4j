@@ -26,7 +26,6 @@
 package org.rrd4j.data;
 
 import org.rrd4j.ConsolFun;
-import org.rrd4j.core.RrdException;
 import org.rrd4j.core.Util;
 
 /**
@@ -107,9 +106,9 @@ public class Aggregates {
      *
      * @return Aggregated value
      *
-     * @throws RrdException Thrown if unsupported consolidation function is supplied
+     * @throws IllegalArgumentException Thrown if unsupported consolidation function is supplied
      */
-    public double getAggregate(ConsolFun consolFun) throws RrdException {
+    public double getAggregate(ConsolFun consolFun) {
         switch (consolFun) {
             case AVERAGE:
                 return average;
@@ -122,7 +121,7 @@ public class Aggregates {
             case TOTAL:
                 return total;
         }
-        throw new RrdException("Unknown consolidation function: " + consolFun);
+        throw new IllegalArgumentException("Unknown consolidation function: " + consolFun);
     }
 
     /**

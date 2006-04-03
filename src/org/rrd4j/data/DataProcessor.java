@@ -91,15 +91,14 @@ public class DataProcessor {
 	 *
 	 * @param t1 Starting timestamp in seconds without milliseconds
 	 * @param t2 Ending timestamp in seconds without milliseconds
-	 * @throws RrdException Thrown if invalid timestamps are supplied
 	 */
-	public DataProcessor(long t1, long t2) throws RrdException {
+	public DataProcessor(long t1, long t2) {
 		if ((t1 < t2 && t1 > 0 && t2 > 0) || (t1 > 0 && t2 == 0)) {
 			this.tStart = t1;
 			this.tEnd = t2;
 		}
 		else {
-			throw new RrdException("Invalid timestamps specified: " + t1 + ", " + t2);
+			throw new IllegalArgumentException("Invalid timestamps specified: " + t1 + ", " + t2);
 		}
 	}
 
@@ -110,9 +109,8 @@ public class DataProcessor {
 	 *
 	 * @param d1 Starting date
 	 * @param d2 Ending date
-	 * @throws RrdException Thrown if invalid timestamps are supplied
 	 */
-	public DataProcessor(Date d1, Date d2) throws RrdException {
+	public DataProcessor(Date d1, Date d2) {
 		this(Util.getTimestamp(d1), d2 != null ? Util.getTimestamp(d2) : 0);
 	}
 
@@ -123,9 +121,8 @@ public class DataProcessor {
 	 *
 	 * @param gc1 Starting Calendar date
 	 * @param gc2 Ending Calendar date
-	 * @throws RrdException Thrown if invalid timestamps are supplied
 	 */
-	public DataProcessor(Calendar gc1, Calendar gc2) throws RrdException {
+	public DataProcessor(Calendar gc1, Calendar gc2) {
 		this(Util.getTimestamp(gc1), gc2 != null ? Util.getTimestamp(gc2) : 0);
 	}
 
@@ -246,11 +243,10 @@ public class DataProcessor {
 	 * Returns consolidated timestamps created with the {@link #processData()} method.
 	 *
 	 * @return array of timestamps in seconds
-	 * @throws RrdException thrown if timestamps are not calculated yet
 	 */
-	public long[] getTimestamps() throws RrdException {
+	public long[] getTimestamps() {
 		if (timestamps == null) {
-			throw new RrdException("Timestamps not calculated yet");
+			throw new IllegalArgumentException("Timestamps not calculated yet");
 		}
 		else {
 			return timestamps;
@@ -263,11 +259,11 @@ public class DataProcessor {
 	 *
 	 * @param sourceName Datasource name
 	 * @return an array of datasource values
-	 * @throws RrdException Thrown if invalid datasource name is specified,
+	 * @throws IllegalArgumentException Thrown if invalid datasource name is specified,
 	 *                      or if datasource values are not yet calculated (method {@link #processData()}
 	 *                      was not called)
 	 */
-	public double[] getValues(String sourceName) throws RrdException {
+	public double[] getValues(String sourceName) {
 		Source source = getSource(sourceName);
 		double[] values = source.getValues();
 		if (values == null) {
@@ -285,11 +281,11 @@ public class DataProcessor {
 	 *                   (these string constants are conveniently defined in the {@link ConsolFun} class)
 	 * @return MIN, MAX, LAST, FIRST, AVERAGE or TOTAL value calculated from the data
 	 *         for the given datasource name
-	 * @throws RrdException Thrown if invalid datasource name is specified,
+	 * @throws IllegalArgumentException Thrown if invalid datasource name is specified,
 	 *                      or if datasource values are not yet calculated (method {@link #processData()}
 	 *                      was not called)
 	 */
-	public double getAggregate(String sourceName, ConsolFun consolFun) throws RrdException {
+	public double getAggregate(String sourceName, ConsolFun consolFun) {
 		Source source = getSource(sourceName);
 		return source.getAggregates(tStart, tEnd).getAggregate(consolFun);
 	}
@@ -298,11 +294,11 @@ public class DataProcessor {
 	 * Returns all (MIN, MAX, LAST, FIRST, AVERAGE and TOTAL) aggregated values for a single datasource.
 	 * @param sourceName Datasource name
 	 * @return Object containing all aggregated values
-	 * @throws RrdException Thrown if invalid datasource name is specified,
+	 * @throws IllegalArgumentException Thrown if invalid datasource name is specified,
 	 *                      or if datasource values are not yet calculated (method {@link #processData()}
 	 *                      was not called)
 	 */
-	public Aggregates getAggregates(String sourceName) throws RrdException {
+	public Aggregates getAggregates(String sourceName) {
 		Source source = getSource(sourceName);
 		return source.getAggregates(tStart, tEnd);
 	}
@@ -322,9 +318,8 @@ public class DataProcessor {
 	 *
 	 * @param sourceName Datasource name
 	 * @return 95th percentile of fetched source values
-	 * @throws RrdException Thrown if invalid source name is supplied
 	 */
-	public double get95Percentile(String sourceName) throws RrdException {
+	public double get95Percentile(String sourceName) {
 		return getPercentile(sourceName);
 	}
 
@@ -341,9 +336,8 @@ public class DataProcessor {
 	 *
 	 * @param sourceName Datasource name
 	 * @return 95th percentile of fetched source values
-	 * @throws RrdException Thrown if invalid source name is supplied
 	 */
-	public double getPercentile(String sourceName) throws RrdException {
+	public double getPercentile(String sourceName) {
 		return getPercentile(sourceName, DEFAULT_PERCENTILE);
 	}
 
@@ -380,11 +374,11 @@ public class DataProcessor {
 	 * @return All datasource values for all datasources. The first index is the index of the datasource,
 	 *         the second index is the index of the datasource value. The number of datasource values is equal
 	 *         to the number of timestamps returned with {@link #getTimestamps()}  method.
-	 * @throws RrdException Thrown if invalid datasource name is specified,
+	 * @throws IllegalArgumentException Thrown if invalid datasource name is specified,
 	 *                      or if datasource values are not yet calculated (method {@link #processData()}
 	 *                      was not called)
 	 */
-	public double[][] getValues() throws RrdException {
+	public double[][] getValues() {
 		String[] names = getSourceNames();
 		double[][] values = new double[names.length][];
 		for (int i = 0; i < names.length; i++) {
@@ -521,9 +515,8 @@ public class DataProcessor {
 	 * RRD files, RPN expressions will be calculated, etc.
 	 *
 	 * @throws IOException  Thrown in case of I/O error (while fetching data from RRD files)
-	 * @throws RrdException Thrown in case of Rrd4j specific error
 	 */
-	public void processData() throws IOException, RrdException {
+	public void processData() throws IOException {
 		extractDefs();
 		fetchRrdData();
 		fixZeroEndingTimestamp();
@@ -619,10 +612,8 @@ public class DataProcessor {
 	 * Dumps timestamps and values of all datasources in a tabelar form. Very useful for debugging.
 	 *
 	 * @return Dumped object content.
-	 * @throws RrdException Thrown if nothing is calculated so far (the method {@link #processData()}
-	 *                      was not called).
 	 */
-	public String dump() throws RrdException {
+	public String dump() {
 		String[] names = getSourceNames();
 		double[][] values = getValues();
 		StringBuilder buffer = new StringBuilder();
@@ -661,7 +652,7 @@ public class DataProcessor {
 		defSources = defList.toArray(new Def[defList.size()]);
 	}
 
-	private void fetchRrdData() throws IOException, RrdException {
+	private void fetchRrdData() throws IOException {
 		long tEndFixed = (tEnd == 0) ? Util.getTime() : tEnd;
 		for (int i = 0; i < defSources.length; i++) {
 			if (!defSources[i].isLoaded()) {
@@ -699,17 +690,17 @@ public class DataProcessor {
 		}
 	}
 
-	private void fixZeroEndingTimestamp() throws RrdException {
+	private void fixZeroEndingTimestamp() {
 		if (tEnd == 0) {
 			if (defSources.length == 0) {
-				throw new RrdException("Could not adjust zero ending timestamp, no DEF source provided");
+				throw new IllegalStateException("Could not adjust zero ending timestamp, no DEF source provided");
 			}
 			tEnd = defSources[0].getArchiveEndTime();
 			for (int i = 1; i < defSources.length; i++) {
 				tEnd = Math.min(tEnd, defSources[i].getArchiveEndTime());
 			}
 			if (tEnd <= tStart) {
-				throw new RrdException("Could not resolve zero ending timestamp.");
+				throw new IllegalStateException("Could not resolve zero ending timestamp.");
 			}
 		}
 	}
@@ -764,7 +755,7 @@ public class DataProcessor {
         }
 	}
 
-	private void calculateNonRrdSources() throws RrdException {
+	private void calculateNonRrdSources() {
         for (Source source : sources.values()) {
             if (source instanceof SDef) {
                 calculateSDef((SDef) source);
@@ -782,12 +773,12 @@ public class DataProcessor {
 		pdef.calculateValues();
 	}
 
-	private void calculateCDef(CDef cDef) throws RrdException {
+	private void calculateCDef(CDef cDef) {
 		RpnCalculator calc = new RpnCalculator(cDef.getRpnExpression(), cDef.getName(), this);
 		cDef.setValues(calc.calculateValues());
 	}
 
-	private void calculateSDef(SDef sDef) throws RrdException {
+	private void calculateSDef(SDef sDef) {
 		String defName = sDef.getDefName();
 		ConsolFun consolFun = sDef.getConsolFun();
 		Source source = getSource(defName);
@@ -795,7 +786,7 @@ public class DataProcessor {
 		sDef.setValue(value);
 	}
 
-	private RrdDb getRrd(Def def) throws IOException, RrdException {
+	private RrdDb getRrd(Def def) throws IOException {
 		String path = def.getPath(), backend = def.getBackend();
 		if (poolUsed && backend == null) {
 			return RrdDbPool.getInstance().requestRrdDb(path);
@@ -808,7 +799,7 @@ public class DataProcessor {
 		}
 	}
 
-	private void releaseRrd(RrdDb rrd, Def def) throws IOException, RrdException {
+	private void releaseRrd(RrdDb rrd, Def def) throws IOException {
 		String backend = def.getBackend();
 		if (poolUsed && backend == null) {
 			RrdDbPool.getInstance().release(rrd);
@@ -831,9 +822,8 @@ public class DataProcessor {
 	 *
 	 * @param args Not used
 	 * @throws IOException
-	 * @throws RrdException
 	 */
-	public static void main(String[] args) throws IOException, RrdException {
+	public static void main(String[] args) throws IOException {
 		// time span
 		long t1 = Util.getTimestamp(2003, 4, 1);
 		long t2 = Util.getTimestamp(2003, 5, 1);

@@ -129,7 +129,7 @@ public class Epoch extends JFrame {
 				try {
 					inputField.setText("" + parseDate(time));
 				}
-				catch (RrdException e) {
+				catch (Exception e) {
 					inputField.setText("Could not convert, sorry");
 				}
 			}
