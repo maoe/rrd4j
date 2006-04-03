@@ -25,7 +25,6 @@
 
 package org.rrd4j.data;
 
-import org.rrd4j.core.RrdException;
 import org.rrd4j.ConsolFun;
 
 class SDef extends Source {
@@ -57,14 +56,14 @@ class SDef extends Source {
         setValues(values);
     }
 
-    Aggregates getAggregates(long tStart, long tEnd) throws RrdException {
+    Aggregates getAggregates(long tStart, long tEnd) {
         Aggregates agg = new Aggregates();
         agg.first = agg.last = agg.min = agg.max = agg.average = value;
         agg.total = value * (tEnd - tStart);
         return agg;
     }
 
-    double getPercentile(long tStart, long tEnd, double percentile) throws RrdException {
+    double getPercentile(long tStart, long tEnd, double percentile) {
         return value;
     }
 }

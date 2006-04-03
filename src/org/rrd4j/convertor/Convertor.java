@@ -26,9 +26,8 @@
 package org.rrd4j.convertor;
 
 import org.rrd4j.core.RrdDb;
-import org.rrd4j.core.RrdException;
 
-import java.io.*;
+import java.io.File;
 import java.text.DecimalFormat;
 import java.util.Date;
 
@@ -49,7 +48,7 @@ public class Convertor {
 		try {
 			RrdDb.setDefaultFactory(FACTORY_NAME);
 		}
-		catch (RrdException e) {
+		catch (Exception e) {
 			e.printStackTrace();
 			System.exit(-1);
 		}
@@ -62,11 +61,11 @@ public class Convertor {
 		println(ruler);
 		println("Converting RRDTool files to Rrd4j native format.");
 		println("Original RRDTool files will not be modified in any way");
-		println("Rrd4j files created during the process will have a " + SUFFIX + " suffix");
+		println("RRD4J files created during the process will have a " + SUFFIX + " suffix");
 		println(ruler);
-		for(int i = 0; i < files.length; i++) {
-			convertFile(files[i]);
-		}
+        for (String file : files) {
+            convertFile(file);
+        }
 		println(ruler);
 		println("Finished: " + totalCount + " total, " +
 			goodCount + " OK, " + badCount + " failed");
@@ -99,11 +98,11 @@ public class Convertor {
 		}
 	}
 
-	private final static void println(String msg) {
+	private static void println(String msg) {
 		System.out.println(msg);
 	}
 
-	private final static void print(String msg) {
+	private static void print(String msg) {
 		System.out.print(msg);
 	}
 

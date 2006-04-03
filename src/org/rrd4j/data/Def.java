@@ -25,10 +25,9 @@
 
 package org.rrd4j.data;
 
-import org.rrd4j.core.FetchData;
-import org.rrd4j.core.RrdException;
-import org.rrd4j.core.Util;
 import org.rrd4j.ConsolFun;
+import org.rrd4j.core.FetchData;
+import org.rrd4j.core.Util;
 
 import java.io.IOException;
 
@@ -89,7 +88,7 @@ class Def extends Source {
 		return fetchData.getTimestamps();
 	}
 
-	double[] getRrdValues() throws RrdException {
+	double[] getRrdValues() {
 		return fetchData.getValues(dsName);
 	}
 
@@ -101,14 +100,14 @@ class Def extends Source {
 		return fetchData.getStep();
 	}
 
-	Aggregates getAggregates(long tStart, long tEnd) throws RrdException {
+	Aggregates getAggregates(long tStart, long tEnd) {
 		long[] t = getRrdTimestamps();
 		double[] v = getRrdValues();
 		Aggregator agg = new Aggregator(t, v);
 		return agg.getAggregates(tStart, tEnd);
 	}
 
-	double getPercentile(long tStart, long tEnd, double percentile) throws RrdException {
+	double getPercentile(long tStart, long tEnd, double percentile) {
 		long[] t = getRrdTimestamps();
 		double[] v = getRrdValues();
 		Aggregator agg = new Aggregator(t, v);

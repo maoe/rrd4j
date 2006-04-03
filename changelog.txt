@@ -1,0 +1,13 @@
+RRD4J 2.0
+=========
+
+Bugfixes
+
+* TimeAxis miscalculated when width was smaller then the endtime
+
+Improvements
+
+* ConsolFun and DsType are now JDK 1.5 Enum's
+* RrdException is removed from most places
+* Usage of StringBuilders to improve performance
+* Berkeley DB backend

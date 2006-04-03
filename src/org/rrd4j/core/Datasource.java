@@ -352,11 +352,11 @@ public class Datasource implements RrdUpdater {
      * @param heartbeat New heartbeat value
      *
      * @throws IOException  Thrown in case of I/O error
-     * @throws RrdException Thrown if invalid (non-positive) heartbeat value is specified.
+     * @throws IllegalArgumentException Thrown if invalid (non-positive) heartbeat value is specified.
      */
-    public void setHeartbeat(long heartbeat) throws RrdException, IOException {
+    public void setHeartbeat(long heartbeat) throws IOException {
         if (heartbeat < 1L) {
-            throw new RrdException("Invalid heartbeat specified: " + heartbeat);
+            throw new IllegalArgumentException("Invalid heartbeat specified: " + heartbeat);
         }
         this.heartbeat.set(heartbeat);
     }
@@ -366,17 +366,16 @@ public class Datasource implements RrdUpdater {
      *
      * @param newDsName New datasource name
      *
-     * @throws RrdException Thrown if invalid data source name is specified (name too long, or
-     *                      name already defined in the RRD
      * @throws IOException  Thrown in case of I/O error
      */
-    public void setDsName(String newDsName) throws RrdException, IOException {
-        if (newDsName.length() > RrdString.STRING_LENGTH) {
-            throw new RrdException("Invalid datasource name specified: " + newDsName);
+    public void setDsName(String newDsName) throws IOException {
+        if (newDsName != null && newDsName.length() > RrdString.STRING_LENGTH) {
+            throw new IllegalArgumentException("Invalid datasource name specified: " + newDsName);
         }
         if (parentDb.containsDs(newDsName)) {
-            throw new RrdException("Datasource already defined in this RRD: " + newDsName);
+            throw new IllegalArgumentException("Datasource already defined in this RRD: " + newDsName);
         }
+
         this.dsName.set(newDsName);
     }
 
@@ -405,14 +404,14 @@ public class Datasource implements RrdUpdater {
      *                             false, otherwise.
      *
      * @throws IOException  Thrown in case of I/O error
-     * @throws RrdException Thrown if invalid minValue was supplied (not less then maxValue)
+     * @throws IllegalArgumentException Thrown if invalid minValue was supplied (not less then maxValue)
      */
-    public void setMinValue(double minValue, boolean filterArchivedValues)
-            throws IOException, RrdException {
+    public void setMinValue(double minValue, boolean filterArchivedValues) throws IOException {
         double maxValue = this.maxValue.get();
         if (!Double.isNaN(minValue) && !Double.isNaN(maxValue) && minValue >= maxValue) {
-            throw new RrdException("Invalid min/max values: " + minValue + "/" + maxValue);
+            throw new IllegalArgumentException("Invalid min/max values: " + minValue + "/" + maxValue);
         }
+
         this.minValue.set(minValue);
         if (!Double.isNaN(minValue) && filterArchivedValues) {
             int dsIndex = getDsIndex();
@@ -434,14 +433,14 @@ public class Datasource implements RrdUpdater {
      *                             false, otherwise.
      *
      * @throws IOException  Thrown in case of I/O error
-     * @throws RrdException Thrown if invalid maxValue was supplied (not greater then minValue)
+     * @throws IllegalArgumentException Thrown if invalid maxValue was supplied (not greater then minValue)
      */
-    public void setMaxValue(double maxValue, boolean filterArchivedValues)
-            throws IOException, RrdException {
+    public void setMaxValue(double maxValue, boolean filterArchivedValues) throws IOException {
         double minValue = this.minValue.get();
         if (!Double.isNaN(minValue) && !Double.isNaN(maxValue) && minValue >= maxValue) {
-            throw new RrdException("Invalid min/max values: " + minValue + "/" + maxValue);
+            throw new IllegalArgumentException("Invalid min/max values: " + minValue + "/" + maxValue);
         }
+
         this.maxValue.set(maxValue);
         if (!Double.isNaN(maxValue) && filterArchivedValues) {
             int dsIndex = getDsIndex();
@@ -465,12 +464,11 @@ public class Datasource implements RrdUpdater {
      *                             false, otherwise.
      *
      * @throws IOException  Thrown in case of I/O error
-     * @throws RrdException Thrown if invalid min/max values were supplied
+     * @throws IllegalArgumentException Thrown if invalid min/max values were supplied
      */
-    public void setMinMaxValue(double minValue, double maxValue, boolean filterArchivedValues)
-            throws IOException, RrdException {
+    public void setMinMaxValue(double minValue, double maxValue, boolean filterArchivedValues) throws IOException {
         if (!Double.isNaN(minValue) && !Double.isNaN(maxValue) && minValue >= maxValue) {
-            throw new RrdException("Invalid min/max values: " + minValue + "/" + maxValue);
+            throw new IllegalArgumentException("Invalid min/max values: " + minValue + "/" + maxValue);
         }
         this.minValue.set(minValue);
         this.maxValue.set(maxValue);

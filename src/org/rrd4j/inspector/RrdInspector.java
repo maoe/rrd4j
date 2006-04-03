@@ -364,10 +364,7 @@ public class RrdInspector extends JFrame {
                 inspectorModel.refresh();
                 tabbedPane.setSelectedIndex(0);
             }
-            catch (IOException e) {
-                Util.error(this, e);
-            }
-            catch (RrdException e) {
+            catch (Exception e) {
                 Util.error(this, e);
             }
         }
@@ -387,10 +384,7 @@ public class RrdInspector extends JFrame {
                 inspectorModel.refresh();
                 tabbedPane.setSelectedIndex(0);
             }
-            catch (IOException e) {
-                Util.error(this, e);
-            }
-            catch (RrdException e) {
+            catch (Exception e) {
                 Util.error(this, e);
             }
         }
@@ -428,10 +422,7 @@ public class RrdInspector extends JFrame {
                 rrd.close();
             }
         }
-        catch (IOException e) {
-            Util.error(this, e);
-        }
-        catch (RrdException e) {
+        catch (Exception e) {
             Util.error(this, e);
         }
     }
@@ -470,10 +461,7 @@ public class RrdInspector extends JFrame {
                 rrd.close();
             }
         }
-        catch (IOException e) {
-            Util.error(this, e);
-        }
-        catch (RrdException e) {
+        catch (Exception e) {
             Util.error(this, e);
         }
     }
@@ -502,10 +490,7 @@ public class RrdInspector extends JFrame {
             inspectorModel.refresh();
             tabbedPane.setSelectedIndex(0);
         }
-        catch (IOException e) {
-            Util.error(this, e);
-        }
-        catch (RrdException e) {
+        catch (Exception e) {
             Util.error(this, e);
         }
     }
@@ -538,10 +523,7 @@ public class RrdInspector extends JFrame {
             inspectorModel.refresh();
             tabbedPane.setSelectedIndex(0);
         }
-        catch (IOException e) {
-            Util.error(this, e);
-        }
-        catch (RrdException e) {
+        catch (Exception e) {
             Util.error(this, e);
         }
     }

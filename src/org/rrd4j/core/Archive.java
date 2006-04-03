@@ -395,12 +395,11 @@ public class Archive implements RrdUpdater {
      *
      * @param xff New X-files factor value. Must be >= 0 and < 1.
      *
-     * @throws RrdException Thrown if invalid value is supplied
      * @throws IOException  Thrown in case of I/O error
      */
-    public void setXff(double xff) throws RrdException, IOException {
+    public void setXff(double xff) throws IOException {
         if (xff < 0D || xff >= 1D) {
-            throw new RrdException("Invalid xff supplied (" + xff + "), must be >= 0 and < 1");
+            throw new IllegalArgumentException("Invalid xff supplied (" + xff + "), must be >= 0 and < 1");
         }
         this.xff.set(xff);
     }

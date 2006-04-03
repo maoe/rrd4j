@@ -33,7 +33,7 @@ import java.io.IOException;
  * fixed length array of double values. Each double value reperesents consolidated, archived
  * value for the specific timestamp. When the underlying array of double values gets completely
  * filled, new values will replace the oldest ones.<p>
- *
+ * <p/>
  * Robin object does not hold values in memory - such object could be quite large.
  * Instead of it, Robin reads them from the backend I/O only when necessary.
  *
@@ -60,7 +60,6 @@ public class Robin implements RrdUpdater {
      * Fetches all archived values.
      *
      * @return Array of double archive values, starting from the oldest one.
-     *
      * @throws IOException Thrown in case of I/O specific error.
      */
     public double[] getValues() throws IOException {
@@ -102,14 +101,13 @@ public class Robin implements RrdUpdater {
      * Updates archived values in bulk.
      *
      * @param newValues Array of double values to be stored in the archive
-     *
-     * @throws IOException  Thrown in case of I/O error
-     * @throws RrdException Thrown if the length of the input array is different from the length of
-     *                      this archive
+     * @throws IOException              Thrown in case of I/O error
+     * @throws IllegalArgumentException Thrown if the length of the input array is different from the length of
+     *                                  this archive
      */
-    public void setValues(double[] newValues) throws IOException, RrdException {
+    public void setValues(double[] newValues) throws IOException {
         if (rows != newValues.length) {
-            throw new RrdException("Invalid number of robin values supplied (" + newValues.length +
+            throw new IllegalArgumentException("Invalid number of robin values supplied (" + newValues.length +
                     "), exactly " + rows + " needed");
         }
         update(newValues);
@@ -119,7 +117,6 @@ public class Robin implements RrdUpdater {
      * (Re)sets all values in this archive to the same value.
      *
      * @param newValue New value
-     *
      * @throws IOException Thrown in case of I/O error
      */
     public void setValues(double newValue) throws IOException {
@@ -144,9 +141,7 @@ public class Robin implements RrdUpdater {
      * Returns the i-th value from the Robin archive.
      *
      * @param index Value index
-     *
      * @return Value stored in the i-th position (the oldest value has zero index)
-     *
      * @throws IOException Thrown in case of I/O specific error.
      */
     public double getValue(int index) throws IOException {
@@ -159,7 +154,6 @@ public class Robin implements RrdUpdater {
      *
      * @param index index in the archive (the oldest value has zero index)
      * @param value value to be stored
-     *
      * @throws IOException Thrown in case of I/O specific error.
      */
     public void setValue(int index, double value) throws IOException {
@@ -212,8 +206,7 @@ public class Robin implements RrdUpdater {
      * Copies object's internal state to another Robin object.
      *
      * @param other New Robin object to copy state to
-     *
-     * @throws IOException  Thrown in case of I/O error
+     * @throws IOException Thrown in case of I/O error
      */
     public void copyStateTo(RrdUpdater other) throws IOException {
         if (!(other instanceof Robin)) {
@@ -243,7 +236,6 @@ public class Robin implements RrdUpdater {
      *
      * @param minValue lower boundary
      * @param maxValue upper boundary
-     *
      * @throws IOException Thrown in case of I/O error
      */
     public void filterValues(double minValue, double maxValue) throws IOException {
@@ -270,9 +262,10 @@ public class Robin implements RrdUpdater {
 
     /**
      * Required to implement RrdUpdater interface. You should never call this method directly.
+     *
      * @return Allocator object
      */
     public RrdAllocator getRrdAllocator() {
         return parentArc.getRrdAllocator();
-	}
+    }
 }

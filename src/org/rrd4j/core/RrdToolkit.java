@@ -99,10 +99,8 @@ public class RrdToolkit {
 	 * @param saveBackup    true, if backup of the original file should be created;
 	 *                      false, otherwise
 	 * @throws IOException  Thrown in case of I/O error
-	 * @throws RrdException Thrown in case of Rrd4j specific error
 	 */
-	public static void addDatasource(String sourcePath, DsDef newDatasource, boolean saveBackup)
-			throws IOException, RrdException {
+	public static void addDatasource(String sourcePath, DsDef newDatasource, boolean saveBackup) throws IOException {
 		String destPath = Util.getTmpFilename();
 		addDatasource(sourcePath, destPath, newDatasource);
 		copyFile(destPath, sourcePath, saveBackup);
@@ -117,14 +115,14 @@ public class RrdToolkit {
 	 * @param destPath   path to a new RRD file (will be created)
 	 * @param dsName     Name of the Datasource to be removed from the new RRD file
 	 * @throws IOException  Thrown in case of I/O error
-	 * @throws RrdException Thrown in case of Rrd4j specific error
 	 */
 	public static void removeDatasource(String sourcePath, String destPath, String dsName)
-			throws IOException, RrdException {
+			throws IOException {
 		if (Util.sameFilePath(sourcePath, destPath)) {
-			throw new RrdException("Source and destination paths are the same");
+			throw new IllegalArgumentException("Source and destination paths are the same");
 		}
-		RrdDb rrdSource = new RrdDb(sourcePath);
+
+        RrdDb rrdSource = new RrdDb(sourcePath);
 		try {
 			RrdDef rrdDef = rrdSource.getRrdDef();
 			rrdDef.setPath(destPath);
@@ -157,10 +155,8 @@ public class RrdToolkit {
 	 * @param saveBackup true, if backup of the original file should be created;
 	 *                   false, otherwise
 	 * @throws IOException  Thrown in case of I/O error
-	 * @throws RrdException Thrown in case of Rrd4j specific error
 	 */
-	public static void removeDatasource(String sourcePath, String dsName, boolean saveBackup)
-			throws IOException, RrdException {
+	public static void removeDatasource(String sourcePath, String dsName, boolean saveBackup) throws IOException {
 		String destPath = Util.getTmpFilename();
 		removeDatasource(sourcePath, destPath, dsName);
 		copyFile(destPath, sourcePath, saveBackup);
@@ -173,11 +169,8 @@ public class RrdToolkit {
 	 * @param oldDsName  Old datasource name
 	 * @param newDsName  New datasource name
 	 * @throws IOException  Thrown in case of I/O error
-	 * @throws RrdException Thrown in case of Rrd4j specific error (invalid path or datasource names,
-	 *                      for example)
 	 */
-	public static void renameDatasource(String sourcePath, String oldDsName, String newDsName)
-			throws IOException, RrdException {
+	public static void renameDatasource(String sourcePath, String oldDsName, String newDsName) throws IOException {
 		RrdDb rrd = new RrdDb(sourcePath);
 		try {
 			if (rrd.containsDs(oldDsName)) {
@@ -185,7 +178,7 @@ public class RrdToolkit {
 				datasource.setDsName(newDsName);
 			}
 			else {
-				throw new RrdException("Could not find datasource [" + oldDsName + "] in file " + sourcePath);
+				throw new IllegalArgumentException("Could not find datasource [" + oldDsName + "] in file " + sourcePath);
 			}
 		}
 		finally {
@@ -203,10 +196,8 @@ public class RrdToolkit {
 	 * @param dsName     Datasource name or null if you want to rename all datasources
 	 * @return Number of datasources successfully renamed
 	 * @throws IOException  Thrown in case of I/O error
-	 * @throws RrdException Thrown in case of Rrd4j specific error (invalid path or datasource name,
-	 *                      for example)
 	 */
-	public static int forceZerosForNans(String sourcePath, String dsName) throws IOException, RrdException {
+	public static int forceZerosForNans(String sourcePath, String dsName) throws IOException {
 		RrdDb rrd = new RrdDb(sourcePath);
 		try {
 			Datasource[] datasources;
@@ -218,7 +209,7 @@ public class RrdToolkit {
 					datasources = new Datasource[]{rrd.getDatasource(dsName)};
 				}
 				else {
-					throw new RrdException("Could not find datasource [" + dsName + "] in file " + sourcePath);
+					throw new IllegalArgumentException("Could not find datasource [" + dsName + "] in file " + sourcePath);
 				}
 			}
 			int count = 0;
@@ -245,12 +236,10 @@ public class RrdToolkit {
 	 * @param destPath   path to a new RRD file (will be created)
 	 * @param newArchive Archive definition to be added to the new RRD file
 	 * @throws IOException  Thrown in case of I/O error
-	 * @throws RrdException Thrown in case of Rrd4j specific error
 	 */
-	public static void addArchive(String sourcePath, String destPath, ArcDef newArchive)
-			throws IOException, RrdException {
+	public static void addArchive(String sourcePath, String destPath, ArcDef newArchive) throws IOException {
 		if (Util.sameFilePath(sourcePath, destPath)) {
-			throw new RrdException("Source and destination paths are the same");
+			throw new IllegalArgumentException("Source and destination paths are the same");
 		}
 		RrdDb rrdSource = new RrdDb(sourcePath);
 		try {
@@ -285,10 +274,8 @@ public class RrdToolkit {
 	 * @param saveBackup true, if backup of the original file should be created;
 	 *                   false, otherwise
 	 * @throws IOException  Thrown in case of I/O error
-	 * @throws RrdException Thrown in case of Rrd4j specific error
 	 */
-	public static void addArchive(String sourcePath, ArcDef newArchive, boolean saveBackup)
-			throws IOException, RrdException {
+	public static void addArchive(String sourcePath, ArcDef newArchive, boolean saveBackup) throws IOException {
 		String destPath = Util.getTmpFilename();
 		addArchive(sourcePath, destPath, newArchive);
 		copyFile(destPath, sourcePath, saveBackup);
@@ -304,14 +291,13 @@ public class RrdToolkit {
 	 * @param consolFun  Consolidation function of Archive which should be removed
 	 * @param steps      Number of steps for Archive which should be removed
 	 * @throws IOException  Thrown in case of I/O error
-	 * @throws RrdException Thrown in case of Rrd4j specific error
 	 */
-	public static void removeArchive(String sourcePath, String destPath, ConsolFun consolFun, int steps)
-			throws IOException, RrdException {
+	public static void removeArchive(String sourcePath, String destPath, ConsolFun consolFun, int steps) throws IOException {
 		if (Util.sameFilePath(sourcePath, destPath)) {
-			throw new RrdException("Source and destination paths are the same");
+			throw new IllegalArgumentException("Source and destination paths are the same");
 		}
-		RrdDb rrdSource = new RrdDb(sourcePath);
+
+        RrdDb rrdSource = new RrdDb(sourcePath);
 		try {
 			RrdDef rrdDef = rrdSource.getRrdDef();
 			rrdDef.setPath(destPath);
@@ -345,10 +331,8 @@ public class RrdToolkit {
 	 * @param saveBackup true, if backup of the original file should be created;
 	 *                   false, otherwise
 	 * @throws IOException  Thrown in case of I/O error
-	 * @throws RrdException Thrown in case of Rrd4j specific error
 	 */
-	public static void removeArchive(String sourcePath, ConsolFun consolFun, int steps,
-							  boolean saveBackup) throws IOException, RrdException {
+	public static void removeArchive(String sourcePath, ConsolFun consolFun, int steps, boolean saveBackup) throws IOException {
 		String destPath = Util.getTmpFilename();
 		removeArchive(sourcePath, destPath, consolFun, steps);
 		copyFile(destPath, sourcePath, saveBackup);
@@ -386,11 +370,9 @@ public class RrdToolkit {
 	 * @param sourcePath     Path to exisiting RRD file (will be updated)
 	 * @param datasourceName Name of the datasource in the specified RRD file
 	 * @param newHeartbeat   New datasource heartbeat
-	 * @throws RrdException Thrown in case of Rrd4j specific error
 	 * @throws IOException  Thrown in case of I/O error
 	 */
-	public static void setDsHeartbeat(String sourcePath, String datasourceName,
-							   long newHeartbeat) throws RrdException, IOException {
+	public static void setDsHeartbeat(String sourcePath, String datasourceName, long newHeartbeat) throws IOException {
 		RrdDb rrd = new RrdDb(sourcePath);
 		try {
 			Datasource ds = rrd.getDatasource(datasourceName);
@@ -407,11 +389,9 @@ public class RrdToolkit {
 	 * @param sourcePath   Path to exisiting RRD file (will be updated)
 	 * @param dsIndex      Index of the datasource in the specified RRD file
 	 * @param newHeartbeat New datasource heartbeat
-	 * @throws RrdException Thrown in case of Rrd4j specific error
 	 * @throws IOException  Thrown in case of I/O error
 	 */
-	public static void setDsHeartbeat(String sourcePath, int dsIndex, long newHeartbeat)
-			throws RrdException, IOException {
+	public static void setDsHeartbeat(String sourcePath, int dsIndex, long newHeartbeat) throws IOException {
 		RrdDb rrd = new RrdDb(sourcePath);
 		try {
 			Datasource ds = rrd.getDatasource(dsIndex);
@@ -430,11 +410,10 @@ public class RrdToolkit {
 	 * @param newMinValue          New min value for the datasource
 	 * @param filterArchivedValues set to <code>true</code> if archived values less than
 	 *                             <code>newMinValue</code> should be set to NaN; set to false, otherwise.
-	 * @throws RrdException Thrown in case of Rrd4j specific error
 	 * @throws IOException  Thrown in case of I/O error
 	 */
 	public static void setDsMinValue(String sourcePath, String datasourceName,
-							  double newMinValue, boolean filterArchivedValues) throws RrdException, IOException {
+							  double newMinValue, boolean filterArchivedValues) throws IOException {
 		RrdDb rrd = new RrdDb(sourcePath);
 		try {
 			Datasource ds = rrd.getDatasource(datasourceName);
@@ -453,11 +432,10 @@ public class RrdToolkit {
 	 * @param newMaxValue          New max value for the datasource
 	 * @param filterArchivedValues set to <code>true</code> if archived values greater than
 	 *                             <code>newMaxValue</code> should be set to NaN; set to false, otherwise.
-	 * @throws RrdException Thrown in case of Rrd4j specific error
 	 * @throws IOException  Thrown in case of I/O error
 	 */
 	public static void setDsMaxValue(String sourcePath, String datasourceName,
-							  double newMaxValue, boolean filterArchivedValues) throws RrdException, IOException {
+							  double newMaxValue, boolean filterArchivedValues) throws IOException {
 		RrdDb rrd = new RrdDb(sourcePath);
 		try {
 			Datasource ds = rrd.getDatasource(datasourceName);
@@ -477,12 +455,11 @@ public class RrdToolkit {
 	 * @param newMaxValue          New max value for the datasource
 	 * @param filterArchivedValues set to <code>true</code> if archived values outside
 	 *                             of the specified min/max range should be replaced with NaNs.
-	 * @throws RrdException Thrown in case of Rrd4j specific error
 	 * @throws IOException  Thrown in case of I/O error
 	 */
 	public static void setDsMinMaxValue(String sourcePath, String datasourceName,
 								 double newMinValue, double newMaxValue, boolean filterArchivedValues)
-			throws RrdException, IOException {
+			throws IOException {
 		RrdDb rrd = new RrdDb(sourcePath);
 		try {
 			Datasource ds = rrd.getDatasource(datasourceName);
@@ -500,11 +477,10 @@ public class RrdToolkit {
 	 * @param consolFun  Consolidation function of the target archive
 	 * @param steps      Number of sptes of the target archive
 	 * @param newXff     New X-files factor for the target archive
-	 * @throws RrdException Thrown in case of Rrd4j specific error
 	 * @throws IOException  Thrown in case of I/O error
 	 */
 	public static void setArcXff(String sourcePath, ConsolFun consolFun, int steps,
-						  double newXff) throws RrdException, IOException {
+						  double newXff) throws IOException {
 		RrdDb rrd = new RrdDb(sourcePath);
 		try {
 			Archive arc = rrd.getArchive(consolFun, steps);
@@ -526,18 +502,17 @@ public class RrdToolkit {
 	 * @param numSteps   Number of steps of the archive to be resized
 	 * @param newRows    New archive size (number of archive rows)
 	 * @throws IOException  Thrown in case of I/O error
-	 * @throws RrdException Thrown in case of Rrd4j specific error
 	 */
 	public static void resizeArchive(String sourcePath, String destPath, ConsolFun consolFun,
-							  int numSteps, int newRows)
-			throws IOException, RrdException {
+							  int numSteps, int newRows) throws IOException {
 		if (Util.sameFilePath(sourcePath, destPath)) {
-			throw new RrdException("Source and destination paths are the same");
+			throw new IllegalArgumentException("Source and destination paths are the same");
 		}
 		if (newRows < 2) {
-			throw new RrdException("New arcihve size must be at least 2");
+			throw new IllegalArgumentException("New archive size must be at least 2");
 		}
-		RrdDb rrdSource = new RrdDb(sourcePath);
+
+        RrdDb rrdSource = new RrdDb(sourcePath);
 		try {
 			RrdDef rrdDef = rrdSource.getRrdDef();
 			ArcDef arcDef = rrdDef.findArchive(consolFun, numSteps);
@@ -569,11 +544,9 @@ public class RrdToolkit {
 	 * @param saveBackup true, if backup of the original file should be created;
 	 *                   false, otherwise
 	 * @throws IOException  Thrown in case of I/O error
-	 * @throws RrdException Thrown in case of Rrd4j specific error
 	 */
 	public static void resizeArchive(String sourcePath, ConsolFun consolFun,
-							  int numSteps, int newRows, boolean saveBackup)
-			throws IOException, RrdException {
+							  int numSteps, int newRows, boolean saveBackup) throws IOException {
 		String destPath = Util.getTmpFilename();
 		resizeArchive(sourcePath, destPath, consolFun, numSteps, newRows);
 		copyFile(destPath, sourcePath, saveBackup);
@@ -594,9 +567,8 @@ public class RrdToolkit {
 	 *
 	 * @param sourcePath Path to a RRD file with multiple datasources defined
 	 * @throws IOException  Thrown in case of I/O error
-	 * @throws RrdException Thrown in case of Rrd4j specific error
 	 */
-	public static void split(String sourcePath) throws IOException, RrdException {
+	public static void split(String sourcePath) throws IOException {
 		RrdDb rrdSource = new RrdDb(sourcePath);
 		try {
 			String[] dsNames = rrdSource.getDsNames();

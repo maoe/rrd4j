@@ -437,7 +437,7 @@ public class RrdDef {
 		return dump();
 	}
 
-	void removeDatasource(String dsName) throws RrdException {
+	void removeDatasource(String dsName) {
 		for(int i = 0; i < dsDefs.size(); i++) {
 			DsDef dsDef = dsDefs.get(i);
 			if(dsDef.getDsName().equals(dsName)) {
@@ -445,7 +445,7 @@ public class RrdDef {
 				return;
 			}
 		}
-		throw new RrdException("Could not find datasource named '" + dsName + "'");
+		throw new IllegalArgumentException("Could not find datasource named '" + dsName + "'");
 	}
 
 	void saveSingleDatasource(String dsName) {
@@ -458,20 +458,20 @@ public class RrdDef {
 		}
 	}
 
-	void removeArchive(ConsolFun consolFun, int steps) throws RrdException {
+	void removeArchive(ConsolFun consolFun, int steps) {
         ArcDef arcDef = findArchive(consolFun, steps);
 		if(!arcDefs.remove(arcDef)) {
-			throw new RrdException("Could not remove archive " +  consolFun + "/" + steps);
+			throw new IllegalArgumentException("Could not remove archive " +  consolFun + "/" + steps);
 		}
 	}
 
-	ArcDef findArchive(ConsolFun consolFun, int steps) throws RrdException {
+	ArcDef findArchive(ConsolFun consolFun, int steps) {
         for (ArcDef arcDef : arcDefs) {
             if (arcDef.getConsolFun() == consolFun && arcDef.getSteps() == steps) {
                 return arcDef;
             }
         }
-		throw new RrdException("Could not find archive " + consolFun + "/" + steps);
+		throw new IllegalArgumentException("Could not find archive " + consolFun + "/" + steps);
 	}
 
 	/**

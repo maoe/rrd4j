@@ -271,7 +271,7 @@ public class DataProcessor {
 		Source source = getSource(sourceName);
 		double[] values = source.getValues();
 		if (values == null) {
-			throw new RrdException("Values not available for source [" + sourceName + "]");
+			throw new IllegalArgumentException("Values not available for source [" + sourceName + "]");
 		}
 		return values;
 	}
@@ -354,11 +354,10 @@ public class DataProcessor {
 	 * @param percentile Boundary percentile. Value of 95 (%) is suitable in most cases, but you are free
 	 * to provide your own percentile boundary between zero and 100.
 	 * @return Requested percentile of fetched source values
-	 * @throws RrdException Thrown if invalid sourcename is supplied, or if the percentile value makes no sense.
 	 */
-	public double getPercentile(String sourceName, double percentile) throws RrdException {
+	public double getPercentile(String sourceName, double percentile) {
 		if(percentile <= 0.0 || percentile > 100.0) {
-			throw new RrdException("Invalid percentile [" + percentile + "], should be between 0 and 100");
+			throw new IllegalArgumentException("Invalid percentile [" + percentile + "], should be between 0 and 100");
 		}
 		Source source = getSource(sourceName);
 		return source.getPercentile(tStart, tEnd, percentile);
@@ -394,12 +393,12 @@ public class DataProcessor {
 		return values;
 	}
 
-	private Source getSource(String sourceName) throws RrdException {
+	private Source getSource(String sourceName) {
 		Source source = sources.get(sourceName);
 		if (source != null) {
 			return source;
 		}
-		throw new RrdException("Unknown source: " + sourceName);
+		throw new IllegalArgumentException("Unknown source: " + sourceName);
 	}
 
 	/////////////////////////////////////////////////////////////////
@@ -755,7 +754,7 @@ public class DataProcessor {
         }
 	}
 
-	private void normalizeRrdValues() throws RrdException {
+	private void normalizeRrdValues() {
 		Normalizer normalizer = new Normalizer(timestamps);
         for (Def def : defSources) {
             long[] rrdTimestamps = def.getRrdTimestamps();

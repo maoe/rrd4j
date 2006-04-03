@@ -446,7 +446,7 @@ public class Util {
         try {
             return rrd2.getArcIndex(consolFun, steps);
         }
-        catch (RrdException e) {
+        catch (IllegalArgumentException e) {
             return -1;
         }
     }

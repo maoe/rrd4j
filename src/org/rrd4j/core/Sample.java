@@ -75,17 +75,17 @@ public class Sample {
 	 * Sets single data source value in the sample.
 	 * @param dsName Data source name.
 	 * @param value Data source value.
-	 * @throws RrdException Thrown if invalid data source name is supplied.
+	 * @throws IllegalArgumentException Thrown if invalid data source name is supplied.
 	 * @return This <code>Sample</code> object
 	 */
-	public Sample setValue(String dsName, double value) throws RrdException {
+	public Sample setValue(String dsName, double value) {
 		for(int i = 0; i < values.length; i++) {
 			if(dsNames[i].equals(dsName)) {
 				values[i] = value;
 				return this;
 			}
 		}
-		throw new RrdException("Datasource " + dsName + " not found");
+		throw new IllegalArgumentException("Datasource " + dsName + " not found");
 	}
 
 	/**
@@ -94,15 +94,15 @@ public class Sample {
 	 * @param i Data source index
 	 * @param value Data source values
  	 * @return This <code>Sample</code> object
-	 * @throws RrdException Thrown if data source index is invalid.
+	 * @throws IllegalArgumentException Thrown if data source index is invalid.
 	 */
-	public Sample setValue(int i, double value) throws RrdException {
+	public Sample setValue(int i, double value) {
 		if(i < values.length) {
 			values[i] = value;
 			return this;
 		}
 		else {
-			throw new RrdException("Sample datasource index " + i + " out of bounds");
+			throw new IllegalArgumentException("Sample datasource index " + i + " out of bounds");
 		}
 	}
 
@@ -112,19 +112,19 @@ public class Sample {
 	 *
 	 * @param values Data source values.
 	 * @return This <code>Sample</code> object
-	 * @throws RrdException Thrown if the number of supplied values is zero or greater
+	 * @throws IllegalArgumentException Thrown if the number of supplied values is zero or greater
 	 * than the number of data sources defined in the RRD.
 	 */
-	public Sample setValues(double... values) throws RrdException {
-		if(values.length <= this.values.length) {
+    public Sample setValues(double... values) throws RrdException {
+        if (values.length <= this.values.length) {
             System.arraycopy(values, 0, this.values, 0, values.length);
-			return this;
-		}
-		else {
-			throw new RrdException("Invalid number of values specified (found " +
-				values.length +	", only " + dsNames.length + " allowed)");
-		}
-	}
+            return this;
+        }
+        else {
+            throw new IllegalArgumentException("Invalid number of values specified (found " +
+                    values.length + ", only " + dsNames.length + " allowed)");
+        }
+    }
 
 	/**
 	 * Returns all current data source values in the sample.
@@ -179,13 +179,13 @@ public class Sample {
 	 * Method will throw an exception if timestamp is invalid (cannot be parsed as Long, and is not 'N'
 	 * or 'NOW'). Datasource value which cannot be parsed as 'double' will be silently set to NaN.<p>
 	 * @return This <code>Sample</code> object
-	 * @throws RrdException Thrown if too many datasource values are supplied
+	 * @throws IllegalArgumentException Thrown if too many datasource values are supplied
 	 */
 	public Sample set(String timeAndValues) throws RrdException {
 		StringTokenizer tokenizer = new StringTokenizer(timeAndValues, ":", false);
 		int n = tokenizer.countTokens();
 		if(n > values.length + 1) {
-			throw new RrdException("Invalid number of values specified (found " +
+			throw new IllegalArgumentException("Invalid number of values specified (found " +
 				values.length +	", " + dsNames.length + " allowed)");
 		}
 		String timeToken = tokenizer.nextToken();

@@ -963,16 +963,15 @@ public class RrdDb implements RrdUpdater {
      * @param consolFun Consolidation function
      * @param steps     Number of archive steps
      * @return Requested Archive object
-     * @throws IOException  Thrown in case of I/O error
-     * @throws RrdException Thrown if no such archive could be found
+     * @throws IOException Thrown in case of I/O error
      */
-    public int getArcIndex(ConsolFun consolFun, int steps) throws RrdException, IOException {
+    public int getArcIndex(ConsolFun consolFun, int steps) throws IOException {
         for (int i = 0; i < archives.length; i++) {
             if (archives[i].getConsolFun() == consolFun && archives[i].getSteps() == steps) {
                 return i;
             }
         }
-        throw new RrdException("Could not find archive " + consolFun + "/" + steps);
+        throw new IllegalArgumentException("Could not find archive " + consolFun + "/" + steps);
     }
 
     /**
@@ -988,7 +987,7 @@ public class RrdDb implements RrdUpdater {
         try {
             return getArchive(getArcIndex(consolFun, steps));
         }
-        catch (RrdException e) {
+        catch (IllegalArgumentException e) {
             return null;
         }
     }
@@ -1053,10 +1052,10 @@ public class RrdDb implements RrdUpdater {
      * {@link RrdBackendFactory#setDefaultFactory(String)}.<p>
      *
      * @param factoryName Name of the backend factory to be set as default.
-     * @throws RrdException Thrown if invalid factory name is supplied, or not called
-     *                      before the first backend object (before the first RrdDb object) is created.
+     * @throws IllegalArgumentException Thrown if invalid factory name is supplied, or not called
+     *                                  before the first backend object (before the first RrdDb object) is created.
      */
-    public static void setDefaultFactory(String factoryName) throws RrdException {
+    public static void setDefaultFactory(String factoryName) {
         RrdBackendFactory.setDefaultFactory(factoryName);
     }
 
@@ -1081,9 +1080,9 @@ public class RrdDb implements RrdUpdater {
      * @param dsName Datasource name
      * @return Last stored value for the given datasource
      * @throws IOException  Thrown in case of I/O error
-     * @throws RrdException Thrown if no datasource in this RrdDb matches the given datasource name
+     * @throws IllegalArgumentException Thrown if no datasource in this RrdDb matches the given datasource name
      */
-    public synchronized double getLastDatasourceValue(String dsName) throws IOException, RrdException {
+    public synchronized double getLastDatasourceValue(String dsName) throws IOException {
         int dsIndex = getDsIndex(dsName);
         return datasources[dsIndex].getLastValue();
     }

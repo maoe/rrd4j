@@ -159,15 +159,14 @@ public class FetchData {
 	 *
 	 * @param dsName Datasource name.
 	 * @return Array of single datasource values.
-	 * @throws RrdException Thrown if no matching datasource name is found.
 	 */
-	public double[] getValues(String dsName) throws RrdException {
+	public double[] getValues(String dsName) {
 		for (int dsIndex = 0; dsIndex < getColumnCount(); dsIndex++) {
 			if (dsName.equals(dsNames[dsIndex])) {
 				return getValues(dsIndex);
 			}
 		}
-		throw new RrdException("Datasource [" + dsName + "] not found");
+		throw new IllegalArgumentException("Datasource [" + dsName + "] not found");
 	}
 
 	/**

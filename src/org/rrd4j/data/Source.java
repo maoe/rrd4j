@@ -25,44 +25,42 @@
 
 package org.rrd4j.data;
 
-import org.rrd4j.core.RrdException;
-
 abstract class Source {
-	final private String name;
-	protected double[] values;
-	protected long[] timestamps;
+    final private String name;
+    protected double[] values;
+    protected long[] timestamps;
 
-	Source(String name) {
-		this.name = name;
-	}
+    Source(String name) {
+        this.name = name;
+    }
 
-	String getName() {
-		return name;
-	}
+    String getName() {
+        return name;
+    }
 
-	void setValues(double[] values) {
-		this.values = values;
-	}
+    void setValues(double[] values) {
+        this.values = values;
+    }
 
-	void setTimestamps(long[] timestamps) {
-		this.timestamps = timestamps;
-	}
+    void setTimestamps(long[] timestamps) {
+        this.timestamps = timestamps;
+    }
 
-	double[] getValues() {
-		return values;
-	}
+    double[] getValues() {
+        return values;
+    }
 
-	long[] getTimestamps() {
-		return timestamps;
-	}
+    long[] getTimestamps() {
+        return timestamps;
+    }
 
-	Aggregates getAggregates(long tStart, long tEnd) throws RrdException {
-		Aggregator agg = new Aggregator(timestamps, values);
-		return agg.getAggregates(tStart, tEnd);
-	}
+    Aggregates getAggregates(long tStart, long tEnd) {
+        Aggregator agg = new Aggregator(timestamps, values);
+        return agg.getAggregates(tStart, tEnd);
+    }
 
-	double getPercentile(long tStart, long tEnd, double percentile) throws RrdException {
-		Aggregator agg = new Aggregator(timestamps, values);
-		return agg.getPercentile(tStart, tEnd, percentile);
-	}
+    double getPercentile(long tStart, long tEnd, double percentile) {
+        Aggregator agg = new Aggregator(timestamps, values);
+        return agg.getPercentile(tStart, tEnd, percentile);
+    }
 }
