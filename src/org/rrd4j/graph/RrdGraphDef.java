@@ -24,9 +24,8 @@
  */
 package org.rrd4j.graph;
 
-import org.rrd4j.core.RrdException;
-import org.rrd4j.core.Util;
 import org.rrd4j.ConsolFun;
+import org.rrd4j.core.Util;
 import org.rrd4j.data.Plottable;
 
 import java.awt.*;
@@ -538,14 +537,13 @@ public class RrdGraphDef implements RrdGraphConstants {
 	 *
 	 * @param colorTag Color tag, as explained above.
 	 * @param color    Any color (paint) you like
-	 * @throws RrdException Thrown if invalid colorTag is supplied.
 	 */
-	public void setColor(int colorTag, Paint color) throws RrdException {
+	public void setColor(int colorTag, Paint color) {
 		if (colorTag >= 0 && colorTag < colors.length) {
 			colors[colorTag] = color;
 		}
 		else {
-			throw new RrdException("Invalid color index specified: " + colorTag);
+			throw new IllegalArgumentException("Invalid color index specified: " + colorTag);
 		}
 	}
 
@@ -556,19 +554,18 @@ public class RrdGraphDef implements RrdGraphConstants {
 	 * @param colorName One of the following strings: "BACK", "CANVAS", "SHADEA", "SHADEB",
 	 *                  "GRID", "MGRID", "FONT", "FRAME", "ARROW"
 	 * @param color     Any color (paint) you like
-	 * @throws RrdException Thrown if invalid element name is supplied.
 	 */
-	public void setColor(String colorName, Paint color) throws RrdException {
+	public void setColor(String colorName, Paint color) {
 		setColor(getColorTagByName(colorName), color);
 	}
 
-	private static int getColorTagByName(String colorName) throws RrdException {
+	private static int getColorTagByName(String colorName) {
 		for (int i = 0; i < COLOR_NAMES.length; i++) {
 			if (COLOR_NAMES[i].equalsIgnoreCase(colorName)) {
 				return i;
 			}
 		}
-		throw new RrdException("Unknown color name specified: " + colorName);
+		throw new IllegalArgumentException("Unknown color name specified: " + colorName);
 	}
 
 	/**
@@ -857,10 +854,10 @@ public class RrdGraphDef implements RrdGraphConstants {
 	 * @param srcName Virtual source name
 	 * @param color   Stacked graph color
 	 * @param legend  Legend text
-	 * @throws RrdException Thrown if this STACK has no previously defined AREA, STACK or LINE
+	 * @throws IllegalArgumentException Thrown if this STACK has no previously defined AREA, STACK or LINE
 	 *                      graph bellow it.
 	 */
-	public void stack(String srcName, Paint color, String legend) throws RrdException {
+	public void stack(String srcName, Paint color, String legend) {
 		// find parent AREA or LINE
 		SourcedPlotElement parent = null;
 		for (int i = plotElements.size() - 1; i >= 0; i--) {
@@ -871,7 +868,7 @@ public class RrdGraphDef implements RrdGraphConstants {
 			}
 		}
 		if (parent == null) {
-			throw new RrdException("You have to stack graph onto something (line or area)");
+			throw new IllegalArgumentException("You have to stack graph onto something (line or area)");
 		}
 		else {
 			LegendText legendText = new LegendText(color, legend);

@@ -24,7 +24,6 @@
  */
 package org.rrd4j.data;
 
-import org.rrd4j.core.RrdException;
 import org.rrd4j.core.Util;
 
 import java.util.Calendar;
@@ -53,10 +52,10 @@ public class CubicSplineInterpolator extends Plottable {
 	 * datasource values.
 	 * @param timestamps timestamps in seconds
 	 * @param values corresponding datasource values
-	 * @throws RrdException Thrown if supplied arrays do not contain at least 3 values, or if
+	 * @throws IllegalArgumentException Thrown if supplied arrays do not contain at least 3 values, or if
 	 * timestamps are not ordered, or array lengths are not equal, or some datasource value is NaN.
 	 */
-	public CubicSplineInterpolator(long[] timestamps, double[] values) throws RrdException {
+	public CubicSplineInterpolator(long[] timestamps, double[] values) {
 		this.x = new double[timestamps.length];
 		for(int i = 0; i < timestamps.length; i++) {
 			this.x[i] = timestamps[i];
@@ -71,10 +70,10 @@ public class CubicSplineInterpolator extends Plottable {
 	 * datasource values.
 	 * @param dates Array of Date objects
 	 * @param values corresponding datasource values
-	 * @throws RrdException Thrown if supplied arrays do not contain at least 3 values, or if
+	 * @throws IllegalArgumentException Thrown if supplied arrays do not contain at least 3 values, or if
 	 * timestamps are not ordered, or array lengths are not equal, or some datasource value is NaN.
 	 */
-	public CubicSplineInterpolator(Date[] dates, double[] values) throws RrdException {
+	public CubicSplineInterpolator(Date[] dates, double[] values) {
 		this.x = new double[dates.length];
 		for(int i = 0; i < dates.length; i++) {
 			this.x[i] = Util.getTimestamp(dates[i]);
@@ -89,10 +88,10 @@ public class CubicSplineInterpolator extends Plottable {
 	 * datasource values.
 	 * @param dates Array of GregorianCalendar objects
 	 * @param values corresponding datasource values
-	 * @throws RrdException Thrown if supplied arrays do not contain at least 3 values, or if
+	 * @throws IllegalArgumentException Thrown if supplied arrays do not contain at least 3 values, or if
 	 * timestamps are not ordered, or array lengths are not equal, or some datasource value is NaN.
 	 */
-	public CubicSplineInterpolator(Calendar[] dates, double[] values) throws RrdException {
+	public CubicSplineInterpolator(Calendar[] dates, double[] values) {
 		this.x = new double[dates.length];
 		for(int i = 0; i < dates.length; i++) {
 			this.x[i] = Util.getTimestamp(dates[i]);
@@ -106,17 +105,17 @@ public class CubicSplineInterpolator extends Plottable {
 	 * Creates cubic spline interpolator for an array of 2D-points.
 	 * @param x x-axis point coordinates
 	 * @param y y-axis point coordinates
-	 * @throws RrdException Thrown if supplied arrays do not contain at least 3 values, or if
+	 * @throws IllegalArgumentException Thrown if supplied arrays do not contain at least 3 values, or if
 	 * timestamps are not ordered, or array lengths are not equal, or some datasource value is NaN.
 	 */
-	public CubicSplineInterpolator(double[] x, double[] y) throws RrdException {
+	public CubicSplineInterpolator(double[] x, double[] y) {
 		this.x = x;
 		this.y = y;
         validate();
         spline();
 	}
 
-	private void validate() throws RrdException {
+	private void validate() {
 		boolean ok = true;
 		if(x.length != y.length || x.length < 3) {
 			ok = false;
@@ -127,7 +126,7 @@ public class CubicSplineInterpolator extends Plottable {
 			}
 		}
 		if(!ok) {
-			throw new RrdException("Invalid plottable data supplied");
+			throw new IllegalArgumentException("Invalid plottable data supplied");
 		}
 	}
 

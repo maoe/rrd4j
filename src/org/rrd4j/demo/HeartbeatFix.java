@@ -1,15 +1,14 @@
 package org.rrd4j.demo;
 
-import org.rrd4j.core.RrdToolkit;
-import org.rrd4j.core.RrdException;
 import org.rrd4j.core.RrdDb;
+import org.rrd4j.core.RrdToolkit;
 
-import java.io.FileFilter;
 import java.io.File;
+import java.io.FileFilter;
 import java.io.IOException;
 
 public class HeartbeatFix {
-	public static void main(String[] args) throws IOException, RrdException {
+	public static void main(String[] args) throws IOException {
 		if(args.length != 2) {
 			System.err.println("SYNTAX: HeartbeatFix <rrd directory> <heartbeat>");
 			System.exit(-1);

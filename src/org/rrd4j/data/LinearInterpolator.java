@@ -24,7 +24,6 @@
  */
 package org.rrd4j.data;
 
-import org.rrd4j.core.RrdException;
 import org.rrd4j.core.Util;
 
 import java.util.Calendar;
@@ -77,10 +76,10 @@ public class LinearInterpolator extends Plottable {
      * @param timestamps timestamps in seconds
      * @param values     corresponding datasource values
      *
-     * @throws RrdException Thrown if supplied arrays do not contain at least two values, or if
+     * @throws IllegalArgumentException Thrown if supplied arrays do not contain at least two values, or if
      *                      timestamps are not ordered, or array lengths are not equal.
      */
-    public LinearInterpolator(long[] timestamps, double[] values) throws RrdException {
+    public LinearInterpolator(long[] timestamps, double[] values) {
         this.timestamps = timestamps;
         this.values = values;
         validate();
@@ -92,10 +91,10 @@ public class LinearInterpolator extends Plottable {
      * @param dates  Array of Date objects
      * @param values corresponding datasource values
      *
-     * @throws RrdException Thrown if supplied arrays do not contain at least two values, or if
+     * @throws IllegalArgumentException Thrown if supplied arrays do not contain at least two values, or if
      *                      timestamps are not ordered, or array lengths are not equal.
      */
-    public LinearInterpolator(Date[] dates, double[] values) throws RrdException {
+    public LinearInterpolator(Date[] dates, double[] values) {
         this.values = values;
         timestamps = new long[dates.length];
         for (int i = 0; i < dates.length; i++) {
@@ -110,10 +109,10 @@ public class LinearInterpolator extends Plottable {
      * @param dates  array of GregorianCalendar objects
      * @param values corresponding datasource values
      *
-     * @throws RrdException Thrown if supplied arrays do not contain at least two values, or if
+     * @throws IllegalArgumentException Thrown if supplied arrays do not contain at least two values, or if
      *                      timestamps are not ordered, or array lengths are not equal.
      */
-    public LinearInterpolator(Calendar[] dates, double[] values) throws RrdException {
+    public LinearInterpolator(Calendar[] dates, double[] values) {
         this.values = values;
         timestamps = new long[dates.length];
         for (int i = 0; i < dates.length; i++) {
@@ -122,7 +121,7 @@ public class LinearInterpolator extends Plottable {
         validate();
     }
 
-    private void validate() throws RrdException {
+    private void validate() {
         boolean ok = true;
         if (timestamps.length != values.length || timestamps.length < 2) {
             ok = false;
@@ -133,7 +132,7 @@ public class LinearInterpolator extends Plottable {
             }
         }
         if (!ok) {
-            throw new RrdException("Invalid plottable data supplied");
+            throw new IllegalArgumentException("Invalid plottable data supplied");
         }
     }
 

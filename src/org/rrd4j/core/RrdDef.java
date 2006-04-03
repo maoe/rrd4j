@@ -231,18 +231,19 @@ public class RrdDef {
 	 * @throws RrdException Thrown if invalid string is supplied.
 	 */
 	public void addDatasource(String rrdToolDsDef) throws RrdException {
-		RrdException rrdException = new RrdException(
+		IllegalArgumentException illArgException = new IllegalArgumentException(
 			"Wrong rrdtool-like datasource definition: " + rrdToolDsDef);
-		StringTokenizer tokenizer = new StringTokenizer(rrdToolDsDef, ":");
+
+        StringTokenizer tokenizer = new StringTokenizer(rrdToolDsDef, ":");
 		if (tokenizer.countTokens() != 6) {
-			throw rrdException;
+			throw illArgException;
 		}
 		String[] tokens = new String[6];
 		for (int curTok = 0; tokenizer.hasMoreTokens(); curTok++) {
 			tokens[curTok] = tokenizer.nextToken();
 		}
 		if (!tokens[0].equalsIgnoreCase("DS")) {
-			throw rrdException;
+			throw illArgException;
 		}
 		String dsName = tokens[1];
 		DsType dsType = DsType.valueOf(tokens[2]);
@@ -251,7 +252,7 @@ public class RrdDef {
 			dsHeartbeat = Long.parseLong(tokens[3]);
 		}
 		catch(NumberFormatException nfe) {
-			throw rrdException;
+			throw illArgException;
 		}
 		double minValue = Double.NaN;
 		if(!tokens[4].equalsIgnoreCase("U")) {
@@ -259,7 +260,7 @@ public class RrdDef {
 				minValue = Double.parseDouble(tokens[4]);
 			}
 			catch(NumberFormatException nfe) {
-				throw rrdException;
+				throw illArgException;
 			}
 		}
 		double maxValue = Double.NaN;
@@ -268,7 +269,7 @@ public class RrdDef {
 				maxValue = Double.parseDouble(tokens[5]);
 			}
 			catch(NumberFormatException nfe) {
-				throw rrdException;
+				throw illArgException;
 			}
 		}
 		addDatasource(new DsDef(dsName, dsType, dsHeartbeat, minValue, maxValue));
@@ -277,9 +278,8 @@ public class RrdDef {
 	/**
 	 * Adds data source definitions to RRD definition in bulk.
 	 * @param dsDefs Array of data source definition objects.
-	 * @throws RrdException Thrown if duplicate data source name is used.
 	 */
-	public void addDatasource(DsDef[] dsDefs) throws RrdException {
+	public void addDatasource(DsDef[] dsDefs) {
         for (DsDef dsDef : dsDefs) {
             addDatasource(dsDef);
         }

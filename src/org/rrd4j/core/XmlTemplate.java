@@ -52,15 +52,15 @@ public abstract class XmlTemplate {
 	private HashMap<String, Object> valueMap = new HashMap<String, Object>();
 	private HashSet<Node> validatedNodes = new HashSet<Node>();
 
-	protected XmlTemplate(InputSource xmlSource) throws IOException, RrdException {
+	protected XmlTemplate(InputSource xmlSource) throws IOException {
 		root = Util.Xml.getRootElement(xmlSource);
 	}
 
-	protected XmlTemplate(String xmlString) throws IOException, RrdException {
+	protected XmlTemplate(String xmlString) throws IOException {
 		root = Util.Xml.getRootElement(xmlString);
 	}
 
-	protected XmlTemplate(File xmlFile) throws IOException, RrdException {
+	protected XmlTemplate(File xmlFile) throws IOException {
 		root = Util.Xml.getRootElement(xmlFile);
 	}
 
@@ -216,7 +216,7 @@ public abstract class XmlTemplate {
 		return Util.Xml.getChildNodes(parentNode, null);
 	}
 
-	protected static Node getFirstChildNode(Node parentNode, String childName) throws RrdException {
+	protected static Node getFirstChildNode(Node parentNode, String childName) {
 		return Util.Xml.getFirstChildNode(parentNode, childName);
 	}
 
@@ -224,11 +224,11 @@ public abstract class XmlTemplate {
 		return Util.Xml.hasChildNode(parentNode, childName);
 	}
 
-	protected String getChildValue(Node parentNode, String childName) throws RrdException {
+	protected String getChildValue(Node parentNode, String childName) {
 		return getChildValue(parentNode, childName, true);
 	}
 
-	protected String getChildValue(Node parentNode, String childName, boolean trim) throws RrdException {
+	protected String getChildValue(Node parentNode, String childName, boolean trim) {
 		String value = Util.Xml.getChildValue(parentNode, childName, trim);
 		return resolveMappings(value);
 	}
@@ -267,7 +267,7 @@ public abstract class XmlTemplate {
 		return result.toString();
 	}
 
-	protected int getChildValueAsInt(Node parentNode, String childName) throws RrdException {
+	protected int getChildValueAsInt(Node parentNode, String childName) {
 		String valueStr = getChildValue(parentNode, childName);
 		return Integer.parseInt(valueStr);
 	}
@@ -277,7 +277,7 @@ public abstract class XmlTemplate {
 		return Integer.parseInt(valueStr);
 	}
 
-	protected long getChildValueAsLong(Node parentNode, String childName) throws RrdException {
+	protected long getChildValueAsLong(Node parentNode, String childName) {
 		String valueStr = getChildValue(parentNode, childName);
 		return Long.parseLong(valueStr);
 	}
@@ -287,7 +287,7 @@ public abstract class XmlTemplate {
 		return Long.parseLong(valueStr);
 	}
 
-	protected double getChildValueAsDouble(Node parentNode, String childName) throws RrdException {
+	protected double getChildValueAsDouble(Node parentNode, String childName) {
 		String valueStr = getChildValue(parentNode, childName);
 		return Util.parseDouble(valueStr);
 	}
@@ -297,7 +297,7 @@ public abstract class XmlTemplate {
 		return Util.parseDouble(valueStr);
 	}
 
-	protected boolean getChildValueAsBoolean(Node parentNode, String childName) throws RrdException {
+	protected boolean getChildValueAsBoolean(Node parentNode, String childName) {
 		String valueStr = getChildValue(parentNode, childName);
 		return Util.parseBoolean(valueStr);
 	}
@@ -307,7 +307,7 @@ public abstract class XmlTemplate {
 		return Util.parseBoolean(valueStr);
 	}
 
-	protected Paint getValueAsColor(Node parentNode) throws RrdException {
+	protected Paint getValueAsColor(Node parentNode) {
 		String rgbStr = getValue(parentNode);
 		return Util.parseColor(rgbStr);
 	}
@@ -318,7 +318,7 @@ public abstract class XmlTemplate {
 				(node.getNodeName().equals("#text") && node.getNodeValue().trim().length() == 0);
 	}
 
-	protected void validateTagsOnlyOnce(Node parentNode, String[] allowedChildNames) throws RrdException {
+	protected void validateTagsOnlyOnce(Node parentNode, String[] allowedChildNames) {
 		// validate node only once
 		if (validatedNodes.contains(parentNode)) {
 			return;
@@ -339,7 +339,7 @@ public abstract class XmlTemplate {
                 }
             }
             if (!isEmptyNode(child)) {
-                throw new RrdException("Unexpected tag encountered: <" + childName + ">");
+                throw new IllegalArgumentException("Unexpected tag encountered: <" + childName + ">");
             }
         }
 		// everything is OK
