@@ -8,6 +8,6 @@ Bugfixes
 Improvements
 
 * ConsolFun and DsType are now JDK 1.5 Enum's
-* RrdException is removed from most places
+* Removed RrdException
 * Usage of StringBuilders to improve performance
 * Berkeley DB backend

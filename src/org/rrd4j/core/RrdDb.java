@@ -570,7 +570,7 @@ public class RrdDb implements RrdUpdater {
 
     synchronized void store(Sample sample) throws IOException {
         if (closed) {
-            throw new IllegalStateException("RRD already closed, cannot store this  sample");
+            throw new IllegalStateException("RRD already closed, cannot store this sample");
         }
         long newTime = sample.getTime();
         long lastTime = header.getLastUpdateTime();
