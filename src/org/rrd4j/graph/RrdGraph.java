@@ -317,7 +317,7 @@ public class RrdGraph implements RrdGraphConstants {
         im.unitslength = gdef.unitsLength;
         if (gdef.onlyGraph) {
             if (im.ysize > 64) {
-                throw new IllegalArgumentException("Cannot create graph only, height too big");
+                throw new IllegalArgumentException("Cannot create graph only, height too big: " + im.ysize);
             }
             im.xorigin = 0;
         }
