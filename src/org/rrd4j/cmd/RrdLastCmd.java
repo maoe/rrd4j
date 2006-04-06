@@ -26,7 +26,6 @@
 package org.rrd4j.cmd;
 
 import org.rrd4j.core.RrdDb;
-import org.rrd4j.core.RrdException;
 
 import java.io.IOException;
 
@@ -36,10 +35,10 @@ class RrdLastCmd extends RrdToolCmd {
 		return "last";
 	}
 
-	Object execute() throws RrdException, IOException {
+	Object execute() throws IOException {
 		String[] words = getRemainingWords();
 		if (words.length != 2) {
-			throw new RrdException("Invalid rrdlast syntax");
+			throw new IllegalArgumentException("Invalid rrdlast syntax");
 		}
 		String path = words[1];
 		RrdDb rrdDb = getRrdDbReference(path);

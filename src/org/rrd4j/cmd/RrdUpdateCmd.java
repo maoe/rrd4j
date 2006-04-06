@@ -26,7 +26,6 @@
 package org.rrd4j.cmd;
 
 import org.rrd4j.core.RrdDb;
-import org.rrd4j.core.RrdException;
 import org.rrd4j.core.Sample;
 import org.rrd4j.core.Util;
 
@@ -38,12 +37,12 @@ class RrdUpdateCmd extends RrdToolCmd {
         return "update";
     }
 
-	Object execute() throws RrdException, IOException {
+	Object execute() throws IOException {
 		String template = getOptionValue("t", "template");
 		String[] dsNames = (template != null) ? new ColonSplitter(template).split() : null;
 		String[] words = getRemainingWords();
 		if (words.length < 3) {
-			throw new RrdException("Insufficent number of parameters for rrdupdate command");
+			throw new IllegalArgumentException("Insufficent number of parameters for rrdupdate command");
 		}
 		String path = words[1];
 		RrdDb rrdDb = getRrdDbReference(path);
@@ -52,7 +51,7 @@ class RrdUpdateCmd extends RrdToolCmd {
 				// template specified, check datasource names
                 for (String dsName : dsNames) {
                     if (!rrdDb.containsDs(dsName)) {
-                        throw new RrdException("Invalid datasource name: " + dsName);
+                        throw new IllegalArgumentException("Invalid datasource name: " + dsName);
                     }
                 }
 			}
@@ -61,12 +60,12 @@ class RrdUpdateCmd extends RrdToolCmd {
 			for (int i = 2; i < words.length; i++) {
 				String[] tokens = new ColonSplitter(words[i]).split();
 				if (dsNames != null && dsNames.length + 1 != tokens.length) {
-					throw new RrdException("Template requires " + dsNames.length + " values, " +
+					throw new IllegalArgumentException("Template requires " + dsNames.length + " values, " +
 							(tokens.length - 1) + " value(s) found in: " + words[i]);
 				}
 				int dsCount = rrdDb.getHeader().getDsCount();
 				if (dsNames == null && dsCount + 1 != tokens.length) {
-					throw new RrdException("Expected " + dsCount + " values, " +
+					throw new IllegalArgumentException("Expected " + dsCount + " values, " +
 							(tokens.length - 1) + " value(s) found in: " + words[i]);
 				}
 				timestamp = Util.getTimestamp(tokens[0]);

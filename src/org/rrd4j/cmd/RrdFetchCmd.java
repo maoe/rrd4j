@@ -36,7 +36,7 @@ class RrdFetchCmd extends RrdToolCmd implements RrdGraphConstants {
 		return "fetch";
 	}
 
-	Object execute() throws RrdException, IOException {
+	Object execute() throws IOException {
 		String startStr = getOptionValue("s", "start", DEFAULT_START);
 		String endStr = getOptionValue("e", "end", DEFAULT_END);
 		long[] timestamps = Util.getTimestamps(startStr, endStr);
@@ -45,7 +45,7 @@ class RrdFetchCmd extends RrdToolCmd implements RrdGraphConstants {
 		// other words
 		String[] words = getRemainingWords();
 		if (words.length != 3) {
-			throw new RrdException("Invalid rrdfetch syntax");
+			throw new IllegalArgumentException("Invalid rrdfetch syntax");
 		}
 		String path = words[1];
 		ConsolFun consolFun = ConsolFun.valueOf(words[2]);

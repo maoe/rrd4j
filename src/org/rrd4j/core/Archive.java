@@ -33,7 +33,7 @@ import java.io.IOException;
  * Class to represent single RRD archive in a RRD with its internal state.
  * Normally, you don't need methods to manipulate archive objects directly
  * because Rrd4j framework does it automatically for you.<p>
- *
+ * <p/>
  * Each archive object consists of three parts: archive definition, archive state objects
  * (one state object for each datasource) and round robin archives (one round robin for
  * each datasource). API (read-only) is provided to access each of theese parts.<p>
@@ -96,7 +96,6 @@ public class Archive implements RrdUpdater {
      * multiplied with the number of archive steps.
      *
      * @return Archive time step in seconds
-     *
      * @throws IOException Thrown in case of I/O error.
      */
     public long getArcStep() throws IOException {
@@ -153,18 +152,15 @@ public class Archive implements RrdUpdater {
             state.setNanSteps(state.getNanSteps() + 1);
         }
         else {
-            ConsolFun function = ConsolFun.valueOf(consolFun.get());
-            if (function == ConsolFun.MIN) {
-                state.setAccumValue(Util.min(state.getAccumValue(), value));
-            }
-            else if (function == ConsolFun.MAX) {
-                state.setAccumValue(Util.max(state.getAccumValue(), value));
-            }
-            else if (function == ConsolFun.LAST) {
-                state.setAccumValue(value);
-            }
-            else if (function == ConsolFun.AVERAGE) {
-                state.setAccumValue(Util.sum(state.getAccumValue(), value));
+            switch (ConsolFun.valueOf(consolFun.get())) {
+                case MIN:
+                    state.setAccumValue(Util.min(state.getAccumValue(), value));
+                case MAX:
+                    state.setAccumValue(Util.max(state.getAccumValue(), value));
+                case LAST:
+                    state.setAccumValue(value);
+                case AVERAGE:
+                    state.setAccumValue(Util.sum(state.getAccumValue(), value));
             }
         }
     }
@@ -177,7 +173,7 @@ public class Archive implements RrdUpdater {
         //double nanPct = (double) nanSteps / (double) arcSteps;
         double accumValue = state.getAccumValue();
         if (nanSteps <= arcXff * arcSteps && !Double.isNaN(accumValue)) {
-            if (ConsolFun.valueOf(consolFun.get()) == ConsolFun.AVERAGE) {
+            if (getConsolFun() == ConsolFun.AVERAGE) {
                 accumValue /= (arcSteps - nanSteps);
             }
             robin.store(accumValue);
@@ -193,7 +189,6 @@ public class Archive implements RrdUpdater {
      * Returns archive consolidation function ("AVERAGE", "MIN", "MAX" or "LAST").
      *
      * @return Archive consolidation function.
-     *
      * @throws IOException Thrown in case of I/O error.
      */
     public ConsolFun getConsolFun() throws IOException {
@@ -204,7 +199,6 @@ public class Archive implements RrdUpdater {
      * Returns archive X-files factor.
      *
      * @return Archive X-files factor (between 0 and 1).
-     *
      * @throws IOException Thrown in case of I/O error.
      */
     public double getXff() throws IOException {
@@ -215,7 +209,6 @@ public class Archive implements RrdUpdater {
      * Returns the number of archive steps.
      *
      * @return Number of archive steps.
-     *
      * @throws IOException Thrown in case of I/O error.
      */
     public int getSteps() throws IOException {
@@ -226,7 +219,6 @@ public class Archive implements RrdUpdater {
      * Returns the number of archive rows.
      *
      * @return Number of archive rows.
-     *
      * @throws IOException Thrown in case of I/O error.
      */
     public int getRows() throws IOException {
@@ -237,7 +229,6 @@ public class Archive implements RrdUpdater {
      * Returns current starting timestamp. This value is not constant.
      *
      * @return Timestamp corresponding to the first archive row
-     *
      * @throws IOException Thrown in case of I/O error.
      */
     public long getStartTime() throws IOException {
@@ -251,7 +242,6 @@ public class Archive implements RrdUpdater {
      * Returns current ending timestamp. This value is not constant.
      *
      * @return Timestamp corresponding to the last archive row
-     *
      * @throws IOException Thrown in case of I/O error.
      */
     public long getEndTime() throws IOException {
@@ -266,7 +256,6 @@ public class Archive implements RrdUpdater {
      * for each RRD datasource).
      *
      * @param dsIndex Datasource index
-     *
      * @return Underlying archive state object
      */
     public ArcState getArcState(int dsIndex) {
@@ -278,7 +267,6 @@ public class Archive implements RrdUpdater {
      * archive values on a per-datasource basis.
      *
      * @param dsIndex Index of the datasource in the RRD.
-     *
      * @return Underlying round robin archive for the given datasource.
      */
     public Robin getRobin(int dsIndex) {
@@ -365,8 +353,7 @@ public class Archive implements RrdUpdater {
      * Copies object's internal state to another Archive object.
      *
      * @param other New Archive object to copy state to
-     *
-     * @throws IOException  Thrown in case of I/O error
+     * @throws IOException Thrown in case of I/O error
      */
     public void copyStateTo(RrdUpdater other) throws IOException {
         if (!(other instanceof Archive)) {
@@ -394,8 +381,7 @@ public class Archive implements RrdUpdater {
      * Sets X-files factor to a new value.
      *
      * @param xff New X-files factor value. Must be >= 0 and < 1.
-     *
-     * @throws IOException  Thrown in case of I/O error
+     * @throws IOException Thrown in case of I/O error
      */
     public void setXff(double xff) throws IOException {
         if (xff < 0D || xff >= 1D) {
@@ -416,9 +402,10 @@ public class Archive implements RrdUpdater {
 
     /**
      * Required to implement RrdUpdater interface. You should never call this method directly.
+     *
      * @return Allocator object
      */
     public RrdAllocator getRrdAllocator() {
         return parentDb.getRrdAllocator();
-	}
+    }
 }

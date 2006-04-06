@@ -26,11 +26,9 @@
 package org.rrd4j.inspector;
 
 import org.rrd4j.core.RrdDb;
-import org.rrd4j.core.RrdException;
 
-import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.DefaultMutableTreeNode;
-import java.io.IOException;
+import javax.swing.tree.DefaultTreeModel;
 import java.io.File;
 
 class MainTreeModel extends DefaultTreeModel {

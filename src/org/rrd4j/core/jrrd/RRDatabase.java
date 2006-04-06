@@ -194,13 +194,11 @@ public class RRDatabase {
 
 		ArrayList<Archive> subset = new ArrayList<Archive>();
 
-		for (int i = 0; i < archives.size(); i++) {
-			Archive archive = archives.get(i);
-
-			if (archive.getType().equals(type)) {
-				subset.add(archive);
-			}
-		}
+        for (Archive archive : archives) {
+            if (archive.getType().equals(type)) {
+                subset.add(archive);
+            }
+        }
 
 		return subset;
 	}
@@ -235,12 +233,11 @@ public class RRDatabase {
 	 * @param type the consolidation function that should have been applied to
 	 *             the data.
 	 * @return the raw data.
-	 * @throws RRDException if there was a problem locating a data archive with
+	 * @throws IllegalArgumentException if there was a problem locating a data archive with
 	 *                      the requested consolidation function.
 	 * @throws IOException  if there was a problem reading data from the database.
 	 */
-	public DataChunk getData(ConsolidationFunctionType type)
-			throws RRDException, IOException {
+	public DataChunk getData(ConsolidationFunctionType type) throws IOException {
 		return getData(type, 1L);
 	}
 
@@ -252,17 +249,17 @@ public class RRDatabase {
 	 *             the data.
 	 * @param step the step size to use.
 	 * @return the raw data.
-	 * @throws RRDException if there was a problem locating a data archive with
+	 * @throws IllegalArgumentException if there was a problem locating a data archive with
 	 *                      the requested consolidation function.
 	 * @throws IOException  if there was a problem reading data from the database.
 	 */
 	public DataChunk getData(ConsolidationFunctionType type, long step)
-			throws RRDException, IOException {
+			throws IOException {
 
 		ArrayList<Archive> possibleArchives = getArchiveList(type);
 
 		if (possibleArchives.size() == 0) {
-			throw new RRDException("Database does not contain an Archive of consolidation function type "
+			throw new IllegalArgumentException("Database does not contain an Archive of consolidation function type "
 					+ type);
 		}
 
@@ -329,43 +326,44 @@ public class RRDatabase {
 		long bestStepDiff = 0;
 		long tmpStepDiff = 0;
 
-		for (int i = 0; i < archives.size(); i++) {
-			archive = archives.get(i);
+        for (Archive archive1 : archives) {
+            archive = archive1;
 
-			long calEnd = lastUpdateLong
-					- (lastUpdateLong
-					% (archive.pdpCount * header.pdpStep));
-			long calStart = calEnd
-					- (archive.pdpCount * archive.rowCount
-					* header.pdpStep);
-			long fullMatch = end - start;
+            long calEnd = lastUpdateLong
+                    - (lastUpdateLong
+                    % (archive.pdpCount * header.pdpStep));
+            long calStart = calEnd
+                    - (archive.pdpCount * archive.rowCount
+                    * header.pdpStep);
+            long fullMatch = end - start;
 
-			if ((calEnd >= end) && (calStart < start)) {    // Best full match
-				tmpStepDiff = Math.abs(step - (header.pdpStep * archive.pdpCount));
+            if ((calEnd >= end) && (calStart < start)) {    // Best full match
+                tmpStepDiff = Math.abs(step - (header.pdpStep * archive.pdpCount));
 
-				if ((firstFull != 0) || (tmpStepDiff < bestStepDiff)) {
-					firstFull = 0;
-					bestStepDiff = tmpStepDiff;
-					bestFullArchive = archive;
-				}
-			} else {                                        // Best partial match
-				long tmpMatch = fullMatch;
+                if ((firstFull != 0) || (tmpStepDiff < bestStepDiff)) {
+                    firstFull = 0;
+                    bestStepDiff = tmpStepDiff;
+                    bestFullArchive = archive;
+                }
+            }
+            else {                                        // Best partial match
+                long tmpMatch = fullMatch;
 
-				if (calStart > start) {
-					tmpMatch -= calStart - start;
-				}
+                if (calStart > start) {
+                    tmpMatch -= calStart - start;
+                }
 
-				if (calEnd < end) {
-					tmpMatch -= end - calEnd;
-				}
+                if (calEnd < end) {
+                    tmpMatch -= end - calEnd;
+                }
 
-				if ((firstPart != 0) || (bestMatch < tmpMatch)) {
-					firstPart = 0;
-					bestMatch = tmpMatch;
-					bestPartialArchive = archive;
-				}
-			}
-		}
+                if ((firstPart != 0) || (bestMatch < tmpMatch)) {
+                    firstPart = 0;
+                    bestMatch = tmpMatch;
+                    bestPartialArchive = archive;
+                }
+            }
+        }
 
 		// See how the matching went
 		// optimise this
@@ -400,19 +398,15 @@ public class RRDatabase {
 		s.print("last_update = ");
 		s.println(lastUpdate.getTime() / 1000);
 
-		for (Iterator<DataSource> i = dataSources.iterator(); i.hasNext();) {
-			DataSource ds = i.next();
-
-			ds.printInfo(s, numberFormat);
-		}
+        for (DataSource ds : dataSources) {
+            ds.printInfo(s, numberFormat);
+        }
 
 		int index = 0;
 
-		for (Iterator<Archive> i = archives.iterator(); i.hasNext();) {
-			Archive archive = i.next();
-
-			archive.printInfo(s, numberFormat, index++);
-		}
+        for (Archive archive : archives) {
+            archive.printInfo(s, numberFormat, index++);
+        }
 	}
 
 	/**
@@ -470,19 +464,15 @@ public class RRDatabase {
 
 		sb.append(header.toString());
 
-		for (Iterator<DataSource> i = dataSources.iterator(); i.hasNext();) {
-			DataSource ds = i.next();
+        for (DataSource ds : dataSources) {
+            sb.append("\n\t");
+            sb.append(ds.toString());
+        }
 
-			sb.append("\n\t");
-			sb.append(ds.toString());
-		}
-
-		for (Iterator<Archive> i = archives.iterator(); i.hasNext();) {
-			Archive archive = i.next();
-
-			sb.append("\n\t");
-			sb.append(archive.toString());
-		}
+        for (Archive archive : archives) {
+            sb.append("\n\t");
+            sb.append(archive.toString());
+        }
 
 		return sb.toString();
 	}

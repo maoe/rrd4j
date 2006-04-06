@@ -176,9 +176,9 @@ public class FetchData {
 	 * <code>getRpnValues("x,y,+,2,/");</code><p>
 	 * @param rpnExpression RRDTool-like RPN expression
 	 * @return Calculated values
-	 * @throws RrdException Thrown if invalid RPN expression is supplied
+	 * @throws IllegalArgumentException Thrown if invalid RPN expression is supplied
 	 */
-	public double[] getRpnValues(String rpnExpression) throws RrdException {
+	public double[] getRpnValues(String rpnExpression) {
 		DataProcessor dataProcessor = createDataProcessor(rpnExpression);
 		return dataProcessor.getValues(RPN_SOURCE_NAME);
 	}
@@ -311,9 +311,9 @@ public class FetchData {
 	 *                  (these string constants are conveniently defined in the {@link ConsolFun} class)
 	 * @return MIN, MAX, LAST, FIRST, AVERAGE or TOTAL value calculated from the fetched data
 	 *         for the given datasource name
-	 * @throws RrdException Thrown if the given datasource name cannot be found in fetched data.
+	 * @throws IllegalArgumentException Thrown if the given datasource name cannot be found in fetched data.
 	 */
-	public double getAggregate(String dsName, ConsolFun consolFun)	throws RrdException {
+	public double getAggregate(String dsName, ConsolFun consolFun) {
 		DataProcessor dp = createDataProcessor(null);
 		return dp.getAggregate(dsName, consolFun);
 	}
@@ -328,13 +328,13 @@ public class FetchData {
 	 * @param consolFun Consolidation function (MIN, MAX, LAST, FIRST, AVERAGE or TOTAL)
 	 * @param rpnExpression RRDTool-like RPN expression
 	 * @return Aggregated value
-	 * @throws RrdException Thrown if the given datasource name cannot be found in fetched data, or if
+	 * @throws IllegalArgumentException Thrown if the given datasource name cannot be found in fetched data, or if
 	 * invalid RPN expression is supplied
 	 * @throws IOException Thrown in case of I/O error (unlikely to happen)
 	 * @deprecated This method is preserved just for backward compatibility.
 	 */
 	public double getAggregate(String dsName, ConsolFun consolFun, String rpnExpression)
-			throws RrdException, IOException {
+			throws IOException {
 		// for backward compatibility
 		rpnExpression = rpnExpression.replaceAll("value", dsName);
 		return getRpnAggregate(rpnExpression, consolFun);
@@ -348,9 +348,9 @@ public class FetchData {
 	 * @param rpnExpression RRDTool-like RPN expression
 	 * @param consolFun Consolidation function (MIN, MAX, LAST, FIRST, AVERAGE or TOTAL)
 	 * @return Aggregated value
-	 * @throws RrdException Thrown if invalid RPN expression is supplied
+	 * @throws IllegalArgumentException Thrown if invalid RPN expression is supplied
 	 */
-	public double getRpnAggregate(String rpnExpression, ConsolFun consolFun) throws RrdException {
+	public double getRpnAggregate(String rpnExpression, ConsolFun consolFun) {
 		DataProcessor dataProcessor = createDataProcessor(rpnExpression);
 		return dataProcessor.getAggregate(RPN_SOURCE_NAME, consolFun);
 	}
@@ -361,9 +361,9 @@ public class FetchData {
 	 *
 	 * @param dsName Datasource name.
 	 * @return Simple object containing all aggregated values.
-	 * @throws RrdException Thrown if the given datasource name cannot be found in the fetched data.
+	 * @throws IllegalArgumentException Thrown if the given datasource name cannot be found in the fetched data.
 	 */
-	public Aggregates getAggregates(String dsName) throws RrdException {
+	public Aggregates getAggregates(String dsName) {
 		DataProcessor dataProcessor = createDataProcessor(null);
 		return dataProcessor.getAggregates(dsName);
 	}
@@ -376,9 +376,9 @@ public class FetchData {
 	 * <code>getRpnAggregates("x,y,+,2,/");</code><p>
 	 * @param rpnExpression RRDTool-like RPN expression
 	 * @return Object containing all aggregated values
-	 * @throws RrdException Thrown if invalid RPN expression is supplied
+	 * @throws IllegalArgumentException Thrown if invalid RPN expression is supplied
 	 */
-	public Aggregates getRpnAggregates(String rpnExpression) throws RrdException, IOException {
+	public Aggregates getRpnAggregates(String rpnExpression) throws IOException {
 		DataProcessor dataProcessor = createDataProcessor(rpnExpression);
 		return dataProcessor.getAggregates(RPN_SOURCE_NAME);
 	}
@@ -396,9 +396,9 @@ public class FetchData {
 	 *
 	 * @param dsName Datasource name
 	 * @return 95th percentile of fetched source values
-	 * @throws RrdException Thrown if invalid source name is supplied
+	 * @throws IllegalArgumentException Thrown if invalid source name is supplied
 	 */
-	public double get95Percentile(String dsName) throws RrdException {
+	public double get95Percentile(String dsName) {
 		DataProcessor dataProcessor = createDataProcessor(null);
 		return dataProcessor.get95Percentile(dsName);
 	}
@@ -408,9 +408,9 @@ public class FetchData {
 	 * RPN expression.
 	 * @param rpnExpression RRDTool-like RPN expression
 	 * @return 95-percentile
-	 * @throws RrdException Thrown if invalid RPN expression is supplied
+	 * @throws IllegalArgumentException Thrown if invalid RPN expression is supplied
 	 */
-	public double getRpn95Percentile(String rpnExpression) throws RrdException {
+	public double getRpn95Percentile(String rpnExpression) {
 		DataProcessor dataProcessor = createDataProcessor(rpnExpression);
 		return dataProcessor.get95Percentile(RPN_SOURCE_NAME);
 	}
@@ -502,7 +502,7 @@ public class FetchData {
 		return arcEndTime;
 	}
 
-	private DataProcessor createDataProcessor(String rpnExpression) throws RrdException {
+	private DataProcessor createDataProcessor(String rpnExpression) {
 		DataProcessor dataProcessor = new DataProcessor(request.getFetchStart(), request.getFetchEnd());
         for (String dsName : dsNames) {
             dataProcessor.addDatasource(dsName, this);

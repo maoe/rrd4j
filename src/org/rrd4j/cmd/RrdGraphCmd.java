@@ -25,7 +25,6 @@
 
 package org.rrd4j.cmd;
 
-import org.rrd4j.core.RrdException;
 import org.rrd4j.core.Util;
 import org.rrd4j.ConsolFun;
 import org.rrd4j.graph.RrdGraph;
@@ -44,7 +43,7 @@ class RrdGraphCmd extends RrdToolCmd implements RrdGraphConstants {
 		return "graph";
 	}
 
-	Object execute() throws RrdException, IOException {
+	Object execute() throws IOException {
 		gdef = new RrdGraphDef();
 
 		// OPTIONS
@@ -163,7 +162,7 @@ class RrdGraphCmd extends RrdToolCmd implements RrdGraphConstants {
 		String[] words = getRemainingWords();
 		// the first word must be a filename
 		if (words.length < 2) {
-			throw new RrdException("Image filename must be specified");
+			throw new IllegalArgumentException("Image filename must be specified");
 		}
 		gdef.setFilename(words[1]);
 		// parse remaining words, in no particular order
@@ -199,7 +198,7 @@ class RrdGraphCmd extends RrdToolCmd implements RrdGraphConstants {
 				parseStack(words[i]);
 			}
 			else {
-				throw new RrdException("Unexpected GRAPH token encountered: " + words[i]);
+				throw new IllegalArgumentException("Unexpected GRAPH token encountered: " + words[i]);
 			}
 		}
 		// create diagram finally
@@ -220,14 +219,14 @@ class RrdGraphCmd extends RrdToolCmd implements RrdGraphConstants {
 		return info;
 	}
 
-	private void parseLine(String word) throws RrdException {
+	private void parseLine(String word) {
 		String[] tokens1 = new ColonSplitter(word).split();
 		if (tokens1.length != 2 && tokens1.length != 3) {
-			throw new RrdException("Invalid LINE statement: " + word);
+			throw new IllegalArgumentException("Invalid LINE statement: " + word);
 		}
 		String[] tokens2 = tokens1[1].split("#");
 		if (tokens2.length != 1 && tokens2.length != 2) {
-			throw new RrdException("Invalid LINE statement: " + word);
+			throw new IllegalArgumentException("Invalid LINE statement: " + word);
 		}
 		float width = Integer.parseInt(tokens1[0].substring(tokens1[0].length() - 1));
 		String name = tokens2[0];
@@ -236,14 +235,14 @@ class RrdGraphCmd extends RrdToolCmd implements RrdGraphConstants {
 		gdef.line(name, color, legend, width);
 	}
 
-	private void parseArea(String word) throws RrdException {
+	private void parseArea(String word) {
 		String[] tokens1 = new ColonSplitter(word).split();
 		if (tokens1.length != 2 && tokens1.length != 3) {
-			throw new RrdException("Invalid AREA statement: " + word);
+			throw new IllegalArgumentException("Invalid AREA statement: " + word);
 		}
 		String[] tokens2 = tokens1[1].split("#");
 		if (tokens2.length != 1 && tokens2.length != 2) {
-			throw new RrdException("Invalid AREA statement: " + word);
+			throw new IllegalArgumentException("Invalid AREA statement: " + word);
 		}
 		String name = tokens2[0];
 		Paint color = tokens2.length == 2 ? Util.parseColor(tokens2[1]) : BLIND_COLOR;
@@ -251,14 +250,14 @@ class RrdGraphCmd extends RrdToolCmd implements RrdGraphConstants {
 		gdef.area(name, color, legend);
 	}
 
-	private void parseStack(String word) throws RrdException {
+	private void parseStack(String word) {
 		String[] tokens1 = new ColonSplitter(word).split();
 		if (tokens1.length != 2 && tokens1.length != 3) {
-			throw new RrdException("Invalid STACK statement: " + word);
+			throw new IllegalArgumentException("Invalid STACK statement: " + word);
 		}
 		String[] tokens2 = tokens1[1].split("#");
 		if (tokens2.length != 1 && tokens2.length != 2) {
-			throw new RrdException("Invalid STACK statement: " + word);
+			throw new IllegalArgumentException("Invalid STACK statement: " + word);
 		}
 		String name = tokens2[0];
 		Paint color = tokens2.length == 2 ? Util.parseColor(tokens2[1]) : BLIND_COLOR;
@@ -266,91 +265,91 @@ class RrdGraphCmd extends RrdToolCmd implements RrdGraphConstants {
 		gdef.stack(name, color, legend);
 	}
 
-	private void parseHRule(String word) throws RrdException {
+	private void parseHRule(String word) {
 		String[] tokens1 = new ColonSplitter(word).split();
 		if (tokens1.length < 2 || tokens1.length > 3) {
-			throw new RrdException("Invalid HRULE statement: " + word);
+			throw new IllegalArgumentException("Invalid HRULE statement: " + word);
 		}
 		String[] tokens2 = tokens1[1].split("#");
 		if (tokens2.length != 2) {
-			throw new RrdException("Invalid HRULE statement: " + word);
+			throw new IllegalArgumentException("Invalid HRULE statement: " + word);
 		}
 		double value = parseDouble(tokens2[0]);
 		Paint color = Util.parseColor(tokens2[1]);
 		gdef.hrule(value, color, tokens1.length == 3 ? tokens1[2] : null);
 	}
 
-	private void parseVRule(String word) throws RrdException {
+	private void parseVRule(String word) {
 		String[] tokens1 = new ColonSplitter(word).split();
 		if (tokens1.length < 2 || tokens1.length > 3) {
-			throw new RrdException("Invalid VRULE statement: " + word);
+			throw new IllegalArgumentException("Invalid VRULE statement: " + word);
 		}
 		String[] tokens2 = tokens1[1].split("#");
 		if (tokens2.length != 2) {
-			throw new RrdException("Invalid VRULE statement: " + word);
+			throw new IllegalArgumentException("Invalid VRULE statement: " + word);
 		}
 		long timestamp = Util.getTimestamp(tokens2[0]);
 		Paint color = Util.parseColor(tokens2[1]);
 		gdef.vrule(timestamp, color, tokens1.length == 3 ? tokens1[2] : null);
 	}
 
-	private void parseComment(String word) throws RrdException {
+	private void parseComment(String word) {
 		String[] tokens = new ColonSplitter(word).split();
 		if (tokens.length != 2) {
-			throw new RrdException("Invalid COMMENT specification: " + word);
+			throw new IllegalArgumentException("Invalid COMMENT specification: " + word);
 		}
 		gdef.comment(tokens[1]);
 	}
 
 
-	private void parseDef(String word) throws RrdException {
+	private void parseDef(String word) {
 		String[] tokens1 = new ColonSplitter(word).split();
 		if (tokens1.length != 4) {
-			throw new RrdException("Invalid DEF specification: " + word);
+			throw new IllegalArgumentException("Invalid DEF specification: " + word);
 		}
 		String[] tokens2 = tokens1[1].split("=");
 		if (tokens2.length != 2) {
-			throw new RrdException("Invalid DEF specification: " + word);
+			throw new IllegalArgumentException("Invalid DEF specification: " + word);
 		}
 		gdef.datasource(tokens2[0], tokens2[1], tokens1[2], ConsolFun.valueOf(tokens1[3]));
 	}
 
-	private void parseCDef(String word) throws RrdException {
+	private void parseCDef(String word) {
 		String[] tokens1 = new ColonSplitter(word).split();
 		if (tokens1.length != 2) {
-			throw new RrdException("Invalid CDEF specification: " + word);
+			throw new IllegalArgumentException("Invalid CDEF specification: " + word);
 		}
 		String[] tokens2 = tokens1[1].split("=");
 		if (tokens2.length != 2) {
-			throw new RrdException("Invalid DEF specification: " + word);
+			throw new IllegalArgumentException("Invalid DEF specification: " + word);
 		}
 		gdef.datasource(tokens2[0], tokens2[1]);
 	}
 
-	private void parsePrint(String word) throws RrdException {
+	private void parsePrint(String word) {
 		String[] tokens = new ColonSplitter(word).split();
 		if (tokens.length != 4) {
-			throw new RrdException("Invalid PRINT specification: " + word);
+			throw new IllegalArgumentException("Invalid PRINT specification: " + word);
 		}
 		gdef.print(tokens[1], ConsolFun.valueOf(tokens[2]), tokens[3]);
 	}
 
-	private void parseGPrint(String word) throws RrdException {
+	private void parseGPrint(String word) {
 		String[] tokens = new ColonSplitter(word).split();
 		if (tokens.length != 4) {
-			throw new RrdException("Invalid GPRINT specification: " + word);
+			throw new IllegalArgumentException("Invalid GPRINT specification: " + word);
 		}
 		gdef.gprint(tokens[1], ConsolFun.valueOf(tokens[2]), tokens[3]);
 	}
 
-	private void parseColors(String[] colorOptions) throws RrdException {
+	private void parseColors(String[] colorOptions) {
 		if (colorOptions == null) {
 			return;
 		}
         for (String colorOption : colorOptions) {
             String[] tokens = colorOption.split("#");
             if (tokens.length != 2) {
-                throw new RrdException("Invalid COLOR specification: " + colorOption);
+                throw new IllegalArgumentException("Invalid COLOR specification: " + colorOption);
             }
             String colorName = tokens[0];
             Paint paint = Util.parseColor(tokens[1]);
@@ -358,7 +357,7 @@ class RrdGraphCmd extends RrdToolCmd implements RrdGraphConstants {
         }
 	}
 
-	private void parseYGrid(String ygrid) throws RrdException {
+	private void parseYGrid(String ygrid) {
 		if (ygrid == null) {
 			return;
 		}
@@ -368,14 +367,14 @@ class RrdGraphCmd extends RrdToolCmd implements RrdGraphConstants {
 		}
 		String[] tokens = new ColonSplitter(ygrid).split();
 		if (tokens.length != 2) {
-			throw new RrdException("Invalid YGRID settings: " + ygrid);
+			throw new IllegalArgumentException("Invalid YGRID settings: " + ygrid);
 		}
 		double gridStep = parseDouble(tokens[0]);
 		int labelFactor = parseInt(tokens[1]);
 		gdef.setValueAxis(gridStep, labelFactor);
 	}
 
-	private void parseXGrid(String xgrid) throws RrdException {
+	private void parseXGrid(String xgrid) {
 		if (xgrid == null) {
 			return;
 		}
@@ -385,7 +384,7 @@ class RrdGraphCmd extends RrdToolCmd implements RrdGraphConstants {
 		}
 		String[] tokens = new ColonSplitter(xgrid).split();
 		if (tokens.length != 8) {
-			throw new RrdException("Invalid XGRID settings: " + xgrid);
+			throw new IllegalArgumentException("Invalid XGRID settings: " + xgrid);
 		}
 		int minorUnit = resolveUnit(tokens[0]), majorUnit = resolveUnit(tokens[2]),
 				labelUnit = resolveUnit(tokens[4]);
@@ -397,7 +396,7 @@ class RrdGraphCmd extends RrdToolCmd implements RrdGraphConstants {
 				labelUnit, labelUnitCount, labelSpan, fmt);
 	}
 
-	private int resolveUnit(String unitName) throws RrdException {
+	private int resolveUnit(String unitName) {
 		final String[] unitNames = {"SECOND", "MINUTE", "HOUR", "DAY", "WEEK", "MONTH", "YEAR"};
 		final int[] units = {SECOND, MINUTE, HOUR, DAY, WEEK, MONTH, YEAR};
 		for (int i = 0; i < unitNames.length; i++) {
@@ -405,6 +404,6 @@ class RrdGraphCmd extends RrdToolCmd implements RrdGraphConstants {
 				return units[i];
 			}
 		}
-		throw new RrdException("Unknown time unit specified: " + unitName);
+		throw new IllegalArgumentException("Unknown time unit specified: " + unitName);
 	}
 }

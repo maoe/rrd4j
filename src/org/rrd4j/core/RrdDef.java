@@ -69,8 +69,8 @@ public class RrdDef {
 	private long startTime = Util.getTime() + DEFAULT_INITIAL_SHIFT;
 	private long step = DEFAULT_STEP;
 
-    private ArrayList<DsDef> dsDefs = new ArrayList<DsDef>();
-	private ArrayList<ArcDef> arcDefs = new ArrayList<ArcDef>();
+    private List<DsDef> dsDefs = new ArrayList<DsDef>();
+	private List<ArcDef> arcDefs = new ArrayList<ArcDef>();
 
 	/**
 	 * <p>Creates new RRD definition object with the given path.
@@ -206,11 +206,10 @@ public class RrdDef {
 	 * @param heartbeat Data source heartbeat.
 	 * @param minValue Minimal acceptable value. Use <code>Double.NaN</code> if unknown.
 	 * @param maxValue Maximal acceptable value. Use <code>Double.NaN</code> if unknown.
-	 * @throws RrdException Thrown if new datasource definition uses already used data
+	 * @throws IllegalArgumentException Thrown if new datasource definition uses already used data
 	 * source name.
 	 */
-	public void addDatasource(String dsName, DsType dsType, long heartbeat,
-		double minValue, double maxValue) throws RrdException {
+	public void addDatasource(String dsName, DsType dsType, long heartbeat, double minValue, double maxValue) {
 		addDatasource(new DsDef(dsName, dsType, heartbeat, minValue, maxValue));
 	}
 
@@ -228,9 +227,9 @@ public class RrdDef {
 	 * For more information on datasource definition parameters see <code>rrdcreate</code>
 	 * man page.<p>
 	 * @param rrdToolDsDef Datasource definition string with the syntax borrowed from RRDTool.
-	 * @throws RrdException Thrown if invalid string is supplied.
+	 * @throws IllegalArgumentException Thrown if invalid string is supplied.
 	 */
-	public void addDatasource(String rrdToolDsDef) throws RrdException {
+	public void addDatasource(String rrdToolDsDef) {
 		IllegalArgumentException illArgException = new IllegalArgumentException(
 			"Wrong rrdtool-like datasource definition: " + rrdToolDsDef);
 
@@ -301,10 +300,10 @@ public class RrdDef {
 	/**
 	 * Adds archive definitions to RRD definition in bulk.
 	 * @param arcDefs Array of archive definition objects
-	 * @throws RrdException Thrown if RRD definition already contains archive with
+	 * @throws IllegalArgumentException Thrown if RRD definition already contains archive with
 	 * the same consolidation function and the same number of steps.
 	 */
-	public void addArchive(ArcDef[] arcDefs) throws RrdException {
+	public void addArchive(ArcDef[] arcDefs) {
         for (ArcDef arcDef : arcDefs) {
             addArchive(arcDef);
         }
@@ -319,11 +318,10 @@ public class RrdDef {
 	 * @param xff X-files factor. Valid values are between 0 and 1.
 	 * @param steps Number of archive steps
 	 * @param rows Number of archive rows
-	 * @throws RrdException Thrown if archive with the same consolidation function
+	 * @throws IllegalArgumentException Thrown if archive with the same consolidation function
 	 * and the same number of steps is already added.
 	 */
-	public void addArchive(ConsolFun consolFun, double xff, int steps, int rows)
-		throws RrdException {
+	public void addArchive(ConsolFun consolFun, double xff, int steps, int rows) {
 		addArchive(new ArcDef(consolFun, xff, steps, rows));
 	}
 
@@ -341,21 +339,21 @@ public class RrdDef {
 	 * For more information on archive definition parameters see <code>rrdcreate</code>
 	 * man page.<p>
 	 * @param rrdToolArcDef Archive definition string with the syntax borrowed from RRDTool.
-	 * @throws RrdException Thrown if invalid string is supplied.
+	 * @throws IllegalArgumentException Thrown if invalid string is supplied.
 	 */
-	public void addArchive(String rrdToolArcDef) throws RrdException {
-		RrdException rrdException = new RrdException(
+	public void addArchive(String rrdToolArcDef) {
+		IllegalArgumentException illArgException = new IllegalArgumentException(
 			"Wrong rrdtool-like archive definition: " + rrdToolArcDef);
 		StringTokenizer tokenizer = new StringTokenizer(rrdToolArcDef, ":");
 		if (tokenizer.countTokens() != 5) {
-			throw rrdException;
+			throw illArgException;
 		}
 		String[] tokens = new String[5];
 		for (int curTok = 0; tokenizer.hasMoreTokens(); curTok++) {
 			tokens[curTok] = tokenizer.nextToken();
 		}
 		if (!tokens[0].equalsIgnoreCase("RRA")) {
-			throw rrdException;
+			throw illArgException;
 		}
 		ConsolFun consolFun = ConsolFun.valueOf(tokens[1]);
 		double xff;
@@ -363,21 +361,21 @@ public class RrdDef {
 			xff = Double.parseDouble(tokens[2]);
 		}
 		catch(NumberFormatException nfe) {
-			throw rrdException;
+			throw illArgException;
 		}
 		int steps;
 		try {
 			steps = Integer.parseInt(tokens[3]);
 		}
 		catch(NumberFormatException nfe) {
-			throw rrdException;
+			throw illArgException;
 		}
 		int rows;
 		try {
 			rows = Integer.parseInt(tokens[4]);
 		}
 		catch(NumberFormatException nfe) {
-			throw rrdException;
+			throw illArgException;
 		}
 		addArchive(new ArcDef(consolFun, xff, steps, rows));
 	}

@@ -40,7 +40,7 @@ class RrdNode {
 		label = new File(path).getName();
 	}
 
-	RrdNode(RrdDb rrd, int dsIndex) throws IOException, RrdException {
+	RrdNode(RrdDb rrd, int dsIndex) throws IOException {
 		// datasource node
 		this.dsIndex = dsIndex;
 		RrdDef def = rrd.getRrdDef();
@@ -48,7 +48,7 @@ class RrdNode {
 		label = dsDefs[dsIndex].dump();
 	}
 
-	RrdNode(RrdDb rrd, int dsIndex, int arcIndex) throws IOException, RrdException {
+	RrdNode(RrdDb rrd, int dsIndex, int arcIndex) throws IOException {
 		// archive node
 		this.dsIndex = dsIndex;
 		this.arcIndex = arcIndex;

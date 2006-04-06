@@ -25,8 +25,6 @@
 
 package org.rrd4j.cmd;
 
-import org.rrd4j.core.RrdException;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -121,10 +119,10 @@ public class RrdCommander {
 	 *         <li><b>tune</b>: returns path to the tuned RRD file
 	 *         </ul>
 	 * @throws IOException  thrown in case of I/O error
-	 * @throws RrdException thrown for all other errors (parsing errors,
+	 * @throws IllegalArgumentException thrown for all other errors (parsing errors,
 	 *                      unknown RRDTool syntax/command/option, internal RRD errors...)
 	 */
-	public static synchronized Object execute(String command) throws IOException, RrdException {
+	public static synchronized Object execute(String command) throws IOException {
 		String cmd = command.trim(), rrdtool = "rrdtool ";
 		if(cmd.startsWith(rrdtool)) {
 			cmd = cmd.substring(rrdtool.length());
@@ -134,7 +132,7 @@ public class RrdCommander {
                 return rrdCommand.executeCommand(cmd);
             }
         }
-		throw new RrdException("Unknown RRDTool command: " + command);
+		throw new IllegalArgumentException("Unknown RRDTool command: " + command);
 	}
 
 	/**

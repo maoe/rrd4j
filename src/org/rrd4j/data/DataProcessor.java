@@ -536,10 +536,10 @@ public class DataProcessor {
 	 * @param sourceName Datasource name
 	 * @param pixelCount Graph width
 	 * @return Per-pixel datasource values
-	 * @throws RrdException Thrown if datasource values are not yet calculated (method {@link #processData()}
+	 * @throws IllegalArgumentException Thrown if datasource values are not yet calculated (method {@link #processData()}
 	 * was not called)
 	 */
-	public double[] getValuesPerPixel(String sourceName, int pixelCount) throws RrdException {
+	public double[] getValuesPerPixel(String sourceName, int pixelCount) {
 		setPixelCount(pixelCount);
 		return getValuesPerPixel(sourceName);
 	}
@@ -552,10 +552,10 @@ public class DataProcessor {
 	 *
 	 * @param sourceName Datasource name
 	 * @return Per-pixel datasource values
-	 * @throws RrdException Thrown if datasource values are not yet calculated (method {@link #processData()}
+	 * @throws IllegalArgumentException Thrown if datasource values are not yet calculated (method {@link #processData()}
 	 * was not called)
 	 */
-	public double[] getValuesPerPixel(String sourceName) throws RrdException {
+	public double[] getValuesPerPixel(String sourceName) {
 		double[] values = getValues(sourceName);
 		double[] pixelValues = new double[pixelCount];
 		Arrays.fill(pixelValues, Double.NaN);

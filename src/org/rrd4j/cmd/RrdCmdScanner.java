@@ -25,8 +25,6 @@
 
 package org.rrd4j.cmd;
 
-import org.rrd4j.core.RrdException;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -36,7 +34,7 @@ class RrdCmdScanner {
 	private LinkedList<String> words = new LinkedList<String>();
 	private StringBuilder buff;
 
-	RrdCmdScanner(String command) throws RrdException {
+	RrdCmdScanner(String command) {
 		String cmd = command.trim();
 		// parse words
 		char activeQuote = 0;
@@ -71,7 +69,7 @@ class RrdCmdScanner {
 			appendWord(c);
 		}
 		if (activeQuote != 0) {
-			throw new RrdException("End of command reached but " + activeQuote + " expected");
+			throw new IllegalArgumentException("End of command reached but " + activeQuote + " expected");
 		}
 		finishWord();
 	}
@@ -111,8 +109,7 @@ class RrdCmdScanner {
         }
 	}
 
-	String getOptionValue(String shortForm, String longForm, String defaultValue)
-			throws RrdException {
+	String getOptionValue(String shortForm, String longForm, String defaultValue) {
 		String value = null;
 		if(shortForm != null) {
 			value = getOptionValue("-" + shortForm);
@@ -126,12 +123,11 @@ class RrdCmdScanner {
 		return value;
 	}
 
-	String getOptionValue(String shortForm, String longForm)
-			throws RrdException {
+	String getOptionValue(String shortForm, String longForm) {
 		return getOptionValue(shortForm, longForm, null);
 	}
 
-	private String getOptionValue(String fullForm) throws RrdException {
+	private String getOptionValue(String fullForm) {
 		Iterator<String> iter = words.listIterator();
 		while (iter.hasNext()) {
 			String word = iter.next();
@@ -144,7 +140,7 @@ class RrdCmdScanner {
 					return value;
 				}
 				else {
-					throw new RrdException("Value for option " + fullForm + " expected but not found");
+					throw new IllegalArgumentException("Value for option " + fullForm + " expected but not found");
 				}
 			}
 			if (word.startsWith(fullForm)) {
@@ -173,7 +169,7 @@ class RrdCmdScanner {
 		return false;
 	}
 
-	String[] getMultipleOptions(String shortForm, String longForm) throws RrdException {
+	String[] getMultipleOptions(String shortForm, String longForm) {
 		List<String> values = new ArrayList<String>();
 		for (; ;) {
 			String value = getOptionValue(shortForm, longForm, null);

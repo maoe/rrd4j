@@ -24,7 +24,6 @@
  */
 package org.rrd4j.cmd;
 
-import org.rrd4j.core.RrdException;
 import org.rrd4j.core.RrdDb;
 import org.rrd4j.core.Datasource;
 import org.rrd4j.core.Archive;
@@ -36,10 +35,10 @@ class RrdInfoCmd extends RrdToolCmd {
 		return "info";
 	}
 
-	Object execute() throws RrdException, IOException {
+	Object execute() throws IOException {
 		String[] words = getRemainingWords();
 		if(words.length != 2) {
-			throw new RrdException("Invalid rrdinfo syntax");
+			throw new IllegalArgumentException("Invalid rrdinfo syntax");
 		}
 		String path = words[1], info;
 		RrdDb rrd = getRrdDbReference(path);

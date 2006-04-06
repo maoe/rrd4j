@@ -136,9 +136,9 @@ public class RrdDefTemplate extends XmlTemplate {
 	 * for this class to find an example of a properly formatted RrdDef XML source.
 	 * @param xmlInputSource Xml input source
 	 * @throws IOException Thrown in case of I/O error
-	 * @throws RrdException Thrown in case of XML related error (parsing error, for example)
+	 * @throws IllegalArgumentException Thrown in case of XML related error (parsing error, for example)
 	 */
-	public RrdDefTemplate(InputSource xmlInputSource) throws IOException, RrdException {
+	public RrdDefTemplate(InputSource xmlInputSource) throws IOException {
 		super(xmlInputSource);
 	}
 
@@ -147,9 +147,9 @@ public class RrdDefTemplate extends XmlTemplate {
 	 * Read general information for this class to see an example of a properly formatted XML source.
 	 * @param xmlString String containing XML template
 	 * @throws IOException Thrown in case of I/O error
-	 * @throws RrdException Thrown in case of XML related error (parsing error, for example)
+	 * @throws IllegalArgumentException Thrown in case of XML related error (parsing error, for example)
 	 */
-	public RrdDefTemplate(String xmlString) throws IOException, RrdException {
+	public RrdDefTemplate(String xmlString) throws IOException {
 		super(xmlString);
 	}
 
@@ -158,9 +158,9 @@ public class RrdDefTemplate extends XmlTemplate {
 	 * Read general information for this class to see an example of a properly formatted XML source.
 	 * @param xmlFile File object representing file with XML template
 	 * @throws IOException Thrown in case of I/O error
-	 * @throws RrdException Thrown in case of XML related error (parsing error, for example)
+	 * @throws IllegalArgumentException Thrown in case of XML related error (parsing error, for example)
 	 */
-	public RrdDefTemplate(File xmlFile) throws IOException, RrdException {
+	public RrdDefTemplate(File xmlFile) throws IOException {
 		super(xmlFile);
 	}
 
@@ -175,13 +175,13 @@ public class RrdDefTemplate extends XmlTemplate {
 	 * @return RrdDef object constructed from the underlying XML template,
 	 * with all placeholders replaced with real values. This object can be passed to the constructor
 	 * of the new RrdDb object.
-	 * @throws RrdException Thrown (in most cases) if the value for some placeholder
+	 * @throws IllegalArgumentException Thrown (in most cases) if the value for some placeholder
 	 * was not supplied through {@link XmlTemplate#setVariable(String, String) setVariable()}
 	 * method call
 	 */
-	public RrdDef getRrdDef() throws RrdException {
+	public RrdDef getRrdDef() {
 		if (!root.getTagName().equals("rrd_def")) {
-			throw new RrdException("XML definition must start with <rrd_def>");
+			throw new IllegalArgumentException("XML definition must start with <rrd_def>");
 		}
 		validateTagsOnlyOnce(root, new String[] {
 			"path", "start", "step", "datasource*", "archive*"

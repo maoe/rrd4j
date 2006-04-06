@@ -28,7 +28,6 @@ package org.rrd4j.cmd;
 import org.rrd4j.core.RrdDb;
 import org.rrd4j.core.RrdDbPool;
 import org.rrd4j.core.RrdDef;
-import org.rrd4j.core.RrdException;
 
 import java.io.IOException;
 
@@ -38,22 +37,22 @@ abstract class RrdToolCmd {
 
 	abstract String getCmdType();
 
-	abstract Object execute() throws RrdException, IOException;
+	abstract Object execute() throws IOException;
 
-	Object executeCommand(String command) throws RrdException, IOException {
+	Object executeCommand(String command) throws IOException {
 		cmdScanner = new RrdCmdScanner(command);
 		return execute();
 	}
 
-	String getOptionValue(String shortForm, String longForm) throws RrdException {
+	String getOptionValue(String shortForm, String longForm) {
 		return cmdScanner.getOptionValue(shortForm, longForm);
 	}
 
-	String getOptionValue(String shortForm, String longForm, String defaultValue) throws RrdException {
+	String getOptionValue(String shortForm, String longForm, String defaultValue) {
 		return cmdScanner.getOptionValue(shortForm, longForm, defaultValue);
 	}
 
-	String[] getMultipleOptionValues(String shortForm, String longForm) throws RrdException {
+	String[] getMultipleOptionValues(String shortForm, String longForm) {
 		return cmdScanner.getMultipleOptions(shortForm, longForm);
 	}
 
@@ -84,25 +83,25 @@ abstract class RrdToolCmd {
 		RrdToolCmd.standardOutUsed = standardOutUsed;
 	}
 
-	static long parseLong(String value) throws RrdException {
+	static long parseLong(String value) {
 		try {
 			return Long.parseLong(value);
 		}
 		catch (NumberFormatException nfe) {
-			throw new RrdException(nfe);
+			throw new IllegalArgumentException(nfe);
 		}
 	}
 
-	static int parseInt(String value) throws RrdException {
+	static int parseInt(String value) {
 		try {
 			return Integer.parseInt(value);
 		}
 		catch (NumberFormatException nfe) {
-			throw new RrdException(nfe);
+			throw new IllegalArgumentException(nfe);
 		}
 	}
 
-	static double parseDouble(String value) throws RrdException {
+	static double parseDouble(String value) {
 		if (value.equals("U")) {
 			return Double.NaN;
 		}
@@ -110,7 +109,7 @@ abstract class RrdToolCmd {
 			return Double.parseDouble(value);
 		}
 		catch (NumberFormatException nfe) {
-			throw new RrdException(nfe);
+			throw new IllegalArgumentException(nfe);
 		}
 	}
 
@@ -126,7 +125,7 @@ abstract class RrdToolCmd {
 		}
 	}
 
-	static RrdDb getRrdDbReference(String path) throws IOException, RrdException {
+	static RrdDb getRrdDbReference(String path) throws IOException {
 		if (rrdDbPoolUsed) {
 			return RrdDbPool.getInstance().requestRrdDb(path);
 		}
@@ -135,7 +134,7 @@ abstract class RrdToolCmd {
 		}
 	}
 
-	static RrdDb getRrdDbReference(String path, String xmlPath) throws IOException, RrdException {
+	static RrdDb getRrdDbReference(String path, String xmlPath) throws IOException {
 		if (rrdDbPoolUsed) {
 			return RrdDbPool.getInstance().requestRrdDb(path, xmlPath);
 		}
@@ -144,7 +143,7 @@ abstract class RrdToolCmd {
 		}
 	}
 
-	static RrdDb getRrdDbReference(RrdDef rrdDef) throws IOException, RrdException {
+	static RrdDb getRrdDbReference(RrdDef rrdDef) throws IOException {
 		if (rrdDbPoolUsed) {
 			return RrdDbPool.getInstance().requestRrdDb(rrdDef);
 		}
@@ -153,7 +152,7 @@ abstract class RrdToolCmd {
 		}
 	}
 
-	static void releaseRrdDbReference(RrdDb rrdDb) throws IOException, RrdException {
+	static void releaseRrdDbReference(RrdDb rrdDb) throws IOException {
 		if (rrdDbPoolUsed) {
 			RrdDbPool.getInstance().release(rrdDb);
 		}

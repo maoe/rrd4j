@@ -35,7 +35,7 @@ class RrdTuneCmd extends RrdToolCmd {
 		return "tune";
 	}
 
-	Object execute() throws RrdException, IOException {
+	Object execute() throws IOException {
 		String[] heartbeats = getMultipleOptionValues("h", "heartbeat");
 		String[] minimums = getMultipleOptionValues("i", "minimum");
 		String[] maximums = getMultipleOptionValues("a", "maximum");
@@ -43,10 +43,10 @@ class RrdTuneCmd extends RrdToolCmd {
 		String[] dsNames = getMultipleOptionValues("r", "data-source-rename");
 		String[] words = getRemainingWords();
 		if(words.length < 2) {
-			throw new RrdException("File name not specified");
+			throw new IllegalArgumentException("File name not specified");
 		}
 		if(words.length > 2) {
-			throw new RrdException("Unexpected token encountered: " + words[2]);
+			throw new IllegalArgumentException("Unexpected token encountered: " + words[2]);
 		}
 		String path = words[1];
 		RrdDb rrd = getRrdDbReference(path);
@@ -83,10 +83,10 @@ class RrdTuneCmd extends RrdToolCmd {
 		return path;
 	}
 
-	private void tuneHeartbeat(RrdDb rrd, String heartbeatStr) throws RrdException, IOException {
+	private void tuneHeartbeat(RrdDb rrd, String heartbeatStr) throws IOException {
 		String[] tokens = new ColonSplitter(heartbeatStr).split();
 		if(tokens.length != 2) {
-			throw new RrdException("Invalid suntax in: " + heartbeatStr);
+			throw new IllegalArgumentException("Invalid suntax in: " + heartbeatStr);
 		}
 		String dsName = tokens[0];
 		long heartbeat = Long.parseLong(tokens[1]);
@@ -94,10 +94,10 @@ class RrdTuneCmd extends RrdToolCmd {
 		ds.setHeartbeat(heartbeat);
 	}
 
-	private void tuneMinimum(RrdDb rrd, String minimumStr) throws RrdException, IOException {
+	private void tuneMinimum(RrdDb rrd, String minimumStr) throws IOException {
 		String[] tokens = new ColonSplitter(minimumStr).split();
 		if(tokens.length != 2) {
-			throw new RrdException("Invalid suntax in: " + minimumStr);
+			throw new IllegalArgumentException("Invalid suntax in: " + minimumStr);
 		}
 		String dsName = tokens[0];
 		double minValue = Util.parseDouble(tokens[1]);
@@ -105,10 +105,10 @@ class RrdTuneCmd extends RrdToolCmd {
 		ds.setMinValue(minValue, false);
 	}
 
-	private void tuneMaximum(RrdDb rrd, String maximumStr) throws RrdException, IOException {
+	private void tuneMaximum(RrdDb rrd, String maximumStr) throws IOException {
 		String[] tokens = new ColonSplitter(maximumStr).split();
 		if(tokens.length != 2) {
-			throw new RrdException("Invalid suntax in: " + maximumStr);
+			throw new IllegalArgumentException("Invalid suntax in: " + maximumStr);
 		}
 		String dsName = tokens[0];
 		double maxValue = Util.parseDouble(tokens[1]);
@@ -116,20 +116,20 @@ class RrdTuneCmd extends RrdToolCmd {
 		ds.setMaxValue(maxValue, false);
 	}
 
-	private void tuneName(RrdDb rrd, String nameStr) throws RrdException, IOException {
+	private void tuneName(RrdDb rrd, String nameStr) throws IOException {
 		String[] tokens = new ColonSplitter(nameStr).split();
 		if(tokens.length != 2) {
-			throw new RrdException("Invalid suntax in: " + nameStr);
+			throw new IllegalArgumentException("Invalid suntax in: " + nameStr);
 		}
 		String oldName = tokens[0], newName = tokens[1];
 		Datasource ds = rrd.getDatasource(oldName);
 		ds.setDsName(newName);
 	}
 
-	private void tuneType(RrdDb rrd, String typeStr) throws RrdException, IOException {
+	private void tuneType(RrdDb rrd, String typeStr) throws IOException {
 		String[] tokens = new ColonSplitter(typeStr).split();
 		if(tokens.length != 2) {
-			throw new RrdException("Invalid suntax in: " + typeStr);
+			throw new IllegalArgumentException("Invalid suntax in: " + typeStr);
 		}
 		String dsName = tokens[0];
 		DsType dsType = DsType.valueOf(tokens[1]);

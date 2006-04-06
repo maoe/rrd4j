@@ -60,10 +60,9 @@ public class Demo {
 	 * java -cp rrd4j-{version}.jar org.rrd4j.demo.Demo
 	 * </pre>
 	 * @param args the name of the backend factory to use (optional)
-	 * @throws RrdException Thrown in case of Rrd4j specific error
 	 * @throws IOException Thrown
 	 */
-	public static void main(String[] args) throws RrdException, IOException {
+	public static void main(String[] args) throws IOException {
 		println("== Starting demo");
 		long startMillis = System.currentTimeMillis();
 		if (args.length > 0) {

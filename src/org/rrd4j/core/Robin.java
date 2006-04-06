@@ -75,13 +75,16 @@ public class Robin implements RrdUpdater {
 
     // stores the same value several times
     void bulkStore(double newValue, int bulkCount) throws IOException {
-        assert bulkCount <= rows: "Invalid number of bulk updates: " + bulkCount +
-                " rows=" + rows;
+        assert bulkCount <= rows: "Invalid number of bulk updates: " + bulkCount + " rows=" + rows;
+
         int position = pointer.get();
+
         // update tail
         int tailUpdateCount = Math.min(rows - position, bulkCount);
+
         values.set(position, newValue, tailUpdateCount);
         pointer.set((position + tailUpdateCount) % rows);
+
         // do we need to update from the start?
         int headUpdateCount = bulkCount - tailUpdateCount;
         if (headUpdateCount > 0) {
@@ -163,6 +166,7 @@ public class Robin implements RrdUpdater {
 
     double[] getValues(int index, int count) throws IOException {
         assert count <= rows: "Too many values requested: " + count + " rows=" + rows;
+
         int startIndex = (pointer.get() + index) % rows;
         int tailReadCount = Math.min(rows - startIndex, count);
         double[] tailValues = values.get(startIndex, tailReadCount);

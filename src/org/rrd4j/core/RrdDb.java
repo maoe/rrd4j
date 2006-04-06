@@ -704,8 +704,7 @@ public class RrdDb implements RrdUpdater {
         return buffer.toString();
     }
 
-    void archive(Datasource datasource, double value, long numUpdates)
-            throws IOException {
+    void archive(Datasource datasource, double value, long numUpdates) throws IOException {
         int dsIndex = getDsIndex(datasource.getDsName());
         for (Archive archive : archives) {
             archive.archive(dsIndex, value, numUpdates);

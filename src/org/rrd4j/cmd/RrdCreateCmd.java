@@ -41,14 +41,14 @@ class RrdCreateCmd extends RrdToolCmd {
 		return "create";
 	}
 
-	Object execute() throws RrdException, IOException {
+	Object execute() throws IOException {
 		String startStr = getOptionValue("b", "start", DEFAULT_START);
 		long start = Util.getTimestamp(startStr);
 		String stepStr = getOptionValue("s", "step", DEFAULT_STEP);
 		long step = parseLong(stepStr);
 		String[] words = getRemainingWords();
 		if (words.length < 2) {
-			throw new RrdException("RRD file path not specified");
+			throw new IllegalArgumentException("RRD file path not specified");
 		}
 		String path = words[1];
 		rrdDef = new RrdDef(path, start, step);
@@ -60,17 +60,17 @@ class RrdCreateCmd extends RrdToolCmd {
 				parseRra(words[i]);
 			}
 			else {
-				throw new RrdException("Invalid rrdcreate syntax: " + words[i]);
+				throw new IllegalArgumentException("Invalid rrdcreate syntax: " + words[i]);
 			}
 		}
 		return createRrdDb();
 	}
 
-	private void parseDef(String word) throws RrdException {
+	private void parseDef(String word) {
 		// DEF:name:type:heratbeat:min:max
 		String[] tokens = new ColonSplitter(word).split();
 		if (tokens.length < 6) {
-			throw new RrdException("Invalid DS definition: " + word);
+			throw new IllegalArgumentException("Invalid DS definition: " + word);
 		}
 		String dsName = tokens[1];
 		DsType dsType = DsType.valueOf(tokens[2]);
@@ -80,11 +80,11 @@ class RrdCreateCmd extends RrdToolCmd {
 		rrdDef.addDatasource(dsName, dsType, heartbeat, min, max);
 	}
 
-	private void parseRra(String word) throws RrdException {
+	private void parseRra(String word) {
 		// RRA:cfun:xff:steps:rows
 		String[] tokens = new ColonSplitter(word).split();
 		if (tokens.length < 5) {
-			throw new RrdException("Invalid RRA definition: " + word);
+			throw new IllegalArgumentException("Invalid RRA definition: " + word);
 		}
 		ConsolFun cf = ConsolFun.valueOf(tokens[1]);
 		double xff = parseDouble(tokens[2]);
@@ -93,7 +93,7 @@ class RrdCreateCmd extends RrdToolCmd {
 		rrdDef.addArchive(cf, xff, steps, rows);
 	}
 
-	private String createRrdDb() throws IOException, RrdException {
+	private String createRrdDb() throws IOException {
 		RrdDb rrdDb = getRrdDbReference(rrdDef);
 		releaseRrdDbReference(rrdDb);
 		return rrdDef.getPath();

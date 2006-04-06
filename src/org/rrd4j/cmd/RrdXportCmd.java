@@ -24,7 +24,6 @@
  */
 package org.rrd4j.cmd;
 
-import org.rrd4j.core.RrdException;
 import org.rrd4j.core.Util;
 import org.rrd4j.core.XmlWriter;
 import org.rrd4j.ConsolFun;
@@ -45,7 +44,7 @@ class RrdXportCmd extends RrdToolCmd implements RrdGraphConstants {
 		return "xport";
 	}
 
-	Object execute() throws RrdException, IOException {
+	Object execute() throws IOException {
 		String startStr = getOptionValue("s", "start", DEFAULT_START);
 		String endStr = getOptionValue("e", "end", DEFAULT_END);
 		long span[] = Util.getTimestamps(startStr, endStr);
@@ -58,7 +57,7 @@ class RrdXportCmd extends RrdToolCmd implements RrdGraphConstants {
 		dproc.setStep(step);
 		String[] words = getRemainingWords();
 		if(words.length < 2) {
-			throw new RrdException("Incomplete XPORT command");
+			throw new IllegalArgumentException("Incomplete XPORT command");
 		}
 		for (int i = 1; i < words.length; i++) {
 			if (words[i].startsWith("DEF:")) {
@@ -71,7 +70,7 @@ class RrdXportCmd extends RrdToolCmd implements RrdGraphConstants {
 				parseXport(words[i]);
 			}
 			else {
-				throw new RrdException("Invalid XPORT syntax: " + words[i]);
+				throw new IllegalArgumentException("Invalid XPORT syntax: " + words[i]);
 			}
 		}
 		String result = xports.size() == 0 ? null : xport();
@@ -79,7 +78,7 @@ class RrdXportCmd extends RrdToolCmd implements RrdGraphConstants {
 		return result;
 	}
 
-	private String xport() throws IOException, RrdException {
+	private String xport() throws IOException {
 		dproc.processData();
 		long[] timestamps = dproc.getTimestamps();
         for (XPort xport : xports) {
@@ -118,33 +117,33 @@ class RrdXportCmd extends RrdToolCmd implements RrdGraphConstants {
 		return result;
 	}
 
-	private void parseDef(String word) throws RrdException {
+	private void parseDef(String word) {
 		// DEF:vname=rrd:ds-name:CF
 		String[] tokens1 = new ColonSplitter(word).split();
 		if (tokens1.length != 4) {
-			throw new RrdException("Invalid DEF syntax: " + word);
+			throw new IllegalArgumentException("Invalid DEF syntax: " + word);
 		}
 		String[] tokens2 = tokens1[1].split("=");
 		if (tokens2.length != 2) {
-			throw new RrdException("Invalid DEF syntax: " + word);
+			throw new IllegalArgumentException("Invalid DEF syntax: " + word);
 		}
 		dproc.addDatasource(tokens2[0], tokens2[1], tokens1[2], ConsolFun.valueOf(tokens1[3]));
 	}
 
-	private void parseCDef(String word) throws RrdException {
+	private void parseCDef(String word) {
 		// CDEF:vname=rpn-expression
 		String[] tokens1 = new ColonSplitter(word).split();
 		if (tokens1.length != 2) {
-			throw new RrdException("Invalid CDEF syntax: " + word);
+			throw new IllegalArgumentException("Invalid CDEF syntax: " + word);
 		}
 		String[] tokens2 = tokens1[1].split("=");
 		if (tokens2.length != 2) {
-			throw new RrdException("Invalid CDEF syntax: " + word);
+			throw new IllegalArgumentException("Invalid CDEF syntax: " + word);
 		}
 		dproc.addDatasource(tokens2[0], tokens2[1]);
 	}
 
-	private void parseXport(String word) throws RrdException {
+	private void parseXport(String word) {
 		// XPORT:vname[:legend]
 		String[] tokens = new ColonSplitter(word).split();
 		if (tokens.length == 2 || tokens.length == 3) {
@@ -152,7 +151,7 @@ class RrdXportCmd extends RrdToolCmd implements RrdGraphConstants {
 			xports.add(xport);
 		}
 		else {
-			throw new RrdException("Invalid XPORT syntax: " + word);
+			throw new IllegalArgumentException("Invalid XPORT syntax: " + word);
 		}
 	}
 

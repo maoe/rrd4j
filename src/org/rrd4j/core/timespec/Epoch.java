@@ -1,6 +1,5 @@
 package org.rrd4j.core.timespec;
 
-import org.rrd4j.core.RrdException;
 import org.rrd4j.core.Util;
 
 import javax.swing.*;
@@ -145,7 +144,7 @@ public class Epoch extends JFrame {
 		inputField.setText(OUTPUT_DATE_FORMAT.format(date));
 	}
 
-	private long parseDate(String time) throws RrdException {
+	private long parseDate(String time) {
         for (SimpleDateFormat parser : parsers) {
             try {
                 return Util.getTimestamp(parser.parse(time));

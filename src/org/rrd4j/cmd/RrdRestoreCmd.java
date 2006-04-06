@@ -26,7 +26,6 @@ package org.rrd4j.cmd;
 
 import org.rrd4j.core.Datasource;
 import org.rrd4j.core.RrdDb;
-import org.rrd4j.core.RrdException;
 
 import java.io.IOException;
 
@@ -35,11 +34,11 @@ class RrdRestoreCmd extends RrdToolCmd {
 		return "restore";
 	}
 
-	Object execute() throws RrdException, IOException {
+	Object execute() throws IOException {
 		boolean check = getBooleanOption("r", "range-check");
 		String[] words = getRemainingWords();
 		if (words.length != 3) {
-			throw new RrdException("Invalid rrdrestore syntax");
+			throw new IllegalArgumentException("Invalid rrdrestore syntax");
 		}
 		String xmlPath = words[1];
 		String rrdPath = words[2];
