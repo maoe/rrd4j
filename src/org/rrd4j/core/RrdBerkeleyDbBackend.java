@@ -56,6 +56,8 @@ public class RrdBerkeleyDbBackend extends RrdBackend {
         DatabaseEntry theData = new DatabaseEntry(buffer);
 
         try {
+            // because the database was opened to support transactions, this write is performed
+            // using auto commit
             rrdDatabase.put(null, theKey, theData);
         }
         catch (DatabaseException de) {

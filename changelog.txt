@@ -1,5 +1,5 @@
-RRD4J 2.0
-=========
+RRD4J 2.0 BETA 1 (04/2006)
+==========================
 
 Bugfixes
 
@@ -9,5 +9,5 @@ Improvements
 
 * ConsolFun and DsType are now JDK 1.5 Enum's
 * Removed RrdException
-* Usage of StringBuilders to improve performance
+* Usage of StringBuilder to improve performance
 * Berkeley DB backend

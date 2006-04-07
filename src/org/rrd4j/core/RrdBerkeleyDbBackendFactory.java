@@ -22,10 +22,12 @@ public final class RrdBerkeleyDbBackendFactory extends RrdBackendFactory  {
 
         EnvironmentConfig envConfig = new EnvironmentConfig();
         envConfig.setAllowCreate(true);
+        envConfig.setTransactional(true);
         environment = new Environment(new File(homeDirectory), envConfig);
 
         DatabaseConfig dbConfig = new DatabaseConfig();
         dbConfig.setAllowCreate(true);
+        dbConfig.setTransactional(true);
         rrdDatabase = environment.openDatabase(null, "cablevisor-rrd", dbConfig);
     }
 
