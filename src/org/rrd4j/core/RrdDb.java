@@ -568,7 +568,7 @@ public class RrdDb implements RrdUpdater {
         return createFetchRequest(consolFun, fetchStart, fetchEnd, 1);
     }
 
-    synchronized void store(Sample sample) throws IOException {
+    final synchronized void store(Sample sample) throws IOException {
         if (closed) {
             throw new IllegalStateException("RRD already closed, cannot store this sample");
         }
@@ -704,7 +704,7 @@ public class RrdDb implements RrdUpdater {
         return buffer.toString();
     }
 
-    void archive(Datasource datasource, double value, long numUpdates) throws IOException {
+    final void archive(Datasource datasource, double value, long numUpdates) throws IOException {
         int dsIndex = getDsIndex(datasource.getDsName());
         for (Archive archive : archives) {
             archive.archive(dsIndex, value, numUpdates);
@@ -712,8 +712,7 @@ public class RrdDb implements RrdUpdater {
     }
 
     /**
-     * <p>Returns internal index number for the given datasource name. This index is heavily
-     * used by rrd4j.graph package and has no value outside of it.</p>
+     * Returns internal index number for the given datasource name.
      *
      * @param dsName Data source name.
      * @return Internal index of the given data source name in this RRD.
@@ -811,18 +810,18 @@ public class RrdDb implements RrdUpdater {
     }
 
     /**
-     * <p>Dumps internal RRD state to XML file.
-     * Use this XML file to convert your Rrd4j RRD to RRDTool format.</p>
-     * <p/>
+     * Dumps internal RRD state to XML file.
+     * Use this XML file to convert your Rrd4j RRD to RRDTool format.
+     *
      * <p>Suppose that you have a Rrd4j RRD file <code>original.rrd</code> and you want
      * to convert it to RRDTool format. First, execute the following java code:</p>
-     * <p/>
+     *
      * <code>RrdDb rrd = new RrdDb("original.rrd");
      * rrd.dumpXml("original.xml");</code>
-     * <p/>
+     *
      * <p>Use <code>original.xml</code> file to create the corresponding RRDTool file
      * (from your command line):
-     * <p/>
+     *
      * <code>rrdtool restore copy.rrd original.xml</code>
      *
      * @param filename Path to XML file which will be created.
@@ -1119,13 +1118,13 @@ public class RrdDb implements RrdUpdater {
     }
 
     public static void main(String[] args) {
-        System.out.println("Rrd4j Java Library :: RRDTool choice for the Java world");
+        System.out.println("RRD4J Java Library :: RRDTool choice for the Java world");
         System.out.println("==================================================================");
-        System.out.println("Rrd4j base directory: " + Util.getRrd4jHomeDirectory());
+        System.out.println("RRD4J base directory: " + Util.getRrd4jHomeDirectory());
         long time = Util.getTime();
         System.out.println("Current timestamp: " + time + ": " + new Date(time * 1000L));
         System.out.println("------------------------------------------------------------------");
-        System.out.println("For the latest information visit: http://www.rrd4j.org");
+        System.out.println("For the latest information visit: https://rrd4j.dev.java.net");
         System.out.println("(C) 2003-2006 Sasa Markovic. All rights reserved.");
     }
 

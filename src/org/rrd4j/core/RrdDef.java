@@ -58,11 +58,11 @@ import java.util.*;
  * @author Sasa Markovic
  */
 public class RrdDef {
-	/** default RRD step to be used if not specified in constructor (300 seconds) */
+	/** Default RRD step to be used if not specified in constructor (300 seconds). */
 	public static final long DEFAULT_STEP = 300L;
 
-    /** if not specified in constructor, starting timestamp will be set to the
-	 * current timestamp plus DEFAULT_INITIAL_SHIFT seconds (-10) */
+    /** If not specified in constructor, starting timestamp will be set to the
+	 * current timestamp plus DEFAULT_INITIAL_SHIFT seconds (-10). */
 	public static final long DEFAULT_INITIAL_SHIFT = -10L;
 
 	private String path;
@@ -278,7 +278,7 @@ public class RrdDef {
 	 * Adds data source definitions to RRD definition in bulk.
 	 * @param dsDefs Array of data source definition objects.
 	 */
-	public void addDatasource(DsDef[] dsDefs) {
+	public void addDatasource(DsDef... dsDefs) {
         for (DsDef dsDef : dsDefs) {
             addDatasource(dsDef);
         }
@@ -303,7 +303,7 @@ public class RrdDef {
 	 * @throws IllegalArgumentException Thrown if RRD definition already contains archive with
 	 * the same consolidation function and the same number of steps.
 	 */
-	public void addArchive(ArcDef[] arcDefs) {
+	public void addArchive(ArcDef... arcDefs) {
         for (ArcDef arcDef : arcDefs) {
             addArchive(arcDef);
         }

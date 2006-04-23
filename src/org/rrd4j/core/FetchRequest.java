@@ -83,7 +83,7 @@ public class FetchRequest {
 	 * datasources, specify an array of datasource names as method argument.
 	 * @param filter Array of datsources (datsource names) to fetch data from.
 	 */
-	public void setFilter(String[] filter) {
+	public void setFilter(String... filter) {
 		this.filter = filter;
 	}
 
@@ -114,7 +114,7 @@ public class FetchRequest {
 	}
 
 	/**
-	 * Returns request filter. See {@link #setFilter(String[]) setFilter()} for
+	 * Returns request filter. See {@link #setFilter(String...) setFilter()} for
 	 * complete explanation.
 	 * @return Request filter (array of datasource names), null if not set.
 	 */

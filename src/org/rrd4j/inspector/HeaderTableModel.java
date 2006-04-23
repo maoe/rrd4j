@@ -25,14 +25,12 @@
 
 package org.rrd4j.inspector;
 
-import org.rrd4j.core.RrdDb;
 import org.rrd4j.core.Header;
-import org.rrd4j.core.RrdException;
+import org.rrd4j.core.RrdDb;
 
 import javax.swing.table.AbstractTableModel;
-import java.util.Date;
-import java.io.IOException;
 import java.io.File;
+import java.util.Date;
 
 class HeaderTableModel extends AbstractTableModel {
 	private static final Object[] DESCRIPTIONS = {

@@ -93,7 +93,7 @@ public class Robin implements RrdUpdater {
         }
     }
 
-    void update(double[] newValues) throws IOException {
+    void update(double... newValues) throws IOException {
         assert rows == newValues.length: "Invalid number of robin values supplied (" + newValues.length +
                 "), exactly " + rows + " needed";
         pointer.set(0);
@@ -108,7 +108,7 @@ public class Robin implements RrdUpdater {
      * @throws IllegalArgumentException Thrown if the length of the input array is different from the length of
      *                                  this archive
      */
-    public void setValues(double[] newValues) throws IOException {
+    public void setValues(double... newValues) throws IOException {
         if (rows != newValues.length) {
             throw new IllegalArgumentException("Invalid number of robin values supplied (" + newValues.length +
                     "), exactly " + rows + " needed");

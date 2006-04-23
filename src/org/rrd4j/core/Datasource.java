@@ -181,7 +181,7 @@ public class Datasource implements RrdUpdater {
         return nanSeconds.get();
     }
 
-    void process(long newTime, double newValue) throws IOException {
+    final void process(long newTime, double newValue) throws IOException {
         Header header = parentDb.getHeader();
         long step = header.getStep();
         long oldTime = header.getLastUpdateTime();

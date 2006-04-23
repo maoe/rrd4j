@@ -72,7 +72,7 @@ public class Header implements RrdUpdater {
 	Header(RrdDb parentDb, DataImporter reader) throws IOException {
 		this(parentDb, (RrdDef) null);
 		String version = reader.getVersion();
-		if(!version.equals(RRDTOOL_VERSION)) {
+		if(!RRDTOOL_VERSION.equals(version)) {
 			throw new IllegalArgumentException("Could not unserialize xml version " + version);
 		}
 		signature.set(DEFAULT_SIGNATURE);
@@ -199,8 +199,7 @@ public class Header implements RrdUpdater {
 
 	void validateHeader() throws IOException {
 		if(!isRrd4jHeader()) {
-			String msg = "Invalid file header. File [" + parentDb.getCanonicalPath() + "] is not a Rrd4j RRD file";
-			throw new IOException(msg);
+			throw new IOException("Invalid file header. File [" + parentDb.getCanonicalPath() + "] is not a RRD4J RRD file");
 		}
 	}
 
