@@ -63,7 +63,10 @@ class TimeAxis implements RrdGraphConstants {
 
 	void draw() {
 		chooseTickSettings();
-		drawMinor();
+        // early return, avoid exceptions
+        if (tickSetting == null) return;
+
+        drawMinor();
 		drawMajor();
 		drawLabels();
 	}
