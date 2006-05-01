@@ -1,13 +1,12 @@
-RRD4J 2.0 BETA 1 (04/2006)
-==========================
+Changes in version 2.0.1
+------------------------
+* Bugfix in TimeAxis where drawing area <= 0 would throw exceptions (Ronny Standtke)
 
-Bugfixes
-
-* TimeAxis miscalculated when width was smaller then the endtime
-
-Improvements
-
-* ConsolFun and DsType are now JDK 1.5 Enum's
-* Removed RrdException
+Changes in version 2.0 (JDK 1.5 migration)
+------------------------------------------
+* Bugfix in TimeAxis miscalculated when width was smaller then the endtime
+* Improvement: ConsolFun and DsType are now JDK 1.5 Enum's
+* Removed RrdException, replaced by IllegalArgumentException in most places
 * Usage of StringBuilder to improve performance
-* Berkeley DB backend
+* Sleepycat Berkeley DB backend (see http://www.sleepycat.com)
+* Varargs where usefull
