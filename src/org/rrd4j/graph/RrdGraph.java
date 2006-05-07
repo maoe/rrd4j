@@ -35,14 +35,14 @@ import java.io.IOException;
  * Class which actually creates Rrd4j graphs (does the hard work).
  */
 public class RrdGraph implements RrdGraphConstants {
-    static final double[] SENSIBLE_VALUES = {
+    private static final double[] SENSIBLE_VALUES = {
             1000.0, 900.0, 800.0, 750.0, 700.0, 600.0, 500.0, 400.0, 300.0, 250.0, 200.0, 125.0, 100.0,
             90.0, 80.0, 75.0, 70.0, 60.0, 50.0, 40.0, 30.0, 25.0, 20.0, 10.0,
             9.0, 8.0, 7.0, 6.0, 5.0, 4.0, 3.5, 3.0, 2.5, 2.0, 1.8, 1.5, 1.2, 1.0,
             0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2, 0.1, 0.0, -1
     };
 
-    static final char[] SYMBOLS = {'a', 'f', 'p', 'n', 'u', 'm', ' ', 'k', 'M', 'G', 'T', 'P', 'E'};
+    private static final char[] SYMBOLS = {'a', 'f', 'p', 'n', 'u', 'm', ' ', 'k', 'M', 'G', 'T', 'P', 'E'};
 
     RrdGraphDef gdef;
     ImageParameters im = new ImageParameters();

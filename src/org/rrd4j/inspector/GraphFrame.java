@@ -265,7 +265,7 @@ class GraphFrame extends JFrame {
 		}
 	}
 
-	class GraphPanel extends JPanel {
+	final class GraphPanel extends JPanel {
 		public void paintComponent(Graphics g) {
 			rrdGraph.render(g);
 		}

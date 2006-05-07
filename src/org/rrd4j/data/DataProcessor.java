@@ -750,8 +750,7 @@ public class DataProcessor {
         for (Def def : defSources) {
             long[] rrdTimestamps = def.getRrdTimestamps();
             double[] rrdValues = def.getRrdValues();
-            double[] values = normalizer.normalize(rrdTimestamps, rrdValues);
-            def.setValues(values);
+            def.setValues(normalizer.normalize(rrdTimestamps, rrdValues));
         }
 	}
 
