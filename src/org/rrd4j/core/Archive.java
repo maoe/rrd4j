@@ -155,12 +155,16 @@ public class Archive implements RrdUpdater {
             switch (ConsolFun.valueOf(consolFun.get())) {
                 case MIN:
                     state.setAccumValue(Util.min(state.getAccumValue(), value));
+                    break;
                 case MAX:
                     state.setAccumValue(Util.max(state.getAccumValue(), value));
+                    break;
                 case LAST:
                     state.setAccumValue(value);
+                    break;
                 case AVERAGE:
                     state.setAccumValue(Util.sum(state.getAccumValue(), value));
+                    break;
             }
         }
     }
