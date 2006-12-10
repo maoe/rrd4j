@@ -488,7 +488,7 @@ public class Util {
     }
 
     /**
-     * Various DOM utility functions
+     * Various DOM utility functions.
      */
     public static class Xml {
         public static Node[] getChildNodes(Node parentNode) {
