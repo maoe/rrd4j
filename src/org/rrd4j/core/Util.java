@@ -81,7 +81,7 @@ public class Util {
      * @return Same array but with all values as double.
      */
     public static double[] toDoubleArray(final long[] array) {
-        double[] values = new double[ array.length ];
+        double[] values = new double[array.length];
         for (int i = 0; i < array.length; i++)
             values[i] = array[i];
         return values;
@@ -500,7 +500,7 @@ public class Util {
             NodeList nodeList = parentNode.getChildNodes();
             for (int i = 0; i < nodeList.getLength(); i++) {
                 Node node = nodeList.item(i);
-                if (childName == null || node.getNodeName().equals(childName)) {
+                if (node.getNodeType() == Node.ELEMENT_NODE && (childName == null || node.getNodeName().equals(childName))) {
                     nodes.add(node);
                 }
             }
@@ -757,12 +757,13 @@ public class Util {
 
     /**
      * Equivalent of the C-style sprintf function. Sorry, it works only in Java5.
+     *
      * @param format Format string
-     * @param args Arbitrary list of arguments
+     * @param args   Arbitrary list of arguments
      * @return Formatted string
      */
-    public static String sprintf(String format, Object ... args) {
+    public static String sprintf(String format, Object... args) {
         String fmt = format.replaceAll("([^%]|^)%([^a-zA-Z%]*)l(f|g|e)", "$1%$2$3");
-		return String.format(fmt, args);
-	}
+        return String.format(fmt, args);
+    }
 }

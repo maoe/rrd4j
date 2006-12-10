@@ -864,8 +864,13 @@ public class RrdGraphDefTemplate extends XmlTemplate implements RrdGraphConstant
 	}
 
 	private void resolveColors(Node parentNode) {
-		validateTagsOnlyOnce(parentNode, COLOR_NAMES);
-		Node[] childNodes = getChildNodes(parentNode);
+        // validateTagsOnly modifies the String[] that gets passed in
+        // therefore we must pass in a copy of COLOR_NAMES
+        String[] copy = new String[COLOR_NAMES.length];
+        System.arraycopy(COLOR_NAMES, 0, copy, 0, COLOR_NAMES.length);
+		validateTagsOnlyOnce(parentNode, copy);
+
+        Node[] childNodes = getChildNodes(parentNode);
         for (Node childNode : childNodes) {
             String colorName = childNode.getNodeName();
             rrdGraphDef.setColor(colorName, getValueAsColor(childNode));
