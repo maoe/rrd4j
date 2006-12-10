@@ -26,7 +26,7 @@
 	<description>RRD4J Build File</description>
 
 	<!-- VARIABLES -->
-	<property name="version" value="2.0.1"/>
+	<property name="version" value="2.0.2"/>
 	<property name="who" value="Mathias Bogaert &lt;m.bogaert@memenco.com&gt;"/>
 
 	<property name="classes" value="classes"/>

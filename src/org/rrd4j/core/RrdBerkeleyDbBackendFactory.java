@@ -14,7 +14,7 @@ import java.io.IOException;
  *
  * @author <a href="mailto:m.bogaert@memenco.com">Mathias Bogaert</a>
  */
-public final class RrdBerkeleyDbBackendFactory extends RrdBackendFactory  {
+public class RrdBerkeleyDbBackendFactory extends RrdBackendFactory  {
     /** factory name, "BERKELEY" */
 	public static final String NAME = "BERKELEY";
 

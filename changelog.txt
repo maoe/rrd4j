@@ -1,3 +1,13 @@
+Changes in version 2.0.2
+------------------------
+* Minor improvements to RrdBerkeleyDbBackendFactory
+
+* Applied patch from Renaud Bruyeron:
+RrdGraphDefTemplate.resolveColors destroys COLOR_NAMES constant array, which breaks the parsing
+of XML template file. Another issue fixed by the patch is that Util.Xml.getChildNodes() does not
+filter out nodes that are not of type Node.ELEMENT_NODE - this breaks pretty much all the parsing
+code in the *Template classes.
+
 Changes in version 2.0.1
 ------------------------
 * Bugfix in TimeAxis where drawing area <= 0 would throw exceptions (Ronny Standtke)
