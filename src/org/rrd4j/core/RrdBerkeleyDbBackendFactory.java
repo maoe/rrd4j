@@ -6,15 +6,23 @@ import java.io.File;
 import java.io.IOException;
 
 /**
- * {@link RrdBackendFactory} that uses <a href="http://www.sleepycat.com/">Sleepycat Berkeley DB</a> to read data.
+ * {@link RrdBackendFactory} that uses <a href="http://www.sleepycat.com/">Sleepycat Berkeley DB</a>
+ * to read data. Call {@link #init()} after instantiation and {@link #destroy()} when tearing down
+ * (or when using Spring use init-method and destroy-method).
+ *
+ * <p>NOTE: you can set the used Berkeley DB name using {@link #setRrdDatabaseName(String)}</p>
  *
  * @author <a href="mailto:m.bogaert@memenco.com">Mathias Bogaert</a>
  */
 public final class RrdBerkeleyDbBackendFactory extends RrdBackendFactory  {
+    /** factory name, "BERKELEY" */
+	public static final String NAME = "BERKELEY";
+
     private String homeDirectory = ".";
 
     private Environment environment;
     private Database rrdDatabase;
+    private String rrdDatabaseName = "rrd4j";
 
     public void init() throws Exception {
         // set the RRD backend factory
@@ -28,7 +36,7 @@ public final class RrdBerkeleyDbBackendFactory extends RrdBackendFactory  {
         DatabaseConfig dbConfig = new DatabaseConfig();
         dbConfig.setAllowCreate(true);
         dbConfig.setTransactional(true);
-        rrdDatabase = environment.openDatabase(null, "cablevisor-rrd", dbConfig);
+        rrdDatabase = environment.openDatabase(null, rrdDatabaseName, dbConfig);
     }
 
     public void destroy() throws Exception {
@@ -96,10 +104,14 @@ public final class RrdBerkeleyDbBackendFactory extends RrdBackendFactory  {
 
     // returns factory name
     public String getFactoryName() {
-        return "Berkeley";
+        return NAME;
     }
 
     public void setHomeDirectory(String homeDirectory) {
         this.homeDirectory = homeDirectory;
+    }
+
+    public void setRrdDatabaseName(String rrdDatabaseName) {
+        this.rrdDatabaseName = rrdDatabaseName;
     }
 }
