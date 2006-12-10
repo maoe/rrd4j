@@ -29,10 +29,9 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 
 /**
- * Rrd4j backend which is used to store RRD data to ordinary files on the disk. This was the
- * default factory before 1.4.0 version<p>
- * <p/>
- * This backend is based on the RandomAccessFile class (java.io.* package).
+ * Backend which is used to store RRD data to ordinary files on the disk. This was the
+ * default factory before 1.4.0 version. This backend is based on the
+ * RandomAccessFile class (java.io.* package).
  */
 public class RrdFileBackend extends RrdBackend {
 	/** read/write file status */

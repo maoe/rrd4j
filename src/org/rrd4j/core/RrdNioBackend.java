@@ -34,8 +34,8 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 /**
- * Rrd4j backend which is used to store RRD data to ordinary disk files
- * by using fast java.nio.* package. This is the default backend engine since Rrd4j 1.4.0.
+ * Backend which is used to store RRD data to ordinary disk files
+ * using java.nio.* package. This is the default backend engine. 
  */
 public class RrdNioBackend extends RrdFileBackend {
 	private static final Timer fileSyncTimer = new Timer(true);

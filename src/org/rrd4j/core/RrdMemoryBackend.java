@@ -28,7 +28,7 @@ package org.rrd4j.core;
 import java.io.IOException;
 
 /**
- * Backend to be used to store all RRD bytes in memory.<p>
+ * Backend to be used to store all RRD bytes in memory.
  */
 public class RrdMemoryBackend extends RrdBackend {
     private byte[] buffer = new byte[0];

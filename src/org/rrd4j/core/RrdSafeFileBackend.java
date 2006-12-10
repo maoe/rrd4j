@@ -30,7 +30,7 @@ import java.nio.channels.FileLock;
 import java.nio.channels.FileChannel;
 
 /**
- * Rrd4j backend which is used to store RRD data to ordinary files on the disk. This backend
+ * Backend which is used to store RRD data to ordinary files on the disk, using locking. This backend
  * is SAFE: it locks the underlying RRD file during update/fetch operations, and caches only static
  * parts of a RRD file in memory. Therefore, this backend is safe to be used when RRD files should
  * be shared between several JVMs at the same time. However, this backend is a little bit slow

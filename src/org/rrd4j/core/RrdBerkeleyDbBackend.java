@@ -7,6 +7,9 @@ import com.sleepycat.je.Database;
 import java.io.IOException;
 
 /**
+ * Backend which is used to store RRD data to ordinary disk files
+ * using <a href="http://www.sleepycat.com/">Sleepycat Berkeley DB</a>.
+ *
  * @author <a href="mailto:m.bogaert@memenco.com">Mathias Bogaert</a>
  */
 public class RrdBerkeleyDbBackend extends RrdBackend {
