@@ -27,35 +27,36 @@ package org.rrd4j.core;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * This class should be used to synchronize access to RRD files
- * in a multithreaded environment. This class should be also used to prevent openning of
- * too many RRD files at the same time (thus avoiding operating system limits)
+ * in a multithreaded environment. This class should be also used to prevent opening of
+ * too many RRD files at the same time (thus avoiding operating system limits).
  */
-
 public class RrdDbPool {
 	/**
 	 * Initial capacity of the pool i.e. maximum number of simultaneously open RRD files. The pool will
 	 * never open too many RRD files at the same time.
 	 */
 	public static final int INITIAL_CAPACITY = 200;
-	private static RrdDbPool instance;
+
+    private static class RrdDbPoolSingletonHolder {
+        static RrdDbPool instance = new RrdDbPool();
+    }
 
 	private int capacity = INITIAL_CAPACITY;
-	private HashMap<String, RrdEntry> rrdMap = new HashMap<String, RrdEntry>(INITIAL_CAPACITY);
+	private Map<String, RrdEntry> rrdMap = new HashMap<String, RrdEntry>(INITIAL_CAPACITY);
 
 	/**
-	 * Creates a single instance of the class on the first call, or returns already existing one.
+	 * Creates a single instance of the class on the first call,
+     * or returns already existing one. Uses Initialization On Demand Holder idiom.
 	 *
 	 * @return Single instance of this class
 	 * @throws RuntimeException Thrown if the default RRD backend is not derived from the {@link RrdFileBackendFactory}
 	 */
-	public synchronized static RrdDbPool getInstance() {
-		if (instance == null) {
-			instance = new RrdDbPool();
-		}
-		return instance;
+	public static RrdDbPool getInstance() {
+		return RrdDbPoolSingletonHolder.instance;
 	}
 
 	private RrdDbPool() {

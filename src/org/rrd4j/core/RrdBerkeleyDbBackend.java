@@ -64,7 +64,7 @@ public class RrdBerkeleyDbBackend extends RrdBackend {
             rrdDatabase.put(null, theKey, theData);
         }
         catch (DatabaseException de) {
-            throw new IOException(de.getMessage());
+            throw new IOException(de.getMessage(), de);
         }
     }
 

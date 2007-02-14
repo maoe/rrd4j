@@ -4,6 +4,7 @@ import com.sleepycat.je.*;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 /**
  * {@link RrdBackendFactory} that uses <a href="http://www.sleepycat.com/">Sleepycat Berkeley DB</a>
@@ -24,16 +25,18 @@ public class RrdBerkeleyDbBackendFactory extends RrdBackendFactory  {
     private Database rrdDatabase;
     private String rrdDatabaseName = "rrd4j";
 
+    private final ConcurrentSkipListSet<String> knownPaths = new ConcurrentSkipListSet<String>();
+
     public void init() throws Exception {
         // set the RRD backend factory
         RrdBackendFactory.registerAndSetAsDefaultFactory(this);
 
-        EnvironmentConfig envConfig = new EnvironmentConfig();
+        final EnvironmentConfig envConfig = new EnvironmentConfig();
         envConfig.setAllowCreate(true);
         envConfig.setTransactional(true);
         environment = new Environment(new File(homeDirectory), envConfig);
 
-        DatabaseConfig dbConfig = new DatabaseConfig();
+        final DatabaseConfig dbConfig = new DatabaseConfig();
         dbConfig.setAllowCreate(true);
         dbConfig.setTransactional(true);
         rrdDatabase = environment.openDatabase(null, rrdDatabaseName, dbConfig);
@@ -51,30 +54,31 @@ public class RrdBerkeleyDbBackendFactory extends RrdBackendFactory  {
     /**
      * Creates new RrdBerkeleyDbBackend object for the given id (path).
      */
-    protected RrdBackend open(String uniqueKey, boolean readOnly) throws IOException {
-        DatabaseEntry theKey = new DatabaseEntry(uniqueKey.getBytes("UTF-8"));
-        DatabaseEntry theData = new DatabaseEntry();
+    protected RrdBackend open(String path, boolean readOnly) throws IOException {
+        if (knownPaths.contains(path)) {
+            DatabaseEntry theKey = new DatabaseEntry(path.getBytes("UTF-8"));
+            DatabaseEntry theData = new DatabaseEntry();
 
-        try {
-            // Perform the get
-            if (rrdDatabase.get(null, theKey, theData, LockMode.DEFAULT) == OperationStatus.SUCCESS) {
-                return new RrdBerkeleyDbBackend(theData.getData(), uniqueKey, rrdDatabase);
+            try {
+                rrdDatabase.get(null, theKey, theData, LockMode.READ_UNCOMMITTED);
+                return new RrdBerkeleyDbBackend(theData.getData(), path, rrdDatabase);
             }
-            else {
-                return new RrdBerkeleyDbBackend(uniqueKey, rrdDatabase);
+            catch (DatabaseException de) {
+                throw new IOException(de.getMessage(), de);
             }
         }
-        catch (DatabaseException de) {
-            throw new IOException(de.getMessage());
+        else {
+            return new RrdBerkeleyDbBackend(path, rrdDatabase);
         }
     }
 
     public void delete(String uniqueKey) {
         try {
+            knownPaths.remove(uniqueKey);
             rrdDatabase.delete(null, new DatabaseEntry(uniqueKey.getBytes("UTF-8")));
         }
         catch (DatabaseException de) {
-            throw new RuntimeException(de.getMessage());
+            throw new RuntimeException(de.getMessage(), de);
         }
         catch (IOException ie) {
             throw new IllegalArgumentException(uniqueKey + ": " + ie.getMessage(), ie);
@@ -84,17 +88,26 @@ public class RrdBerkeleyDbBackendFactory extends RrdBackendFactory  {
     /**
      * Checks if the RRD with the given id (path) already exists in the database.
      */
-    protected boolean exists(String name) throws IOException {
-        DatabaseEntry theKey = new DatabaseEntry(name.getBytes("UTF-8"));
-        theKey.setPartial(0, 0, true); // avoid returning rrd data since we're only checking for existence
+    protected boolean exists(String path) throws IOException {
+        if (!knownPaths.contains(path)) {
+            DatabaseEntry theKey = new DatabaseEntry(path.getBytes("UTF-8"));
+            theKey.setPartial(0, 0, true); // avoid returning rrd data since we're only checking for existence
 
-        DatabaseEntry theData = new DatabaseEntry();
+            DatabaseEntry theData = new DatabaseEntry();
 
-        try {
-            return rrdDatabase.get(null, theKey, theData, LockMode.DEFAULT) == OperationStatus.SUCCESS;
+            try {
+                boolean pathExists = rrdDatabase.get(null, theKey, theData, LockMode.READ_UNCOMMITTED) == OperationStatus.SUCCESS;
+                if (pathExists) {
+                    knownPaths.add(path);
+                }
+                return pathExists;
+            }
+            catch (DatabaseException de) {
+                throw new IOException(de.getMessage(), de);
+            }
         }
-        catch (DatabaseException de) {
-            throw new IOException(de.getMessage());
+        else {
+            return true;
         }
     }
 
