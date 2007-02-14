@@ -28,6 +28,7 @@ package org.rrd4j.core;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Factory class which creates actual {@link RrdMemoryBackend} objects. Rrd4j's support
@@ -45,7 +46,7 @@ public class RrdMemoryBackendFactory extends RrdBackendFactory {
      */
     public static final String NAME = "MEMORY";
 
-    private Map<String, RrdMemoryBackend> backends = new HashMap<String, RrdMemoryBackend>();
+    private Map<String, RrdMemoryBackend> backends = new ConcurrentHashMap<String, RrdMemoryBackend>();
 
     /**
      * Creates RrdMemoryBackend object.
@@ -58,7 +59,7 @@ public class RrdMemoryBackendFactory extends RrdBackendFactory {
      *
      * @throws IOException Thrown in case of I/O error.
      */
-    protected synchronized RrdBackend open(String id, boolean readOnly) throws IOException {
+    protected RrdBackend open(String id, boolean readOnly) throws IOException {
         RrdMemoryBackend backend;
         if (backends.containsKey(id)) {
             backend = backends.get(id);
@@ -77,7 +78,7 @@ public class RrdMemoryBackendFactory extends RrdBackendFactory {
      *
      * @return True, if such storage exists, false otherwise.
      */
-    protected synchronized boolean exists(String id) {
+    protected boolean exists(String id) {
         return backends.containsKey(id);
     }
 

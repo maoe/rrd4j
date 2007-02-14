@@ -26,7 +26,8 @@
 package org.rrd4j.core;
 
 import java.io.IOException;
-import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Base (abstract) backend factory class which holds references to all concrete
@@ -68,7 +69,7 @@ import java.util.HashMap;
  * See javadoc for {@link RrdBackend} to find out how to create your custom backends.
  */
 public abstract class RrdBackendFactory {
-	private static final HashMap<String, RrdBackendFactory> factories = new HashMap<String, RrdBackendFactory>();
+	private static final Map<String, RrdBackendFactory> factories = new ConcurrentHashMap<String, RrdBackendFactory>();
 	private static RrdBackendFactory defaultFactory;
 
 	static {
@@ -111,9 +112,9 @@ public abstract class RrdBackendFactory {
 	 * </ul>
 	 * @return Backend factory for the given factory name
 	 */
-	public static synchronized RrdBackendFactory getFactory(String name) {
+	public static RrdBackendFactory getFactory(String name) {
 		RrdBackendFactory factory = factories.get(name);
-		if(factory != null) {
+		if (factory != null) {
 			return factory;
 		}
 		else {
@@ -125,9 +126,9 @@ public abstract class RrdBackendFactory {
 	 * Registers new (custom) backend factory within the Rrd4j framework.
 	 * @param factory Factory to be registered
 	 */
-	public static synchronized void registerFactory(RrdBackendFactory factory) {
+	public static void registerFactory(RrdBackendFactory factory) {
 		String name = factory.getFactoryName();
-		if(!factories.containsKey(name)) {
+		if (!factories.containsKey(name)) {
 			factories.put(name, factory);
 		}
 		else {
@@ -140,7 +141,7 @@ public abstract class RrdBackendFactory {
 	 * factory as the default.
 	 * @param factory Factory to be registered and set as default
 	 */
-	public static synchronized void registerAndSetAsDefaultFactory(RrdBackendFactory factory) {
+	public static void registerAndSetAsDefaultFactory(RrdBackendFactory factory) {
 		registerFactory(factory);
 		setDefaultFactory(factory.getFactoryName());
 	}

@@ -8,7 +8,7 @@ import java.io.IOException;
 
 /**
  * Backend which is used to store RRD data to ordinary disk files
- * using <a href="http://www.sleepycat.com/">Sleepycat Berkeley DB</a>.
+ * using <a href="http://www.oracle.com/technology/products/berkeley-db/je/index.html">Oracle Berkeley DB Java Edition</a>.
  *
  * @author <a href="mailto:m.bogaert@memenco.com">Mathias Bogaert</a>
  */

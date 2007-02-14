@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.util.concurrent.ConcurrentSkipListSet;
 
 /**
- * {@link RrdBackendFactory} that uses <a href="http://www.sleepycat.com/">Sleepycat Berkeley DB</a>
+ * {@link RrdBackendFactory} that uses <a href="http://www.oracle.com/technology/products/berkeley-db/je/index.html">Oracle Berkeley DB Java Edition</a>
  * to read data. Call {@link #init()} after instantiation and {@link #destroy()} when tearing down
  * (or when using Spring use init-method and destroy-method).
  *
