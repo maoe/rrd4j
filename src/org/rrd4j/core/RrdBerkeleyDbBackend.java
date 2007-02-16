@@ -14,7 +14,7 @@ import java.io.IOException;
  */
 public class RrdBerkeleyDbBackend extends RrdBackend {
     private byte[] buffer;
-    private Database rrdDatabase;
+    private final Database rrdDatabase;
 
     public RrdBerkeleyDbBackend(String path, Database rrdDatabase) {
         super(path);

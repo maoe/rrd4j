@@ -44,9 +44,10 @@ public class Archive implements RrdUpdater {
     private final RrdDb parentDb;
 
     // definition
-    private RrdString consolFun;
-    private RrdDouble xff;
-    private RrdInt steps, rows;
+    private final RrdString consolFun;
+    private final RrdDouble xff;
+    private final RrdInt steps;
+    private final RrdInt rows;
 
     // state
     private Robin[] robins;

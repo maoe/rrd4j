@@ -40,7 +40,7 @@ import java.io.IOException;
  * @author Sasa Markovic
  */
 public class Robin implements RrdUpdater {
-    private Archive parentArc;
+    private final Archive parentArc;
     private RrdInt pointer;
     private RrdDoubleArray values;
     private int rows;
@@ -93,7 +93,7 @@ public class Robin implements RrdUpdater {
         }
     }
 
-    void update(double... newValues) throws IOException {
+    void update(double[] newValues) throws IOException {
         assert rows == newValues.length: "Invalid number of robin values supplied (" + newValues.length +
                 "), exactly " + rows + " needed";
         pointer.set(0);

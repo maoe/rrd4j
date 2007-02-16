@@ -70,7 +70,7 @@ import java.io.IOException;
  */
 public abstract class RrdBackend {
 	private static boolean instanceCreated = false;
-	private String path;
+	private final String path;
 
 	/**
 	 * Creates backend for a RRD storage with the given path.

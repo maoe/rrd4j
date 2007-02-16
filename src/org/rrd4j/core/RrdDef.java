@@ -87,7 +87,8 @@ public class RrdDef {
 	}
 
 	/**
-	 * <p>Creates new RRD definition object with the given path and step.</p>
+	 * Creates new RRD definition object with the given path and step.
+     *
 	 * @param path Path to new RRD.
 	 * @param step RRD step.
 	 */
@@ -100,8 +101,9 @@ public class RrdDef {
 	}
 
 	/**
-	 * <p>Creates new RRD definition object with the given path, starting timestamp
-	 * and step.</p>
+	 * Creates new RRD definition object with the given path, starting timestamp
+	 * and step.
+     *
 	 * @param path Path to new RRD.
 	 * @param startTime RRD starting timestamp.
 	 * @param step RRD step.

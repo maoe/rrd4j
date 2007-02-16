@@ -81,9 +81,9 @@ public class RrdDb implements RrdUpdater {
     private RrdBackend backend;
     private RrdAllocator allocator = new RrdAllocator();
 
-    private Header header;
-    private Datasource[] datasources;
-    private Archive[] archives;
+    private final Header header;
+    private final Datasource[] datasources;
+    private final Archive[] archives;
 
     private boolean closed = false;
 
@@ -225,7 +225,7 @@ public class RrdDb implements RrdUpdater {
      * @throws IOException           Thrown in case of general I/O error (bad RRD file, for example).
      * @see RrdBackendFactory
      */
-    public RrdDb(String path, boolean readOnly, RrdBackendFactory factory) throws FileNotFoundException, IOException {
+    public RrdDb(String path, boolean readOnly, RrdBackendFactory factory) throws IOException {
         // opens existing RRD file - throw exception if the file does not exist...
         if (!factory.exists(path)) {
             throw new FileNotFoundException("Could not open " + path + " [non existent]");
@@ -574,7 +574,7 @@ public class RrdDb implements RrdUpdater {
         long newTime = sample.getTime();
         long lastTime = header.getLastUpdateTime();
         if (lastTime >= newTime) {
-            throw new IllegalArgumentException("Bad sample timestamp " + newTime +
+            throw new IllegalArgumentException("Bad sample time: " + newTime +
                     ". Last update time was " + lastTime + ", at least one second step is required");
         }
         double[] newValues = sample.getValues();
@@ -897,7 +897,12 @@ public class RrdDb implements RrdUpdater {
     }
 
     protected void finalize() throws Throwable {
-        close();
+        try {
+            close();
+        }
+        finally {
+            super.finalize();
+        }
     }
 
     /**
@@ -1117,14 +1122,14 @@ public class RrdDb implements RrdUpdater {
     }
 
     public static void main(String[] args) {
-        System.out.println("RRD4J Java Library :: RRDTool choice for the Java world");
+        System.out.println("RRD4J :: RRDTool choice for the Java world");
         System.out.println("==================================================================");
         System.out.println("RRD4J base directory: " + Util.getRrd4jHomeDirectory());
         long time = Util.getTime();
-        System.out.println("Current timestamp: " + time + ": " + new Date(time * 1000L));
+        System.out.println("Current time: " + time + ": " + new Date(time * 1000L));
         System.out.println("------------------------------------------------------------------");
         System.out.println("For the latest information visit: https://rrd4j.dev.java.net");
-        System.out.println("(C) 2003-2006 Sasa Markovic. All rights reserved.");
+        System.out.println("(C) 2003-2007 Sasa Markovic and Mathias Bogaert. All rights reserved.");
     }
 
 }

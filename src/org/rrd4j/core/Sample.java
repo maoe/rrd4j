@@ -27,6 +27,7 @@ package org.rrd4j.core;
 
 import java.io.IOException;
 import java.util.StringTokenizer;
+import java.util.Arrays;
 
 /**
  * <p>Class to represent data source values for the given timestamp. Objects of this
@@ -55,19 +56,23 @@ public class Sample {
     private long time;
     private final String[] dsNames;
     private final double[] values;
+    private final double[] nanValues;
 
     Sample(RrdDb parentDb, long time) throws IOException {
         this.parentDb = parentDb;
         this.time = time;
+
         this.dsNames = parentDb.getDsNames();
+        Arrays.sort(dsNames);
+
         values = new double[dsNames.length];
-        clearCurrentValues();
+        nanValues = new double[dsNames.length];
+        Arrays.fill(nanValues, Double.NaN);
+        clearValues();
     }
 
-    private Sample clearCurrentValues() {
-        for (int i = 0; i < values.length; i++) {
-            values[i] = Double.NaN;
-        }
+    private Sample clearValues() {
+        System.arraycopy(nanValues, 0, values, 0, values.length);
         return this;
     }
 
@@ -80,13 +85,12 @@ public class Sample {
      * @throws IllegalArgumentException Thrown if invalid data source name is supplied.
      */
     public Sample setValue(String dsName, double value) {
-        for (int i = 0; i < values.length; i++) {
-            if (dsNames[i].equals(dsName)) {
-                values[i] = value;
-                return this;
-            }
+        int i = Arrays.binarySearch(dsNames, dsName);
+        if (i < 0) {
+            throw new IllegalArgumentException("Datasource " + dsName + " not found");
         }
-        throw new IllegalArgumentException("Datasource " + dsName + " not found");
+        values[i] = value;
+        return this;
     }
 
     /**
@@ -221,7 +225,7 @@ public class Sample {
      */
     public void update() throws IOException {
         parentDb.store(this);
-        clearCurrentValues();
+        clearValues();
     }
 
     /**

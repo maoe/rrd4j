@@ -5,6 +5,7 @@ import com.sleepycat.je.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.ConcurrentSkipListSet;
+import java.util.Set;
 
 /**
  * {@link RrdBackendFactory} that uses <a href="http://www.oracle.com/technology/products/berkeley-db/je/index.html">Oracle Berkeley DB Java Edition</a>
@@ -25,7 +26,7 @@ public class RrdBerkeleyDbBackendFactory extends RrdBackendFactory  {
     private Database rrdDatabase;
     private String rrdDatabaseName = "rrd4j";
 
-    private final ConcurrentSkipListSet<String> knownPaths = new ConcurrentSkipListSet<String>();
+    private final Set<String> knownPaths = new ConcurrentSkipListSet<String>();
 
     public void init() throws Exception {
         // set the RRD backend factory
@@ -72,17 +73,18 @@ public class RrdBerkeleyDbBackendFactory extends RrdBackendFactory  {
         }
     }
 
-    public void delete(String uniqueKey) {
+    public void delete(String path) {
         try {
-            knownPaths.remove(uniqueKey);
-            rrdDatabase.delete(null, new DatabaseEntry(uniqueKey.getBytes("UTF-8")));
+            rrdDatabase.delete(null, new DatabaseEntry(path.getBytes("UTF-8")));
         }
         catch (DatabaseException de) {
             throw new RuntimeException(de.getMessage(), de);
         }
         catch (IOException ie) {
-            throw new IllegalArgumentException(uniqueKey + ": " + ie.getMessage(), ie);
+            throw new IllegalArgumentException(path + ": " + ie.getMessage(), ie);
         }
+
+        knownPaths.remove(path);
     }
 
     /**

@@ -46,9 +46,9 @@ public class Datasource implements RrdUpdater {
     private final RrdDb parentDb;
 
     // definition
-    private RrdString dsName, dsType;
-    private RrdLong heartbeat;
-    private RrdDouble minValue, maxValue;
+    private final RrdString dsName, dsType;
+    private final RrdLong heartbeat;
+    private final RrdDouble minValue, maxValue;
 
     // state variables
     private RrdDouble lastValue;
