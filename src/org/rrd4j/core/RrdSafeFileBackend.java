@@ -26,8 +26,9 @@
 package org.rrd4j.core;
 
 import java.io.IOException;
-import java.nio.channels.FileLock;
 import java.nio.channels.FileChannel;
+import java.nio.channels.FileLock;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * Backend which is used to store RRD data to ordinary files on the disk, using locking. This backend
@@ -37,107 +38,112 @@ import java.nio.channels.FileChannel;
  * since it does not use fast java.nio.* package (it's still based on the RandomAccessFile class).
  */
 public class RrdSafeFileBackend extends RrdFileBackend {
-	private static final Counters counters = new Counters();
+    private static final Counters counters = new Counters();
 
-	private FileLock lock;
+    private FileLock lock;
 
-	/**
-	 * Creates RrdFileBackend object for the given file path, backed by RandomAccessFile object.
-	 *
-	 * @param path Path to a file
-	 * @throws IOException Thrown in case of I/O error
-	 */
-	public RrdSafeFileBackend(String path, long lockWaitTime, long lockRetryPeriod)
-			throws IOException {
-		super(path, false);
-		try {
-			lockFile(lockWaitTime, lockRetryPeriod);
-		}
-		catch (IOException ioe) {
-			super.close();
-			throw ioe;
-		}
-	}
+    /**
+     * Creates RrdFileBackend object for the given file path, backed by RandomAccessFile object.
+     *
+     * @param path Path to a file
+     * @throws IOException Thrown in case of I/O error
+     */
+    public RrdSafeFileBackend(String path, long lockWaitTime, long lockRetryPeriod)
+            throws IOException {
+        super(path, false);
+        try {
+            lockFile(lockWaitTime, lockRetryPeriod);
+        }
+        catch (IOException ioe) {
+            super.close();
+            throw ioe;
+        }
+    }
 
-	private void lockFile(long lockWaitTime, long lockRetryPeriod) throws IOException {
-		long entryTime = System.currentTimeMillis();
-		FileChannel channel = file.getChannel();
-		lock = channel.tryLock(0, Long.MAX_VALUE, false);
-		if (lock != null) {
-			counters.registerQuickLock();
-			return;
-		}
-		do {
-			try {
-				Thread.sleep(lockRetryPeriod);
-			}
-			catch (InterruptedException e) {
-				// NOP
-			}
-			lock = channel.tryLock(0, Long.MAX_VALUE, false);
-			if (lock != null) {
-				counters.registerDelayedLock();
-				return;
-			}
-		} while (System.currentTimeMillis() - entryTime <= lockWaitTime);
-		counters.registerError();
-		throw new IOException("Could not obtain exclusive lock on file: " + getPath() +
-				"] after " + lockWaitTime + " milliseconds");
-	}
+    private void lockFile(long lockWaitTime, long lockRetryPeriod) throws IOException {
+        long entryTime = System.currentTimeMillis();
+        FileChannel channel = file.getChannel();
+        lock = channel.tryLock(0, Long.MAX_VALUE, false);
+        if (lock != null) {
+            counters.registerQuickLock();
+            return;
+        }
+        do {
+            try {
+                Thread.sleep(lockRetryPeriod);
+            }
+            catch (InterruptedException e) {
+                // NOP
+            }
+            lock = channel.tryLock(0, Long.MAX_VALUE, false);
+            if (lock != null) {
+                counters.registerDelayedLock();
+                return;
+            }
+        }
+        while (System.currentTimeMillis() - entryTime <= lockWaitTime);
+        counters.registerError();
+        throw new IOException("Could not obtain exclusive lock on file: " + getPath() +
+                "] after " + lockWaitTime + " milliseconds");
+    }
 
-	public void close() throws IOException {
-		try {
-			if (lock != null) {
-				lock.release();
-				lock = null;
-				counters.registerUnlock();
-			}
-		}
-		finally {
-			super.close();
-		}
-	}
+    public void close() throws IOException {
+        try {
+            if (lock != null) {
+                lock.release();
+                lock = null;
+                counters.registerUnlock();
+            }
+        }
+        finally {
+            super.close();
+        }
+    }
 
-	/**
-	 * Defines the caching policy for this backend.
-	 *
-	 * @return <code>false</code>
-	 */
-	protected boolean isCachingAllowed() {
-		return false;
-	}
+    /**
+     * Defines the caching policy for this backend.
+     *
+     * @return <code>false</code>
+     */
+    protected boolean isCachingAllowed() {
+        return false;
+    }
 
-	public static String getLockInfo() {
-		return counters.getInfo();
-	}
+    public static String getLockInfo() {
+        return counters.getInfo();
+    }
 
-	static class Counters {
-		long locks, quickLocks, unlocks, locked, errors;
+    static class Counters {
+        AtomicLong locks = new AtomicLong(1);
+        AtomicLong quickLocks = new AtomicLong(1);
+        AtomicLong unlocks = new AtomicLong(1);
+        AtomicLong locked = new AtomicLong(1);
+        AtomicLong errors = new AtomicLong(1);
 
-		synchronized void registerQuickLock() {
-			locks++;
-			quickLocks++;
-			locked++;
-		}
+        void registerQuickLock() {
+            locks.getAndIncrement();
+            quickLocks.getAndIncrement();
+            locked.getAndIncrement();
+        }
 
-		synchronized void registerDelayedLock() {
-			locks++;
-			locked++;
-		}
+        synchronized void registerDelayedLock() {
+            locks.getAndIncrement();
+            locked.getAndIncrement();
+        }
 
-		synchronized void registerUnlock() {
-			unlocks++;
-			locked--;
-		}
+        synchronized void registerUnlock() {
+            unlocks.getAndIncrement();
+            locked.getAndDecrement();
+        }
 
-		synchronized void registerError() {
-			errors++;
-		}
+        synchronized void registerError() {
+            errors.getAndIncrement();
+        }
 
-		synchronized String getInfo() {
-			return "LOCKS=" + locks + ", " + "UNLOCKS=" + unlocks + ", " +
-					"DELAYED_LOCKS=" + (locks - quickLocks) + ", " + "LOCKED=" + locked + ", " +
-					"ERRORS=" + errors;
-		}
-	}
+        synchronized String getInfo() {
+            return "LOCKS=" + locks + ", " + "UNLOCKS=" + unlocks + ", " +
+                    "DELAYED_LOCKS=" + (locks.get() - quickLocks.get()) + ", " + "LOCKED=" + locked + ", " +
+                    "ERRORS=" + errors;
+        }
+    }
 }
