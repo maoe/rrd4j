@@ -14,6 +14,7 @@ import java.io.IOException;
  */
 public class RrdBerkeleyDbBackend extends RrdBackend {
     private byte[] buffer;
+    private boolean dirty = false;
     private final Database rrdDatabase;
 
     public RrdBerkeleyDbBackend(String path, Database rrdDatabase) {
@@ -33,6 +34,7 @@ public class RrdBerkeleyDbBackend extends RrdBackend {
         for (byte a : bytes) {
             buffer[pos++] = a;
         }
+        dirty = true;
     }
 
     protected synchronized void read(long offset, byte[] b) {
@@ -48,23 +50,25 @@ public class RrdBerkeleyDbBackend extends RrdBackend {
 
     protected void setLength(long length) throws IOException {
         if (length > Integer.MAX_VALUE) {
-            throw new IOException("Cannot create this big Berkeley DB backed RRD: " + length);
+            throw new IOException("Illegal RRD length: " + length);
         }
 
         buffer = new byte[(int) length];
     }
 
     public void close() throws IOException {
-        DatabaseEntry theKey = new DatabaseEntry(getPath().getBytes("UTF-8"));
-        DatabaseEntry theData = new DatabaseEntry(buffer);
+        if (dirty) {
+            DatabaseEntry theKey = new DatabaseEntry(getPath().getBytes("UTF-8"));
+            DatabaseEntry theData = new DatabaseEntry(buffer);
 
-        try {
-            // because the database was opened to support transactions, this write is performed
-            // using auto commit
-            rrdDatabase.put(null, theKey, theData);
-        }
-        catch (DatabaseException de) {
-            throw new IOException(de.getMessage(), de);
+            try {
+                // because the database was opened to support transactions, this write is performed
+                // using auto commit
+                rrdDatabase.put(null, theKey, theData);
+            }
+            catch (DatabaseException de) {
+                throw new IOException(de.getMessage(), de);
+            }
         }
     }
 
