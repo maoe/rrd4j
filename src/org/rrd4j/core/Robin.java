@@ -41,8 +41,8 @@ import java.io.IOException;
  */
 public class Robin implements RrdUpdater {
     private final Archive parentArc;
-    private RrdInt pointer;
-    private RrdDoubleArray values;
+    private final RrdInt pointer;
+    private final RrdDoubleArray values;
     private int rows;
 
     Robin(Archive parentArc, int rows, boolean shouldInitialize) throws IOException {
