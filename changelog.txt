@@ -1,3 +1,10 @@
+Changes in version 2.0.3
+------------------------
+* Major performance and locking improvements with the BerkeleyDB backend
+* 10% performance improvement in the Sample class (now uses binary searching to get the correct datasource)
+* JRobin RRD file compability
+* other minor changes
+
 Changes in version 2.0.2
 ------------------------
 * Minor improvements to RrdBerkeleyDbBackendFactory
