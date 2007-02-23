@@ -118,6 +118,8 @@ public class Aggregates {
                 return last;
             case MAX:
                 return max;
+            case MIN:
+                return min;
             case TOTAL:
                 return total;
         }
