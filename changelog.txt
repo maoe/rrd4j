@@ -1,7 +1,9 @@
 Changes in version 2.0.4
 ------------------------
 * RrdSafeFileBackend uses AtomicLong to track it's lock counters
-* other minor changes
+* Fixed bugreport 2: in org.rrd4j.data.Aggregates.getAggregate(), the MIN case statement is missing. As
+a result, gprint statements cannot display the minimum value of a data series as an aggregate function.
+* Other minor changes
 
 Changes in version 2.0.3
 ------------------------
@@ -9,7 +11,7 @@ Changes in version 2.0.3
 * 10% performance improvement in the Sample class (now uses binary searching to get the correct datasource)
 * JRobin RRD file compability
 * Less synchronization in RrdBackendFactory
-* other minor changes
+* Other minor changes
 
 Changes in version 2.0.2
 ------------------------
