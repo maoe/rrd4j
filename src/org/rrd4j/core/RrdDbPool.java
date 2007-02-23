@@ -5,7 +5,7 @@
  * Project Info:  http://www.rrd4j.org
  * Project Lead:  Mathias Bogaert (m.bogaert@memenco.com)
  *
- * (C) Copyright 2003-2006, by Sasa Markovic.
+ * (C) Copyright 2003-2007, by Sasa Markovic.
  *
  * Developers:    Sasa Markovic
  *

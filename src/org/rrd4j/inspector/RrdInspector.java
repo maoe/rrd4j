@@ -25,21 +25,23 @@
 
 package org.rrd4j.inspector;
 
-import org.rrd4j.core.*;
 import org.rrd4j.ConsolFun;
+import org.rrd4j.core.ArcDef;
+import org.rrd4j.core.DsDef;
+import org.rrd4j.core.RrdDb;
+import org.rrd4j.core.RrdToolkit;
 
 import javax.swing.*;
-import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.filechooser.FileFilter;
-import javax.swing.event.TreeSelectionListener;
 import javax.swing.event.TreeSelectionEvent;
-import javax.swing.tree.TreeSelectionModel;
+import javax.swing.event.TreeSelectionListener;
+import javax.swing.filechooser.FileFilter;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
+import javax.swing.tree.TreeSelectionModel;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
-import java.io.IOException;
 
 /**
  * Utility application (swing) to analyze, change and plot content of Rrd4j RRD files.
@@ -51,7 +53,7 @@ public class RrdInspector extends JFrame {
     static final Dimension MAIN_TREE_SIZE = new Dimension(250, 400);
     static final Dimension INFO_PANE_SIZE = new Dimension(450, 400);
     static final String ABOUT = "RRD4J project\nRrdInspector utility\n" +
-            "Copyright (C) 2003-2006 Sasa Markovic. All rights reserved.";
+            "Copyright (C) 2003-2007 Sasa Markovic. All rights reserved.";
 
     static {
         try {

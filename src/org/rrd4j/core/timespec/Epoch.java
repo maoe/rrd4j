@@ -60,7 +60,7 @@ public class Epoch extends JFrame {
 		}
 		tooltipBuff.append("<b>AT-style time specification</b><br>");
 		tooltipBuff.append("timestamp<br><br>");
-		tooltipBuff.append("Copyright (C) 2003-2006 Sasa Markovic, All Rights Reserved</html>");
+		tooltipBuff.append("Copyright (C) 2003-2007 Sasa Markovic, All Rights Reserved</html>");
 		helpText = tooltipBuff.toString();
 	}
 
