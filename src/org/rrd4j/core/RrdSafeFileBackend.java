@@ -114,11 +114,11 @@ public class RrdSafeFileBackend extends RrdFileBackend {
     }
 
     static class Counters {
-        AtomicLong locks = new AtomicLong(1);
-        AtomicLong quickLocks = new AtomicLong(1);
-        AtomicLong unlocks = new AtomicLong(1);
-        AtomicLong locked = new AtomicLong(1);
-        AtomicLong errors = new AtomicLong(1);
+        AtomicLong locks = new AtomicLong(0);
+        AtomicLong quickLocks = new AtomicLong(0);
+        AtomicLong unlocks = new AtomicLong(0);
+        AtomicLong locked = new AtomicLong(0);
+        AtomicLong errors = new AtomicLong(0);
 
         void registerQuickLock() {
             locks.getAndIncrement();
