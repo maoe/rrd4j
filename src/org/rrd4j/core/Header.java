@@ -51,7 +51,11 @@ public class Header implements RrdUpdater {
 	private RrdInt dsCount, arcCount;
 	private RrdLong lastUpdateTime;
 
-	Header(RrdDb parentDb, RrdDef rrdDef) throws IOException {
+    Header(RrdDb parentDb, RrdDef rrdDef) throws IOException {
+        this(parentDb, rrdDef, DEFAULT_SIGNATURE);
+    }
+
+    Header(RrdDb parentDb, RrdDef rrdDef, String initSignature) throws IOException {
 		this.parentDb = parentDb;
 
         signature = new RrdString(this);	 		// NOT constant, may be cached
@@ -61,7 +65,7 @@ public class Header implements RrdUpdater {
 		lastUpdateTime = new RrdLong(this);
 
         if(rrdDef != null) {
-			signature.set(DEFAULT_SIGNATURE);
+			signature.set(initSignature);
 			step.set(rrdDef.getStep());
 			dsCount.set(rrdDef.getDsCount());
 			arcCount.set(rrdDef.getArcCount());
@@ -194,7 +198,7 @@ public class Header implements RrdUpdater {
 	}
 
 	boolean isRrd4jHeader() throws IOException {
-		return signature.get().startsWith(SIGNATURE);
+		return signature.get().startsWith(SIGNATURE) || signature.get().startsWith("JR"); // backwards compatible with JRobin
 	}
 
 	void validateHeader() throws IOException {

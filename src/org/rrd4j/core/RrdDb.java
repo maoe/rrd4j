@@ -126,9 +126,9 @@ public class RrdDb implements RrdUpdater {
     }
 
     /**
-     * <p>Constructor used to create new RRD object from the definition object but with a storage
-     * (backend) different from default.</p>
-     * <p/>
+     * Constructor used to create new RRD object from the definition object but with a storage
+     * (backend) different from default.
+     *
      * <p>Rrd4j uses <i>factories</i> to create RRD backend objecs. There are three different
      * backend factories supplied with Rrd4j, and each factory has its unique name:</p>
      * <p/>
@@ -159,7 +159,6 @@ public class RrdDb implements RrdUpdater {
      * @see RrdBackendFactory
      */
     public RrdDb(RrdDef rrdDef, RrdBackendFactory factory) throws IOException {
-
         if (!rrdDef.hasDatasources()) {
             throw new IllegalArgumentException("No RRD datasource specified. At least one is needed.");
         }
@@ -193,9 +192,9 @@ public class RrdDb implements RrdUpdater {
     }
 
     /**
-     * <p>Constructor used to open already existing RRD. This RRD object will be backed
+     * Constructor used to open already existing RRD. This RRD object will be backed
      * with a storage (backend) of the default type (file on the disk). Constructor
-     * obtains read or read/write access to this RRD.</p>
+     * obtains read or read/write access to this RRD.
      *
      * @param path     Path to existing RRD.
      * @param readOnly Should be set to <code>false</code> if you want to update
@@ -210,9 +209,9 @@ public class RrdDb implements RrdUpdater {
     }
 
     /**
-     * <p>Constructor used to open already existing RRD backed
+     * Constructor used to open already existing RRD backed
      * with a storage (backend) different from default. Constructor
-     * obtains read or read/write access to this RRD.</p>
+     * obtains read or read/write access to this RRD.
      *
      * @param path     Path to existing RRD.
      * @param readOnly Should be set to <code>false</code> if you want to update
