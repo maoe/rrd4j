@@ -126,21 +126,21 @@ public class RrdSafeFileBackend extends RrdFileBackend {
             locked.getAndIncrement();
         }
 
-        synchronized void registerDelayedLock() {
+        void registerDelayedLock() {
             locks.getAndIncrement();
             locked.getAndIncrement();
         }
 
-        synchronized void registerUnlock() {
+        void registerUnlock() {
             unlocks.getAndIncrement();
             locked.getAndDecrement();
         }
 
-        synchronized void registerError() {
+        void registerError() {
             errors.getAndIncrement();
         }
 
-        synchronized String getInfo() {
+        String getInfo() {
             return "LOCKS=" + locks + ", " + "UNLOCKS=" + unlocks + ", " +
                     "DELAYED_LOCKS=" + (locks.get() - quickLocks.get()) + ", " + "LOCKED=" + locked + ", " +
                     "ERRORS=" + errors;
