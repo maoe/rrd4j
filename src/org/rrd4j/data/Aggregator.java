@@ -32,8 +32,8 @@ import java.util.Arrays;
 import java.util.List;
 
 class Aggregator {
-	private long timestamps[], step;
-	private double[] values;
+	private final long timestamps[], step;
+	private final double[] values;
 
 	Aggregator(long[] timestamps, double[] values) {
 		assert timestamps.length == values.length: "Incompatible timestamps/values arrays (unequal lengths)";
