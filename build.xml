@@ -6,7 +6,7 @@
  * Project Info:  http://www.rrd4j.org
  * Project Lead:  Mathias Bogaert (m.bogaert@memenco.com)
  *
- * (C) Copyright 2003-2005, by Sasa Markovic.
+ * (C) Copyright 2003-2007, by Sasa Markovic.
  *
  * This library is free software; you can redistribute it and/or modify it under the terms
  * of the GNU Lesser General Public License as published by the Free Software Foundation;
@@ -23,24 +23,24 @@
 -->
 
 <project name="rrd4j" default="rrd4j" basedir=".">
-	<description>RRD4J Build File</description>
+    <description>RRD4J Build File</description>
 
-	<!-- VARIABLES -->
-	<property name="version" value="2.0.4"/>
-	<property name="who" value="Mathias Bogaert &lt;m.bogaert@memenco.com&gt;"/>
+    <!-- VARIABLES -->
+    <property name="version" value="2.0.4"/>
+    <property name="who" value="Mathias Bogaert &lt;m.bogaert@memenco.com&gt;"/>
 
-	<property name="classes" value="classes"/>
-	<property name="doc" value="doc"/>
-	<property name="javadoc" value="${doc}/javadoc"/>
-	<property name="src" value="src"/>
-	<property name="lib" value="lib"/>
-	<property name="dist" value="dist"/>
-	<property name="tmpfile" value="tmp.tar"/>
-	<property name="lib-rrd4j" value="rrd4j-${version}.jar"/>
-	<property name="lib-inspector" value="inspector-${version}.jar"/>
-	<property name="lib-convertor" value="convertor-${version}.jar"/>
-	<property name="dist-prefix" value="rrd4j-${version}"/>
-	<property name="dist-file" value="${dist-prefix}.tar.gz"/>
+    <property name="classes" value="classes"/>
+    <property name="doc" value="doc"/>
+    <property name="javadoc" value="${doc}/javadoc"/>
+    <property name="src" value="src"/>
+    <property name="lib" value="lib"/>
+    <property name="dist" value="dist"/>
+    <property name="tmpfile" value="tmp.tar"/>
+    <property name="lib-rrd4j" value="rrd4j-${version}.jar"/>
+    <property name="lib-inspector" value="inspector-${version}.jar"/>
+    <property name="lib-convertor" value="convertor-${version}.jar"/>
+    <property name="dist-prefix" value="rrd4j-${version}"/>
+    <property name="dist-file" value="${dist-prefix}.tar.gz"/>
 
     <path id="class.path">
         <fileset dir="${lib}">
@@ -49,93 +49,93 @@
     </path>
 
     <!-- TARGETS -->
-	<target name="init">
-		<tstamp/>
-		<mkdir dir="${classes}"/>
-		<mkdir dir="${doc}"/>
-		<mkdir dir="${javadoc}"/>
-		<mkdir dir="${lib}"/>
-		<mkdir dir="${dist}"/>
-	</target>
+    <target name="init">
+        <tstamp/>
+        <mkdir dir="${classes}"/>
+        <mkdir dir="${doc}"/>
+        <mkdir dir="${javadoc}"/>
+        <mkdir dir="${lib}"/>
+        <mkdir dir="${dist}"/>
+    </target>
 
-	<target name="clean" depends="init">
-		<delete>
-			<fileset dir="${basedir}">
-				<include name="${classes}/**/*.class"/>
-				<include name="${doc}/**/*"/>
-				<include name="${dist}/**/*"/>
-			</fileset>
-		</delete>
-	</target>
+    <target name="clean" depends="init">
+        <delete>
+            <fileset dir="${basedir}">
+                <include name="${classes}/**/*.class"/>
+                <include name="${doc}/**/*"/>
+                <include name="${dist}/**/*"/>
+            </fileset>
+        </delete>
+    </target>
 
-	<target name="compile" depends="init">
-		<javac srcdir="${src}"
+    <target name="compile" depends="init">
+        <javac srcdir="${src}"
                destdir="${classes}"
                classpathref="class.path"
                compiler="modern"
-               source="1.6" />
-	</target>
+               source="1.6"/>
+    </target>
 
-	<target name="rrd4j" depends="compile">
-		<delete file="${lib}/${lib-rrd4j}"/>
-		<jar jarfile="${lib}/${lib-rrd4j}" basedir="${classes}">
-			<manifest>
-				<attribute name="Main-Class" value="org.rrd4j.cmd.RrdCommander"/>
-			</manifest>
+    <target name="rrd4j" depends="compile">
+        <delete file="${lib}/${lib-rrd4j}"/>
+        <jar jarfile="${lib}/${lib-rrd4j}" basedir="${classes}">
+            <manifest>
+                <attribute name="Main-Class" value="org.rrd4j.cmd.RrdCommander"/>
+            </manifest>
             <include name="org/rrd4j/*.class"/>
             <include name="org/rrd4j/cmd/**/*.class"/>
-			<include name="org/rrd4j/convertor/**/*.class"/>
-			<include name="org/rrd4j/core/**/*.class"/>
-			<include name="org/rrd4j/data/**/*.class"/>
-			<include name="org/rrd4j/demo/**/*.class"/>
-			<include name="org/rrd4j/graph/**/*.class"/>
-			<include name="org/rrd4j/inspector/**/*.class"/>
-		</jar>
-		<delete file="${lib}/${lib-convertor}"/>
-		<jar jarfile="${lib}/${lib-convertor}" basedir="${classes}">
-			<manifest>
-				<attribute name="Main-Class" value="org.rrd4j.convertor.Convertor"/>
-				<attribute name="Class-Path" value="${lib-rrd4j}"/>
-			</manifest>
-			<include name="org/rrd4j/convertor/**/*.class"/>
-		</jar>
-		<jar jarfile="${lib}/${lib-inspector}" basedir="${classes}">
-			<manifest>
-				<attribute name="Main-Class" value="org.rrd4j.inspector.RrdInspector"/>
-				<attribute name="Class-Path" value="${lib-rrd4j}"/>
-			</manifest>
-			<include name="org/rrd4j/inspector/**/*.class"/>
-		</jar>
-	</target>
+            <include name="org/rrd4j/convertor/**/*.class"/>
+            <include name="org/rrd4j/core/**/*.class"/>
+            <include name="org/rrd4j/data/**/*.class"/>
+            <include name="org/rrd4j/demo/**/*.class"/>
+            <include name="org/rrd4j/graph/**/*.class"/>
+            <include name="org/rrd4j/inspector/**/*.class"/>
+        </jar>
+        <delete file="${lib}/${lib-convertor}"/>
+        <jar jarfile="${lib}/${lib-convertor}" basedir="${classes}">
+            <manifest>
+                <attribute name="Main-Class" value="org.rrd4j.convertor.Convertor"/>
+                <attribute name="Class-Path" value="${lib-rrd4j}"/>
+            </manifest>
+            <include name="org/rrd4j/convertor/**/*.class"/>
+        </jar>
+        <jar jarfile="${lib}/${lib-inspector}" basedir="${classes}">
+            <manifest>
+                <attribute name="Main-Class" value="org.rrd4j.inspector.RrdInspector"/>
+                <attribute name="Class-Path" value="${lib-rrd4j}"/>
+            </manifest>
+            <include name="org/rrd4j/inspector/**/*.class"/>
+        </jar>
+    </target>
 
-	<target name="javadoc" depends="compile">
-		<javadoc author="false" version="false"
-			destdir="${javadoc}"
-			packagenames="org.rrd4j.cmd.*,org.rrd4j.convertor.*,org.rrd4j.core.*,org.rrd4j.data.*,org.rrd4j.demo.*,org.rrd4j.graph.*,org.rrd4j.inspector.*"
-			excludepackagenames="org.rrd4j.core.jrrd.*"
-			source="1.5"
-			sourcepath="${src}"
-			access="protected"
-			/>
-	</target>
+    <target name="javadoc" depends="compile">
+        <javadoc author="false" version="false"
+                 destdir="${javadoc}"
+                 packagenames="org.rrd4j.cmd.*,org.rrd4j.convertor.*,org.rrd4j.core.*,org.rrd4j.data.*,org.rrd4j.demo.*,org.rrd4j.graph.*,org.rrd4j.inspector.*"
+                 excludepackagenames="org.rrd4j.core.jrrd.*"
+                 source="1.6"
+                 sourcepath="${src}"
+                 access="protected"
+                />
+    </target>
 
-	<target name="dist" depends="clean,rrd4j,javadoc">
-		<tar destfile="${dist}/${tmpfile}">
-			<tarfileset dir="${doc}" prefix="${dist-prefix}/${doc}">
-				<include name="**/*"/>
-			</tarfileset>
-			<tarfileset dir="${lib}" prefix="${dist-prefix}/${lib}">
-				<include name="**/*"/>
-			</tarfileset>
-			<tarfileset dir="${src}" prefix="${dist-prefix}/${src}">
-				<include name="**/*.java"/>
-			</tarfileset>
-			<tarfileset dir="${classes}" prefix="${dist-prefix}/${classes}">
-				<include name="**/*.class"/>
-			</tarfileset>
-		</tar>
-		<gzip src="${dist}/${tmpfile}" zipfile="${dist}/${dist-file}"/>
-		<delete file="${dist}/${tmpfile}"/>
-	</target>
+    <target name="dist" depends="clean,rrd4j,javadoc">
+        <tar destfile="${dist}/${tmpfile}">
+            <tarfileset dir="${doc}" prefix="${dist-prefix}/${doc}">
+                <include name="**/*"/>
+            </tarfileset>
+            <tarfileset dir="${lib}" prefix="${dist-prefix}/${lib}">
+                <include name="**/*"/>
+            </tarfileset>
+            <tarfileset dir="${src}" prefix="${dist-prefix}/${src}">
+                <include name="**/*.java"/>
+            </tarfileset>
+            <tarfileset dir="${classes}" prefix="${dist-prefix}/${classes}">
+                <include name="**/*.class"/>
+            </tarfileset>
+        </tar>
+        <gzip src="${dist}/${tmpfile}" zipfile="${dist}/${dist-file}"/>
+        <delete file="${dist}/${tmpfile}"/>
+    </target>
 </project>
 
