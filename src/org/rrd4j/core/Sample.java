@@ -63,8 +63,6 @@ public class Sample {
         this.time = time;
 
         this.dsNames = parentDb.getDsNames();
-        Arrays.sort(dsNames);
-
         values = new double[dsNames.length];
         nanValues = new double[dsNames.length];
         Arrays.fill(nanValues, Double.NaN);
@@ -85,12 +83,13 @@ public class Sample {
      * @throws IllegalArgumentException Thrown if invalid data source name is supplied.
      */
     public Sample setValue(String dsName, double value) {
-        int i = Arrays.binarySearch(dsNames, dsName);
-        if (i < 0) {
-            throw new IllegalArgumentException("Datasource " + dsName + " not found");
+        for (int i = 0; i < values.length; i++) {
+            if (dsNames[i].equals(dsName)) {
+                values[i] = value;
+                return this;
+            }
         }
-        values[i] = value;
-        return this;
+        throw new IllegalArgumentException("Datasource " + dsName + " not found");
     }
 
     /**

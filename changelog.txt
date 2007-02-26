@@ -1,3 +1,7 @@
+Changes in version 2.0.5
+------------------------
+* Reverted changes to Sample in 2.0.3 (binary searching broke storage)
+
 Changes in version 2.0.4
 ------------------------
 * RrdSafeFileBackend uses AtomicLong to track it's lock counters
