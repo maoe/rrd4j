@@ -114,7 +114,7 @@ public class RrdBerkeleyDbBackendFactory extends RrdBackendFactory  {
     }
 
     protected boolean shouldValidateHeader(String path) {
-        return true;
+        return false;
     }
 
     // returns factory name

@@ -5,6 +5,7 @@ import com.sleepycat.je.DatabaseException;
 import com.sleepycat.je.Database;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 /**
  * Backend which is used to store RRD data to ordinary disk files
@@ -12,48 +13,24 @@ import java.io.IOException;
  *
  * @author <a href="mailto:m.bogaert@memenco.com">Mathias Bogaert</a>
  */
-public class RrdBerkeleyDbBackend extends RrdBackend {
-    private byte[] buffer;
-    private boolean dirty = false;
+public class RrdBerkeleyDbBackend extends RrdByteArrayBackend {
+    private volatile boolean dirty = false;
     private final Database rrdDatabase;
 
-    public RrdBerkeleyDbBackend(String path, Database rrdDatabase) {
+    protected RrdBerkeleyDbBackend(String path, Database rrdDatabase) {
         super(path);
-        this.buffer = new byte[0];
         this.rrdDatabase = rrdDatabase;
     }
 
-    public RrdBerkeleyDbBackend(byte[] buffer, String path, Database rrdDatabase) {
+    protected RrdBerkeleyDbBackend(byte[] buffer, String path, Database rrdDatabase) {
         super(path);
         this.buffer = buffer;
         this.rrdDatabase = rrdDatabase;
     }
 
-    protected synchronized void write(long offset, byte[] bytes) {
-        int pos = (int) offset;
-        for (byte a : bytes) {
-            buffer[pos++] = a;
-        }
+    protected synchronized void write(long offset, byte[] bytes) throws IOException {
+        super.write(offset, bytes);
         dirty = true;
-    }
-
-    protected synchronized void read(long offset, byte[] b) {
-        int pos = (int) offset;
-        for (int i = 0; i < b.length; i++) {
-            b[i] = buffer[pos++];
-        }
-    }
-
-    public long getLength() {
-        return buffer.length;
-    }
-
-    protected void setLength(long length) throws IOException {
-        if (length > Integer.MAX_VALUE) {
-            throw new IOException("Illegal RRD length: " + length);
-        }
-
-        buffer = new byte[(int) length];
     }
 
     public void close() throws IOException {
@@ -70,15 +47,5 @@ public class RrdBerkeleyDbBackend extends RrdBackend {
                 throw new IOException(de.getMessage(), de);
             }
         }
-    }
-
-    /**
-     * This method is overriden to disable high-level caching in frontend Rrd4j classes.
-     *
-     * @return Always returns <code>false</code>. There is no need to cache anything in high-level classes
-     *         since all RRD bytes are already in memory.
-     */
-    protected boolean isCachingAllowed() {
-        return false;
     }
 }

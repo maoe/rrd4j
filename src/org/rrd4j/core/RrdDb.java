@@ -76,7 +76,7 @@ public class RrdDb implements RrdUpdater {
     public static final String PREFIX_RRDTool = "rrdtool:/";
 
     // static final String RRDTOOL = "rrdtool";
-    static final int XML_INITIAL_BUFFER_CAPACITY = 100000; // bytes
+    static final int XML_BUFFER_CAPACITY = 100000; // bytes
 
     private RrdBackend backend;
     private RrdAllocator allocator = new RrdAllocator();
@@ -419,6 +419,7 @@ public class RrdDb implements RrdUpdater {
                 archives[i] = new Archive(this, reader, i);
             }
             reader.release();
+
             // XMLReader is a rather huge DOM tree, release memory ASAP
             reader = null;
         }
@@ -792,7 +793,7 @@ public class RrdDb implements RrdUpdater {
      * @throws IOException  Thrown in case of I/O related error
      */
     public synchronized String getXml() throws IOException {
-        ByteArrayOutputStream destination = new ByteArrayOutputStream(XML_INITIAL_BUFFER_CAPACITY);
+        ByteArrayOutputStream destination = new ByteArrayOutputStream(XML_BUFFER_CAPACITY);
         dumpXml(destination);
         return destination.toString();
     }

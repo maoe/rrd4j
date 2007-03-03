@@ -113,9 +113,9 @@ public class RrdGraphDef implements RrdGraphConstants {
 	int firstDayOfWeek = FIRST_DAY_OF_WEEK; // ok
 	boolean showSignature = true;
 
-	List<Source> sources = new ArrayList<Source>();
-	List<CommentText> comments = new ArrayList<CommentText>();
-	List<PlotElement> plotElements = new ArrayList<PlotElement>();
+	final List<Source> sources = new ArrayList<Source>();
+	final List<CommentText> comments = new ArrayList<CommentText>();
+	final List<PlotElement> plotElements = new ArrayList<PlotElement>();
 
 	/**
 	 * Creates RrdGraphDef object and sets default time span (default ending time is 'now',
@@ -835,8 +835,7 @@ public class RrdGraphDef implements RrdGraphConstants {
 	 * @param legend  Legend text.
 	 */
 	public void area(String srcName, Paint color, String legend) {
-		LegendText legendText = new LegendText(color, legend);
-		comments.add(legendText);
+		comments.add(new LegendText(color, legend));
 		plotElements.add(new Area(srcName, color));
 	}
 

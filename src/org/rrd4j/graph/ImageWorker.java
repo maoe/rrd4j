@@ -38,6 +38,8 @@ import java.io.*;
 class ImageWorker {
     private static final String DUMMY_TEXT = "Dummy";
 
+    static final int IMG_BUFFER_CAPACITY = 10000; // bytes
+
     private BufferedImage img;
     private Graphics2D gd;
     private int imgWidth, imgHeight;
@@ -210,7 +212,7 @@ class ImageWorker {
     }
 
     byte[] getImageBytes(String type, float quality) throws IOException {
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        ByteArrayOutputStream stream = new ByteArrayOutputStream(IMG_BUFFER_CAPACITY);
         try {
             saveImage(stream, type, quality);
             return stream.toByteArray();
