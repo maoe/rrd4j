@@ -61,7 +61,7 @@ public class RrdBerkeleyDbBackendFactory extends RrdBackendFactory  {
             DatabaseEntry theData = new DatabaseEntry();
 
             try {
-                rrdDatabase.get(null, theKey, theData, LockMode.READ_UNCOMMITTED);
+                rrdDatabase.get(null, theKey, theData, LockMode.DEFAULT);
                 return new RrdBerkeleyDbBackend(theData.getData(), path, rrdDatabase);
             }
             catch (DatabaseException de) {
@@ -98,7 +98,7 @@ public class RrdBerkeleyDbBackendFactory extends RrdBackendFactory  {
             DatabaseEntry theData = new DatabaseEntry();
 
             try {
-                boolean pathExists = rrdDatabase.get(null, theKey, theData, LockMode.READ_UNCOMMITTED) == OperationStatus.SUCCESS;
+                boolean pathExists = rrdDatabase.get(null, theKey, theData, LockMode.DEFAULT) == OperationStatus.SUCCESS;
                 if (pathExists) {
                     knownPaths.add(path);
                 }
