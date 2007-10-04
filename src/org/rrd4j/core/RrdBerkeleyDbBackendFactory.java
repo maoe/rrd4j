@@ -4,8 +4,8 @@ import com.sleepycat.je.*;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 /**
  * {@link RrdBackendFactory} that uses <a href="http://www.oracle.com/technology/products/berkeley-db/je/index.html">Oracle Berkeley DB Java Edition</a>
@@ -26,7 +26,7 @@ public class RrdBerkeleyDbBackendFactory extends RrdBackendFactory  {
     private Database rrdDatabase;
     private String rrdDatabaseName = "rrd4j";
 
-    private final Set<String> knownPaths = new ConcurrentSkipListSet<String>();
+    private final Set<String> knownPaths = new CopyOnWriteArraySet<String>();
 
     public void init() throws Exception {
         // set the RRD backend factory
@@ -65,7 +65,7 @@ public class RrdBerkeleyDbBackendFactory extends RrdBackendFactory  {
                 return new RrdBerkeleyDbBackend(theData.getData(), path, rrdDatabase);
             }
             catch (DatabaseException de) {
-                throw new IOException(de.getMessage(), de);
+                throw new IOException("BerkeleyDB DatabaseException on " + path + "; " + de.getMessage());
             }
         }
         else {
@@ -105,7 +105,7 @@ public class RrdBerkeleyDbBackendFactory extends RrdBackendFactory  {
                 return pathExists;
             }
             catch (DatabaseException de) {
-                throw new IOException(de.getMessage(), de);
+                throw new IOException("BerkeleyDB DatabaseException on " + path + "; " + de.getMessage());
             }
         }
         else {

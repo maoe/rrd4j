@@ -175,28 +175,29 @@ public class Demo {
 		gDef.setEndTime(end);
 		gDef.setTitle("Temperatures in May 2003");
 		gDef.setVerticalLabel("temperature");
-		gDef.datasource("sun", rrdRestoredPath, "sun", AVERAGE);
+
+        gDef.datasource("sun", rrdRestoredPath, "sun", AVERAGE);
 		gDef.datasource("shade", rrdRestoredPath, "shade", AVERAGE);
 		gDef.datasource("median", "sun,shade,+,2,/");
 		gDef.datasource("diff", "sun,shade,-,ABS,-1,*");
-		gDef.datasource("sine", "TIME," + start + ",-," + (end - start) +
-				",/,2,PI,*,*,SIN,1000,*");
-		gDef.line("sun", Color.GREEN, "sun temp");
+		gDef.datasource("sine", "TIME," + start + ",-," + (end - start) + ",/,2,PI,*,*,SIN,1000,*");
+
+        gDef.line("sun", Color.GREEN, "sun temp");
 		gDef.line("shade", Color.BLUE, "shade temp");
 		gDef.line("median", Color.MAGENTA, "median value");
-		gDef.area("diff", Color.YELLOW, "difference\\r");
+		gDef.area("diff", Color.YELLOW, "difference");
 		gDef.line("diff", Color.RED, null);
-		gDef.line("sine", Color.CYAN, "sine function demo\\r");
+		gDef.line("sine", Color.CYAN, "sine fun");
 		gDef.hrule(2568, Color.GREEN, "hrule");
-		gDef.vrule((start + 2 * end) / 3, Color.MAGENTA, "vrule\\r");
-		gDef.gprint("sun", MAX, "maxSun = %.3f%s");
-		gDef.gprint("sun", AVERAGE, "avgSun = %.3f%S\\r");
+		gDef.vrule((start + 2 * end) / 3, Color.MAGENTA, "vrule\\c");
+
+        gDef.comment("\\r");
+
+        gDef.gprint("sun", MAX, "maxSun = %.3f%s");
+		gDef.gprint("sun", AVERAGE, "avgSun = %.3f%S\\c");
 		gDef.gprint("shade", MAX, "maxShade = %.3f%S");
-		gDef.gprint("shade", AVERAGE, "avgShade = %.3f%S\\r");
-		gDef.print("sun", MAX, "maxSun = %.3f%s");
-		gDef.print("sun", AVERAGE, "avgSun = %.3f%S\\r");
-		gDef.print("shade", MAX, "maxShade = %.3f%S");
-		gDef.print("shade", AVERAGE, "avgShade = %.3f%S\\r");
+		gDef.gprint("shade", AVERAGE, "avgShade = %.3f%S\\c");
+
 		gDef.setImageInfo("<img src='%s' width='%d' height = '%d'>");
 		gDef.setPoolUsed(false);
 		gDef.setImageFormat("png");

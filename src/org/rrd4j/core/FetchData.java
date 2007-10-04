@@ -252,7 +252,7 @@ public class FetchData {
 	 * Dumps the content of the whole FetchData object. Useful for debugging.
 	 */
 	public String dump() {
-		StringBuilder buffer = new StringBuilder("");
+		StringBuilder buffer = new StringBuilder();
 		for (int row = 0; row < getRowCount(); row++) {
 			buffer.append(timestamps[row]);
 			buffer.append(":  ");

@@ -6,7 +6,7 @@
  * Project Info:  http://www.rrd4j.org
  * Project Lead:  Mathias Bogaert (m.bogaert@memenco.com)
  *
- * (C) Copyright 2003-2007, by Sasa Markovic.
+ * (C) Copyright 2003-2007, by Sasa Markovic, Mathias Bogaert.
  *
  * This library is free software; you can redistribute it and/or modify it under the terms
  * of the GNU Lesser General Public License as published by the Free Software Foundation;
@@ -113,7 +113,7 @@
                  destdir="${javadoc}"
                  packagenames="org.rrd4j.cmd.*,org.rrd4j.convertor.*,org.rrd4j.core.*,org.rrd4j.data.*,org.rrd4j.demo.*,org.rrd4j.graph.*,org.rrd4j.inspector.*"
                  excludepackagenames="org.rrd4j.core.jrrd.*"
-                 source="1.6"
+                 source="1.5"
                  sourcepath="${src}"
                  access="protected"
                 />
