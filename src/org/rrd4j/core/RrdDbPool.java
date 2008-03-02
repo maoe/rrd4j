@@ -26,47 +26,32 @@
 package org.rrd4j.core;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
-/**
- * This class should be used to synchronize access to RRD files
- * in a multithreaded environment. This class should be also used to prevent opening of
- * too many RRD files at the same time (thus avoiding operating system limits).
- */
-public class RrdDbPool {
+public abstract class RrdDbPool {
+	private static class RrdDbPoolSingletonHolder {
+		static RrdDbPool instance;
+	}
+
+	/**
+	 * Creates a single instance of the class on the first call,
+	 * or returns already existing one. Uses Initialization On Demand Holder idiom.
+	 *
+	 * @return Single instance of this class
+	 * @throws RuntimeException Thrown if the default RRD backend is not derived from the {@link RrdFileBackendFactory}
+	 */
+	public static synchronized RrdDbPool getInstance() {
+		if(RrdDbPoolSingletonHolder.instance == null) {
+			RrdDbPoolSingletonHolder.instance = new RrdDbPoolNew();
+		}
+		return RrdDbPoolSingletonHolder.instance;
+	}
+
+
 	/**
 	 * Initial capacity of the pool i.e. maximum number of simultaneously open RRD files. The pool will
 	 * never open too many RRD files at the same time.
 	 */
 	public static final int INITIAL_CAPACITY = 200;
-
-    private static class RrdDbPoolSingletonHolder {
-        static RrdDbPool instance = new RrdDbPool();
-    }
-
-	private int capacity = INITIAL_CAPACITY;
-	private Map<String, RrdEntry> rrdMap = new HashMap<String, RrdEntry>(INITIAL_CAPACITY);
-
-	/**
-	 * Creates a single instance of the class on the first call,
-     * or returns already existing one. Uses Initialization On Demand Holder idiom.
-	 *
-	 * @return Single instance of this class
-	 * @throws RuntimeException Thrown if the default RRD backend is not derived from the {@link RrdFileBackendFactory}
-	 */
-	public static RrdDbPool getInstance() {
-		return RrdDbPoolSingletonHolder.instance;
-	}
-
-	private RrdDbPool() {
-		RrdBackendFactory factory = RrdBackendFactory.getDefaultFactory();
-
-        if (!(factory instanceof RrdFileBackendFactory)) {
-			throw new RuntimeException("Cannot create instance of " + getClass().getName() + " with " +
-					"a default backend factory not derived from RrdFileBackendFactory");
-		}
-	}
 
 	/**
 	 * Requests a RrdDb reference for the given RRD file path.<p>
@@ -83,29 +68,7 @@ public class RrdDbPool {
 	 * @return reference for the give RRD file
 	 * @throws IOException  Thrown in case of I/O error
 	 */
-	public synchronized RrdDb requestRrdDb(String path) throws IOException {
-		String canonicalPath = Util.getCanonicalPath(path);
-		while (!rrdMap.containsKey(canonicalPath) && rrdMap.size() >= capacity) {
-			try {
-				wait();
-			}
-			catch (InterruptedException e) {
-				throw new RuntimeException(e);
-			}
-		}
-		if (rrdMap.containsKey(canonicalPath)) {
-			// already open, just increase usage count
-			RrdEntry entry = rrdMap.get(canonicalPath);
-			entry.count++;
-			return entry.rrdDb;
-		}
-		else {
-			// not open, open it now and add to the map
-			RrdDb rrdDb = new RrdDb(canonicalPath);
-			rrdMap.put(canonicalPath, new RrdEntry(rrdDb));
-			return rrdDb;
-		}
-	}
+	public abstract RrdDb requestRrdDb(String path) throws IOException;
 
 	/**
 	 * Requests a RrdDb reference for the given RRD file definition object.<p>
@@ -122,20 +85,7 @@ public class RrdDbPool {
 	 * @return Reference to the newly created RRD file
 	 * @throws IOException  Thrown in case of I/O error
 	 */
-	public synchronized RrdDb requestRrdDb(RrdDef rrdDef) throws IOException {
-		String canonicalPath = Util.getCanonicalPath(rrdDef.getPath());
-		while (rrdMap.containsKey(canonicalPath) || rrdMap.size() >= capacity) {
-			try {
-				wait();
-			}
-			catch (InterruptedException e) {
-				throw new RuntimeException(e);
-			}
-		}
-		RrdDb rrdDb = new RrdDb(rrdDef);
-		rrdMap.put(canonicalPath, new RrdEntry(rrdDb));
-		return rrdDb;
-	}
+	public abstract RrdDb requestRrdDb(RrdDef rrdDef) throws IOException;
 
 	/**
 	 * Requests a RrdDb reference for the given path. The file will be created from
@@ -154,20 +104,9 @@ public class RrdDbPool {
 	 * @return Reference to the newly created RRD file
 	 * @throws IOException  Thrown in case of I/O error
 	 */
-	public synchronized RrdDb requestRrdDb(String path, String sourcePath) throws IOException {
-		String canonicalPath = Util.getCanonicalPath(path);
-		while (rrdMap.containsKey(canonicalPath) || rrdMap.size() >= capacity) {
-			try {
-				wait();
-			}
-			catch (InterruptedException e) {
-				throw new RuntimeException(e);
-			}
-		}
-		RrdDb rrdDb = new RrdDb(canonicalPath, sourcePath);
-		rrdMap.put(canonicalPath, new RrdEntry(rrdDb));
-		return rrdDb;
-	}
+	public abstract RrdDb requestRrdDb(String path, String sourcePath)
+	throws IOException;
+
 
 	/**
 	 * Releases RrdDb reference previously obtained from the pool. When a reference is released, its usage
@@ -176,67 +115,34 @@ public class RrdDbPool {
 	 * @param rrdDb RrdDb reference to be returned to the pool
 	 * @throws IOException  Thrown in case of I/O error
 	 */
-	public synchronized void release(RrdDb rrdDb) throws IOException {
-		// null pointer should not kill the thread, just ignore it
-		if (rrdDb == null) {
-			return;
-		}
-		String canonicalPath = Util.getCanonicalPath(rrdDb.getPath());
-		if (!rrdMap.containsKey(canonicalPath)) {
-			throw new IllegalStateException("Could not release [" + canonicalPath + "], the file was never requested");
-		}
-		RrdEntry entry = rrdMap.get(canonicalPath);
-		if (--entry.count <= 0) {
-			// no longer used
-			rrdMap.remove(canonicalPath);
-			notifyAll();
-			entry.rrdDb.close();
-		}
-	}
+	public abstract void release(RrdDb rrdDb) throws IOException;
 
 	/**
 	 * Returns the maximum number of simultaneously open RRD files.
 	 *
 	 * @return maximum number of simultaneously open RRD files
 	 */
-	public synchronized int getCapacity() {
-		return capacity;
-	}
+	public abstract int getCapacity();
 
 	/**
 	 * Sets the maximum number of simultaneously open RRD files.
 	 *
 	 * @param capacity Maximum number of simultaneously open RRD files.
 	 */
-	public synchronized void setCapacity(int capacity) {
-		this.capacity = capacity;
-	}
+	public abstract void setCapacity(int capacity);
 
 	/**
 	 * Returns an array of open file names.
 	 *
 	 * @return Array with canonical paths to open RRD files held in the pool.
 	 */
-	public synchronized String[] getOpenFiles() {
-		return rrdMap.keySet().toArray(new String[0]);
-	}
+	public abstract String[] getOpenFiles();
 
 	/**
 	 * Returns the number of open RRD files.
 	 *
 	 * @return Number of currently open RRD files held in the pool.
 	 */
-	public synchronized int getOpenFileCount() {
-		return rrdMap.size();
-	}
+	public abstract int getOpenFileCount();
 
-	class RrdEntry {
-		RrdDb rrdDb;
-		int count;
-
-		RrdEntry(RrdDb rrdDb) {
-			this.rrdDb = rrdDb;
-			this.count = 1;
-		}
-	}
 }
