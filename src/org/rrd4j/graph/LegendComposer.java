@@ -89,7 +89,7 @@ class LegendComposer implements RrdGraphConstants {
 				return true;
 			}
 			// cannot accomodate if the last marker was \j, \l, \r, \c, \s
-			if (lastMarker.equals(ALIGN_LEFT_MARKER) || lastMarker.equals(ALIGN_CENTER_MARKER) ||
+			if (lastMarker.equals(ALIGN_LEFT_MARKER) || lastMarker.equals(ALIGN_LEFTNONL_MARKER) || lastMarker.equals(ALIGN_CENTER_MARKER) ||
 					lastMarker.equals(ALIGN_RIGHT_MARKER) || lastMarker.equals(ALIGN_JUSTIFIED_MARKER) ||
 					lastMarker.equals(VERTICAL_SPACING_MARKER)) {
 				return false;
@@ -116,7 +116,7 @@ class LegendComposer implements RrdGraphConstants {
 
 		void layoutAndAdvance(boolean isLastLine) {
 			if (comments.size() > 0) {
-				if (lastMarker.equals(ALIGN_LEFT_MARKER)) {
+				if (lastMarker.equals(ALIGN_LEFT_MARKER) || lastMarker.equals(ALIGN_LEFTNONL_MARKER) ) {
 					placeComments(legX, interlegendSpace);
 				}
 				else if (lastMarker.equals(ALIGN_RIGHT_MARKER)) {
@@ -146,11 +146,13 @@ class LegendComposer implements RrdGraphConstants {
 						placeComments(legX, (legWidth - width) / spaceCount + interlegendSpace);
 					}
 				}
-				if(lastMarker.equals(VERTICAL_SPACING_MARKER)) {
-					legY += smallLeading;
-				}
-				else {
-					legY += leading;
+				if(! lastMarker.equals(ALIGN_LEFTNONL_MARKER)) {
+					if(lastMarker.equals(VERTICAL_SPACING_MARKER)) {
+						legY += smallLeading;
+					}
+					else {
+						legY += leading;
+					}
 				}
 			}
 		}

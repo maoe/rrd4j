@@ -115,6 +115,8 @@ public interface RrdGraphConstants {
 
 	/** Constant to represent left alignment marker */
 	String ALIGN_LEFT_MARKER = "\\l";
+	/** Constant to represent left alignment marker, without new line */
+	String ALIGN_LEFTNONL_MARKER = "\\L";
 	/** Constant to represent centered alignment marker */
 	String ALIGN_CENTER_MARKER = "\\c";
 	/** Constant to represent right alignment marker */
@@ -129,7 +131,7 @@ public interface RrdGraphConstants {
 	String NO_JUSTIFICATION_MARKER = "\\J";
 	/** Used internally */
 	String[] MARKERS = {
-		ALIGN_LEFT_MARKER, ALIGN_CENTER_MARKER, ALIGN_RIGHT_MARKER,
+		ALIGN_LEFT_MARKER, ALIGN_LEFTNONL_MARKER, ALIGN_CENTER_MARKER, ALIGN_RIGHT_MARKER,
 		ALIGN_JUSTIFIED_MARKER, GLUE_MARKER, VERTICAL_SPACING_MARKER, NO_JUSTIFICATION_MARKER
 	};
 
