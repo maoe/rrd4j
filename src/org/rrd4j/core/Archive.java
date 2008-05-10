@@ -100,19 +100,18 @@ public class Archive implements RrdUpdater {
      * @throws IOException Thrown in case of I/O error.
      */
     public long getArcStep() throws IOException {
-        long step = parentDb.getHeader().getStep();
-        return step * steps.get();
+        return parentDb.getHeader().getStep() * steps.get();
     }
 
     String dump() throws IOException {
-        StringBuilder buffer = new StringBuilder("== ARCHIVE ==\n");
-        buffer.append("RRA:").append(consolFun.get()).append(":").append(xff.get()).append(":").append(steps.get()).append(":").append(rows.get()).append("\n");
-        buffer.append("interval [").append(getStartTime()).append(", ").append(getEndTime()).append("]" + "\n");
+        StringBuilder builder = new StringBuilder("== ARCHIVE ==\n");
+        builder.append("RRA:").append(consolFun.get()).append(":").append(xff.get()).append(":").append(steps.get()).append(":").append(rows.get()).append("\n");
+        builder.append("interval [").append(getStartTime()).append(", ").append(getEndTime()).append("]" + "\n");
         for (int i = 0; i < robins.length; i++) {
-            buffer.append(states[i].dump());
-            buffer.append(robins[i].dump());
+            builder.append(states[i].dump());
+            builder.append(robins[i].dump());
         }
-        return buffer.toString();
+        return builder.toString();
     }
 
     RrdDb getParentDb() {
