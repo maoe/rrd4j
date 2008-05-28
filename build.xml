@@ -49,7 +49,7 @@
                destdir="${classes}"
                classpathref="class.path"
                compiler="modern"
-               source="1.6"/>
+               source="1.5"/>
     </target>
 
     <target name="rrd4j" depends="compile">
