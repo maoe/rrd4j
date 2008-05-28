@@ -1,27 +1,3 @@
-/* ============================================================
- * Rrd4j : Pure java implementation of RRDTool's functionality
- * ============================================================
- *
- * Project Info:  http://www.rrd4j.org
- * Project Lead:  Mathias Bogaert (m.bogaert@memenco.com)
- *
- * (C) Copyright 2003-2007, by Sasa Markovic.
- *
- * Developers:    Sasa Markovic
- *
- *
- * This library is free software; you can redistribute it and/or modify it under the terms
- * of the GNU Lesser General Public License as published by the Free Software Foundation;
- * either version 2.1 of the License, or (at your option) any later version.
- *
- * This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
- * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License along with this
- * library; if not, write to the Free Software Foundation, Inc., 59 Temple Place, Suite 330,
- * Boston, MA 02111-1307, USA.
- */
 package org.rrd4j.graph;
 
 import org.rrd4j.ConsolFun;
@@ -271,56 +247,56 @@ import java.io.IOException;
 public class RrdGraphDefTemplate extends XmlTemplate implements RrdGraphConstants {
     static final Color BLIND_COLOR = new Color(0, 0, 0, 0);
 
-	private RrdGraphDef rrdGraphDef;
+    private RrdGraphDef rrdGraphDef;
 
-	/**
-	 * Creates template object from any parsable XML source
-	 *
-	 * @param inputSource XML source
-	 * @throws IOException  thrown in case of I/O error
-	 */
-	public RrdGraphDefTemplate(InputSource inputSource) throws IOException {
-		super(inputSource);
-	}
+    /**
+     * Creates template object from any parsable XML source
+     *
+     * @param inputSource XML source
+     * @throws IOException thrown in case of I/O error
+     */
+    public RrdGraphDefTemplate(InputSource inputSource) throws IOException {
+        super(inputSource);
+    }
 
-	/**
-	 * Creates template object from the file containing XML template code
-	 *
-	 * @param xmlFile file containing XML template
-	 * @throws IOException  thrown in case of I/O error
-	 */
-	public RrdGraphDefTemplate(File xmlFile) throws IOException {
-		super(xmlFile);
-	}
+    /**
+     * Creates template object from the file containing XML template code
+     *
+     * @param xmlFile file containing XML template
+     * @throws IOException thrown in case of I/O error
+     */
+    public RrdGraphDefTemplate(File xmlFile) throws IOException {
+        super(xmlFile);
+    }
 
-	/**
-	 * Creates template object from the string containing XML template code
-	 *
-	 * @param xmlString string containing XML template
-	 * @throws IOException  thrown in case of I/O error
-	 */
-	public RrdGraphDefTemplate(String xmlString) throws IOException {
-		super(xmlString);
-	}
+    /**
+     * Creates template object from the string containing XML template code
+     *
+     * @param xmlString string containing XML template
+     * @throws IOException thrown in case of I/O error
+     */
+    public RrdGraphDefTemplate(String xmlString) throws IOException {
+        super(xmlString);
+    }
 
-	/**
-	 * Creates RrdGraphDef object which can be used to create RrdGraph
-	 * object (actual Rrd4j graphs). Before this method is called, all template variables (if any)
-	 * must be resolved (replaced with real values).
-	 * See {@link XmlTemplate#setVariable(String, String) setVariable()} method information to
-	 * understand how to supply values for template variables.
-	 *
-	 * @return Graph definition which can be used to create RrdGraph object (actual Rrd4j graphs)
-	 */
-	public RrdGraphDef getRrdGraphDef() {
-		// basic check
-		if (!root.getTagName().equals("rrd_graph_def")) {
-			throw new IllegalArgumentException("XML definition must start with <rrd_graph_def>");
-		}
-		validateTagsOnlyOnce(root, new String[]{"filename", "span", "options", "datasources", "graph"});
-		rrdGraphDef = new RrdGraphDef();
-		// traverse all nodes
-		Node[] childNodes = getChildNodes(root);
+    /**
+     * Creates RrdGraphDef object which can be used to create RrdGraph
+     * object (actual Rrd4j graphs). Before this method is called, all template variables (if any)
+     * must be resolved (replaced with real values).
+     * See {@link XmlTemplate#setVariable(String, String) setVariable()} method information to
+     * understand how to supply values for template variables.
+     *
+     * @return Graph definition which can be used to create RrdGraph object (actual Rrd4j graphs)
+     */
+    public RrdGraphDef getRrdGraphDef() {
+        // basic check
+        if (!root.getTagName().equals("rrd_graph_def")) {
+            throw new IllegalArgumentException("XML definition must start with <rrd_graph_def>");
+        }
+        validateTagsOnlyOnce(root, new String[]{"filename", "span", "options", "datasources", "graph"});
+        rrdGraphDef = new RrdGraphDef();
+        // traverse all nodes
+        Node[] childNodes = getChildNodes(root);
         for (Node childNode : childNodes) {
             String nodeName = childNode.getNodeName();
             if (nodeName.equals("filename")) {
@@ -343,13 +319,13 @@ public class RrdGraphDefTemplate extends XmlTemplate implements RrdGraphConstant
                 resolveGraphElements(childNode);
             }
         }
-		return rrdGraphDef;
-	}
+        return rrdGraphDef;
+    }
 
-	private void resolveGraphElements(Node graphNode) {
-		validateTagsOnlyOnce(graphNode, new String[]{"area*", "line*", "stack*",
-													 "print*", "gprint*", "hrule*", "vrule*", "comment*"});
-		Node[] childNodes = getChildNodes(graphNode);
+    private void resolveGraphElements(Node graphNode) {
+        validateTagsOnlyOnce(graphNode, new String[]{"area*", "line*", "stack*",
+                "print*", "gprint*", "hrule*", "vrule*", "comment*"});
+        Node[] childNodes = getChildNodes(graphNode);
         for (Node childNode : childNodes) {
             String nodeName = childNode.getNodeName();
             if (nodeName.equals("area")) {
@@ -377,14 +353,14 @@ public class RrdGraphDefTemplate extends XmlTemplate implements RrdGraphConstant
                 rrdGraphDef.comment(getValue(childNode));
             }
         }
-	}
+    }
 
-	private void resolveVRule(Node parentNode) {
-		validateTagsOnlyOnce(parentNode, new String[]{"time", "color", "legend"});
-		long timestamp = Long.MIN_VALUE;
-		Paint color = null;
-		String legend = null;
-		Node[] childNodes = getChildNodes(parentNode);
+    private void resolveVRule(Node parentNode) {
+        validateTagsOnlyOnce(parentNode, new String[]{"time", "color", "legend"});
+        long timestamp = Long.MIN_VALUE;
+        Paint color = null;
+        String legend = null;
+        Node[] childNodes = getChildNodes(parentNode);
         for (Node childNode : childNodes) {
             String nodeName = childNode.getNodeName();
             if (nodeName.equals("time")) {
@@ -397,20 +373,20 @@ public class RrdGraphDefTemplate extends XmlTemplate implements RrdGraphConstant
                 legend = getValue(childNode);
             }
         }
-		if(timestamp != Long.MIN_VALUE && color != null) {
-			rrdGraphDef.vrule(timestamp, color, legend);
-		}
-		else {
-			throw new IllegalArgumentException("Incomplete VRULE settings");
-		}
-	}
+        if (timestamp != Long.MIN_VALUE && color != null) {
+            rrdGraphDef.vrule(timestamp, color, legend);
+        }
+        else {
+            throw new IllegalArgumentException("Incomplete VRULE settings");
+        }
+    }
 
-	private void resolveHRule(Node parentNode) {
-		validateTagsOnlyOnce(parentNode, new String[]{"value", "color", "legend"});
-		double value = Double.NaN;
-		Paint color = null;
-		String legend = null;
-		Node[] childNodes = getChildNodes(parentNode);
+    private void resolveHRule(Node parentNode) {
+        validateTagsOnlyOnce(parentNode, new String[]{"value", "color", "legend"});
+        double value = Double.NaN;
+        Paint color = null;
+        String legend = null;
+        Node[] childNodes = getChildNodes(parentNode);
         for (Node childNode : childNodes) {
             String nodeName = childNode.getNodeName();
             if (nodeName.equals("value")) {
@@ -423,17 +399,17 @@ public class RrdGraphDefTemplate extends XmlTemplate implements RrdGraphConstant
                 legend = getValue(childNode);
             }
         }
-		if(!Double.isNaN(value) && color != null) {
-			rrdGraphDef.hrule(value, color, legend);
-		}
-		else {
-			throw new IllegalArgumentException("Incomplete HRULE settings");
-		}
-	}
+        if (!Double.isNaN(value) && color != null) {
+            rrdGraphDef.hrule(value, color, legend);
+        }
+        else {
+            throw new IllegalArgumentException("Incomplete HRULE settings");
+        }
+    }
 
-	private void resolvePrint(Node parentNode, boolean isInGraph) {
-		validateTagsOnlyOnce(parentNode, new String[]{"datasource", "cf", "format"});
-		String datasource = null, format = null;
+    private void resolvePrint(Node parentNode, boolean isInGraph) {
+        validateTagsOnlyOnce(parentNode, new String[]{"datasource", "cf", "format"});
+        String datasource = null, format = null;
         ConsolFun consolFun = null;
         Node[] childNodes = getChildNodes(parentNode);
         for (Node childNode : childNodes) {
@@ -448,24 +424,24 @@ public class RrdGraphDefTemplate extends XmlTemplate implements RrdGraphConstant
                 format = getValue(childNode);
             }
         }
-		if(datasource != null && consolFun != null && format != null) {
-			if(isInGraph) {
-				rrdGraphDef.gprint(datasource, consolFun, format);
-			}
-			else {
-				rrdGraphDef.print(datasource, consolFun, format);
-			}
-		}
-		else {
-			throw new IllegalArgumentException("Incomplete " + (isInGraph? "GRPINT": "PRINT") + " settings");
-		}
-	}
+        if (datasource != null && consolFun != null && format != null) {
+            if (isInGraph) {
+                rrdGraphDef.gprint(datasource, consolFun, format);
+            }
+            else {
+                rrdGraphDef.print(datasource, consolFun, format);
+            }
+        }
+        else {
+            throw new IllegalArgumentException("Incomplete " + (isInGraph ? "GRPINT" : "PRINT") + " settings");
+        }
+    }
 
-	private void resolveStack(Node parentNode) {
-		validateTagsOnlyOnce(parentNode, new String[]{"datasource", "color", "legend"});
-		String datasource = null, legend = null;
-		Paint color = null;
-		Node[] childNodes = getChildNodes(parentNode);
+    private void resolveStack(Node parentNode) {
+        validateTagsOnlyOnce(parentNode, new String[]{"datasource", "color", "legend"});
+        String datasource = null, legend = null;
+        Paint color = null;
+        Node[] childNodes = getChildNodes(parentNode);
         for (Node childNode : childNodes) {
             String nodeName = childNode.getNodeName();
             if (nodeName.equals("datasource")) {
@@ -478,25 +454,25 @@ public class RrdGraphDefTemplate extends XmlTemplate implements RrdGraphConstant
                 legend = getValue(childNode);
             }
         }
-		if(datasource != null) {
-			if(color != null) {
-				rrdGraphDef.stack(datasource, color, legend);
-			}
-			else {
-				rrdGraphDef.stack(datasource, BLIND_COLOR, legend);
-			}
-		}
-		else {
-			throw new IllegalArgumentException("Incomplete STACK settings");
-		}
-	}
+        if (datasource != null) {
+            if (color != null) {
+                rrdGraphDef.stack(datasource, color, legend);
+            }
+            else {
+                rrdGraphDef.stack(datasource, BLIND_COLOR, legend);
+            }
+        }
+        else {
+            throw new IllegalArgumentException("Incomplete STACK settings");
+        }
+    }
 
-	private void resolveLine(Node parentNode) {
-		validateTagsOnlyOnce(parentNode, new String[]{"datasource", "color", "legend", "width"});
-		String datasource = null, legend = null;
-		Paint color = null;
-		float width = 1.0F;
-		Node[] childNodes = getChildNodes(parentNode);
+    private void resolveLine(Node parentNode) {
+        validateTagsOnlyOnce(parentNode, new String[]{"datasource", "color", "legend", "width"});
+        String datasource = null, legend = null;
+        Paint color = null;
+        float width = 1.0F;
+        Node[] childNodes = getChildNodes(parentNode);
         for (Node childNode : childNodes) {
             String nodeName = childNode.getNodeName();
             if (nodeName.equals("datasource")) {
@@ -512,24 +488,24 @@ public class RrdGraphDefTemplate extends XmlTemplate implements RrdGraphConstant
                 width = (float) getValueAsDouble(childNode);
             }
         }
-		if(datasource != null) {
-			if(color != null) {
-				rrdGraphDef.line(datasource, color, legend, width);
-			}
-			else {
-				rrdGraphDef.line(datasource, BLIND_COLOR, legend, width);
-			}
-		}
-		else {
-			throw new IllegalArgumentException("Incomplete LINE settings");
-		}
-	}
+        if (datasource != null) {
+            if (color != null) {
+                rrdGraphDef.line(datasource, color, legend, width);
+            }
+            else {
+                rrdGraphDef.line(datasource, BLIND_COLOR, legend, width);
+            }
+        }
+        else {
+            throw new IllegalArgumentException("Incomplete LINE settings");
+        }
+    }
 
-	private void resolveArea(Node parentNode) {
-		validateTagsOnlyOnce(parentNode, new String[]{"datasource", "color", "legend"});
-		String datasource = null, legend = null;
-		Paint color = null;
-		Node[] childNodes = getChildNodes(parentNode);
+    private void resolveArea(Node parentNode) {
+        validateTagsOnlyOnce(parentNode, new String[]{"datasource", "color", "legend"});
+        String datasource = null, legend = null;
+        Paint color = null;
+        Node[] childNodes = getChildNodes(parentNode);
         for (Node childNode : childNodes) {
             String nodeName = childNode.getNodeName();
             if (nodeName.equals("datasource")) {
@@ -542,22 +518,22 @@ public class RrdGraphDefTemplate extends XmlTemplate implements RrdGraphConstant
                 legend = getValue(childNode);
             }
         }
-		if(datasource != null) {
-			if(color != null) {
-				rrdGraphDef.area(datasource, color, legend);
-			}
-			else {
-				rrdGraphDef.area(datasource, BLIND_COLOR, legend);
-			}
-		}
-		else {
-			throw new IllegalArgumentException("Incomplete AREA settings");
-		}
-	}
+        if (datasource != null) {
+            if (color != null) {
+                rrdGraphDef.area(datasource, color, legend);
+            }
+            else {
+                rrdGraphDef.area(datasource, BLIND_COLOR, legend);
+            }
+        }
+        else {
+            throw new IllegalArgumentException("Incomplete AREA settings");
+        }
+    }
 
-	private void resolveDatasources(Node datasourcesNode) {
-		validateTagsOnlyOnce(datasourcesNode, new String[]{"def*", "cdef*", "sdef*"});
-		Node[] childNodes = getChildNodes(datasourcesNode);
+    private void resolveDatasources(Node datasourcesNode) {
+        validateTagsOnlyOnce(datasourcesNode, new String[]{"def*", "cdef*", "sdef*"});
+        Node[] childNodes = getChildNodes(datasourcesNode);
         for (Node childNode : childNodes) {
             String nodeName = childNode.getNodeName();
             if (nodeName.equals("def")) {
@@ -570,11 +546,11 @@ public class RrdGraphDefTemplate extends XmlTemplate implements RrdGraphConstant
                 resolveSDef(childNode);
             }
         }
-	}
+    }
 
-	private void resolveSDef(Node parentNode) {
-		validateTagsOnlyOnce(parentNode, new String[]{"name", "source", "cf"});
-		String name = null, source = null;
+    private void resolveSDef(Node parentNode) {
+        validateTagsOnlyOnce(parentNode, new String[]{"name", "source", "cf"});
+        String name = null, source = null;
         ConsolFun consolFun = null;
         Node[] childNodes = getChildNodes(parentNode);
         for (Node childNode : childNodes) {
@@ -589,18 +565,18 @@ public class RrdGraphDefTemplate extends XmlTemplate implements RrdGraphConstant
                 consolFun = ConsolFun.valueOf(getValue(childNode));
             }
         }
-		if(name != null && source != null && consolFun != null) {
-			rrdGraphDef.datasource(name, source, consolFun);
-		}
-		else {
-			throw new IllegalArgumentException("Incomplete SDEF settings");
-		}
-	}
+        if (name != null && source != null && consolFun != null) {
+            rrdGraphDef.datasource(name, source, consolFun);
+        }
+        else {
+            throw new IllegalArgumentException("Incomplete SDEF settings");
+        }
+    }
 
-	private void resolveCDef(Node parentNode) {
-		validateTagsOnlyOnce(parentNode, new String[]{"name", "rpn"});
-		String name = null, rpn = null;
-		Node[] childNodes = getChildNodes(parentNode);
+    private void resolveCDef(Node parentNode) {
+        validateTagsOnlyOnce(parentNode, new String[]{"name", "rpn"});
+        String name = null, rpn = null;
+        Node[] childNodes = getChildNodes(parentNode);
         for (Node childNode : childNodes) {
             String nodeName = childNode.getNodeName();
             if (nodeName.equals("name")) {
@@ -610,17 +586,17 @@ public class RrdGraphDefTemplate extends XmlTemplate implements RrdGraphConstant
                 rpn = getValue(childNode);
             }
         }
-		if(name != null && rpn != null) {
-			rrdGraphDef.datasource(name, rpn);
-		}
-		else {
-			throw new IllegalArgumentException("Incomplete CDEF settings");
-		}
-	}
+        if (name != null && rpn != null) {
+            rrdGraphDef.datasource(name, rpn);
+        }
+        else {
+            throw new IllegalArgumentException("Incomplete CDEF settings");
+        }
+    }
 
-	private void resolveDef(Node parentNode) {
-		validateTagsOnlyOnce(parentNode, new String[]{"name", "rrd", "source", "cf", "backend"});
-		String name = null, rrd = null, source = null, backend = null;
+    private void resolveDef(Node parentNode) {
+        validateTagsOnlyOnce(parentNode, new String[]{"name", "rrd", "source", "cf", "backend"});
+        String name = null, rrd = null, source = null, backend = null;
         ConsolFun consolFun = null;
         Node[] childNodes = getChildNodes(parentNode);
         for (Node childNode : childNodes) {
@@ -641,39 +617,39 @@ public class RrdGraphDefTemplate extends XmlTemplate implements RrdGraphConstant
                 backend = getValue(childNode);
             }
         }
-		if (name != null && rrd != null && source != null && consolFun != null) {
-			rrdGraphDef.datasource(name, rrd, source, consolFun, backend);
-		}
-		else {
-			throw new IllegalArgumentException("Incomplete DEF settings");
-		}
-	}
+        if (name != null && rrd != null && source != null && consolFun != null) {
+            rrdGraphDef.datasource(name, rrd, source, consolFun, backend);
+        }
+        else {
+            throw new IllegalArgumentException("Incomplete DEF settings");
+        }
+    }
 
-	private void resolveFilename(Node filenameNode) {
-		String filename = getValue(filenameNode);
-		rrdGraphDef.setFilename(filename);
-	}
+    private void resolveFilename(Node filenameNode) {
+        String filename = getValue(filenameNode);
+        rrdGraphDef.setFilename(filename);
+    }
 
-	private void resolveSpan(Node spanNode) {
-		validateTagsOnlyOnce(spanNode, new String[]{"start", "end"});
-		String startStr = getChildValue(spanNode, "start");
-		String endStr = getChildValue(spanNode, "end");
-		long[] span = Util.getTimestamps(startStr, endStr);
-		rrdGraphDef.setStartTime(span[0]);
-		rrdGraphDef.setEndTime(span[1]);
-	}
+    private void resolveSpan(Node spanNode) {
+        validateTagsOnlyOnce(spanNode, new String[]{"start", "end"});
+        String startStr = getChildValue(spanNode, "start");
+        String endStr = getChildValue(spanNode, "end");
+        long[] span = Util.getTimestamps(startStr, endStr);
+        rrdGraphDef.setStartTime(span[0]);
+        rrdGraphDef.setEndTime(span[1]);
+    }
 
-	private void resolveOptions(Node rootOptionNode) {
-		validateTagsOnlyOnce(rootOptionNode, new String[]{
-			"anti_aliasing", "use_pool", "time_grid", "value_grid", "alt_y_grid", "alt_y_mrtg",
-			"no_minor_grid", "alt_autoscale", "alt_autoscale_max", "units_exponent", "units_length",
-			"vertical_label", "width", "height", "interlaced", "image_info", "image_format",
-			"image_quality", "background_image", "overlay_image", "unit", "lazy",
-			"min_value", "max_value", "rigid", "base", "logarithmic", "colors",
-			"no_legend", "only_graph", "force_rules_legend", "title", "step", "fonts",
-			"first_day_of_week", "signature"
-		});
-		Node[] optionNodes = getChildNodes(rootOptionNode);
+    private void resolveOptions(Node rootOptionNode) {
+        validateTagsOnlyOnce(rootOptionNode, new String[]{
+                "anti_aliasing", "use_pool", "time_grid", "value_grid", "alt_y_grid", "alt_y_mrtg",
+                "no_minor_grid", "alt_autoscale", "alt_autoscale_max", "units_exponent", "units_length",
+                "vertical_label", "width", "height", "interlaced", "image_info", "image_format",
+                "image_quality", "background_image", "overlay_image", "unit", "lazy",
+                "min_value", "max_value", "rigid", "base", "logarithmic", "colors",
+                "no_legend", "only_graph", "force_rules_legend", "title", "step", "fonts",
+                "first_day_of_week", "signature"
+        });
+        Node[] optionNodes = getChildNodes(rootOptionNode);
         for (Node optionNode : optionNodes) {
             String option = optionNode.getNodeName();
             if (option.equals("use_pool")) {
@@ -786,36 +762,36 @@ public class RrdGraphDefTemplate extends XmlTemplate implements RrdGraphConstant
                 rrdGraphDef.setShowSignature(getValueAsBoolean(optionNode));
             }
         }
-	}
+    }
 
-	private static int resolveFirstDayOfWeek(String firstDayOfWeek) {
-		if (firstDayOfWeek.equalsIgnoreCase("sunday")) {
-			return SUNDAY;
-		}
-		else if (firstDayOfWeek.equalsIgnoreCase("monday")) {
-			return MONDAY;
-		}
-		else if (firstDayOfWeek.equalsIgnoreCase("tuesday")) {
-			return TUESDAY;
-		}
-		else if (firstDayOfWeek.equalsIgnoreCase("wednesday")) {
-			return WEDNESDAY;
-		}
-		else if (firstDayOfWeek.equalsIgnoreCase("thursday")) {
-			return THURSDAY;
-		}
-		else if (firstDayOfWeek.equalsIgnoreCase("friday")) {
-			return FRIDAY;
-		}
-		else if (firstDayOfWeek.equalsIgnoreCase("saturday")) {
-			return SATURDAY;
-		}
-		throw new IllegalArgumentException("Never heard for this day of week: " + firstDayOfWeek);
-	}
+    private static int resolveFirstDayOfWeek(String firstDayOfWeek) {
+        if (firstDayOfWeek.equalsIgnoreCase("sunday")) {
+            return SUNDAY;
+        }
+        else if (firstDayOfWeek.equalsIgnoreCase("monday")) {
+            return MONDAY;
+        }
+        else if (firstDayOfWeek.equalsIgnoreCase("tuesday")) {
+            return TUESDAY;
+        }
+        else if (firstDayOfWeek.equalsIgnoreCase("wednesday")) {
+            return WEDNESDAY;
+        }
+        else if (firstDayOfWeek.equalsIgnoreCase("thursday")) {
+            return THURSDAY;
+        }
+        else if (firstDayOfWeek.equalsIgnoreCase("friday")) {
+            return FRIDAY;
+        }
+        else if (firstDayOfWeek.equalsIgnoreCase("saturday")) {
+            return SATURDAY;
+        }
+        throw new IllegalArgumentException("Never heard for this day of week: " + firstDayOfWeek);
+    }
 
-	private void resolveFonts(Node parentNode) {
-		validateTagsOnlyOnce(parentNode, new String[]{"small_font", "large_font"});
-		Node[] childNodes = getChildNodes(parentNode);
+    private void resolveFonts(Node parentNode) {
+        validateTagsOnlyOnce(parentNode, new String[]{"small_font", "large_font"});
+        Node[] childNodes = getChildNodes(parentNode);
         for (Node childNode : childNodes) {
             String nodeName = childNode.getNodeName();
             if (nodeName.equals("small_font")) {
@@ -825,13 +801,13 @@ public class RrdGraphDefTemplate extends XmlTemplate implements RrdGraphConstant
                 rrdGraphDef.setLargeFont(resolveFont(childNode));
             }
         }
-	}
+    }
 
-	private Font resolveFont(Node parentNode) {
-		validateTagsOnlyOnce(parentNode, new String[]{"name", "style", "size"});
-		String name = null, style = null;
-		int size = 0;
-		Node[] childNodes = getChildNodes(parentNode);
+    private Font resolveFont(Node parentNode) {
+        validateTagsOnlyOnce(parentNode, new String[]{"name", "style", "size"});
+        String name = null, style = null;
+        int size = 0;
+        Node[] childNodes = getChildNodes(parentNode);
         for (Node childNode : childNodes) {
             String nodeName = childNode.getNodeName();
             if (nodeName.equals("name")) {
@@ -844,45 +820,45 @@ public class RrdGraphDefTemplate extends XmlTemplate implements RrdGraphConstant
                 size = getValueAsInt(childNode);
             }
         }
-		if (name != null && style != null && size > 0) {
-			boolean isItalic = style.contains("italic"), isBold = style.contains("bold");
-			int fstyle = Font.PLAIN;
-			if (isItalic && isBold) {
-				fstyle = Font.BOLD + Font.ITALIC;
-			}
-			else if (isItalic) {
-				fstyle = Font.ITALIC;
-			}
-			else if (isBold) {
-				fstyle = Font.BOLD;
-			}
+        if (name != null && style != null && size > 0) {
+            boolean isItalic = style.contains("italic"), isBold = style.contains("bold");
+            int fstyle = Font.PLAIN;
+            if (isItalic && isBold) {
+                fstyle = Font.BOLD + Font.ITALIC;
+            }
+            else if (isItalic) {
+                fstyle = Font.ITALIC;
+            }
+            else if (isBold) {
+                fstyle = Font.BOLD;
+            }
             return new Font(name, fstyle, size);
-		}
-		else {
-			throw new IllegalArgumentException("Incomplete font specification");
-		}
-	}
+        }
+        else {
+            throw new IllegalArgumentException("Incomplete font specification");
+        }
+    }
 
-	private void resolveColors(Node parentNode) {
+    private void resolveColors(Node parentNode) {
         // validateTagsOnly modifies the String[] that gets passed in
         // therefore we must pass in a copy of COLOR_NAMES
         String[] copy = new String[COLOR_NAMES.length];
         System.arraycopy(COLOR_NAMES, 0, copy, 0, COLOR_NAMES.length);
-		validateTagsOnlyOnce(parentNode, copy);
+        validateTagsOnlyOnce(parentNode, copy);
 
         Node[] childNodes = getChildNodes(parentNode);
         for (Node childNode : childNodes) {
             String colorName = childNode.getNodeName();
             rrdGraphDef.setColor(colorName, getValueAsColor(childNode));
         }
-	}
+    }
 
-	private void resolveValueGrid(Node parentNode) {
-		validateTagsOnlyOnce(parentNode, new String[]{"show_grid", "grid_step", "label_factor"});
-		boolean showGrid = true;
-		double gridStep = Double.NaN;
-		int NOT_SET = Integer.MIN_VALUE, labelFactor = NOT_SET;
-		Node[] childNodes = getChildNodes(parentNode);
+    private void resolveValueGrid(Node parentNode) {
+        validateTagsOnlyOnce(parentNode, new String[]{"show_grid", "grid_step", "label_factor"});
+        boolean showGrid = true;
+        double gridStep = Double.NaN;
+        int NOT_SET = Integer.MIN_VALUE, labelFactor = NOT_SET;
+        Node[] childNodes = getChildNodes(parentNode);
         for (Node childNode : childNodes) {
             String nodeName = childNode.getNodeName();
             if (nodeName.equals("show_grid")) {
@@ -895,29 +871,29 @@ public class RrdGraphDefTemplate extends XmlTemplate implements RrdGraphConstant
                 labelFactor = getValueAsInt(childNode);
             }
         }
-		rrdGraphDef.setDrawYGrid(showGrid);
-		if (!Double.isNaN(gridStep) && labelFactor != NOT_SET) {
-			rrdGraphDef.setValueAxis(gridStep, labelFactor);
-		}
-		else if (!Double.isNaN(gridStep) || labelFactor != NOT_SET) {
-			throw new IllegalArgumentException("Incomplete value axis settings");
-		}
-	}
+        rrdGraphDef.setDrawYGrid(showGrid);
+        if (!Double.isNaN(gridStep) && labelFactor != NOT_SET) {
+            rrdGraphDef.setValueAxis(gridStep, labelFactor);
+        }
+        else if (!Double.isNaN(gridStep) || labelFactor != NOT_SET) {
+            throw new IllegalArgumentException("Incomplete value axis settings");
+        }
+    }
 
-	private void resolveTimeGrid(Node parentNode) {
-		validateTagsOnlyOnce(parentNode, new String[]{
-			"show_grid", "minor_grid_unit",
-			"minor_grid_unit_count", "major_grid_unit",
-			"major_grid_unit_count", "label_unit", "label_unit_count",
-			"label_span", "label_format"
-		});
-		boolean showGrid = true;
-		final int NOT_SET = Integer.MIN_VALUE;
-		int minorGridUnit = NOT_SET, minorGridUnitCount = NOT_SET,
-				majorGridUnit = NOT_SET, majorGridUnitCount = NOT_SET,
-				labelUnit = NOT_SET, labelUnitCount = NOT_SET, labelSpan = NOT_SET;
-		String labelFormat = null;
-		Node[] childNodes = getChildNodes(parentNode);
+    private void resolveTimeGrid(Node parentNode) {
+        validateTagsOnlyOnce(parentNode, new String[]{
+                "show_grid", "minor_grid_unit",
+                "minor_grid_unit_count", "major_grid_unit",
+                "major_grid_unit_count", "label_unit", "label_unit_count",
+                "label_span", "label_format"
+        });
+        boolean showGrid = true;
+        final int NOT_SET = Integer.MIN_VALUE;
+        int minorGridUnit = NOT_SET, minorGridUnitCount = NOT_SET,
+                majorGridUnit = NOT_SET, majorGridUnitCount = NOT_SET,
+                labelUnit = NOT_SET, labelUnitCount = NOT_SET, labelSpan = NOT_SET;
+        String labelFormat = null;
+        Node[] childNodes = getChildNodes(parentNode);
         for (Node childNode : childNodes) {
             String nodeName = childNode.getNodeName();
             if (nodeName.equals("show_grid")) {
@@ -948,42 +924,42 @@ public class RrdGraphDefTemplate extends XmlTemplate implements RrdGraphConstant
                 labelFormat = getValue(childNode);
             }
         }
-		rrdGraphDef.setDrawXGrid(showGrid);
-		if (minorGridUnit != NOT_SET && minorGridUnitCount != NOT_SET &&
-				majorGridUnit != NOT_SET && majorGridUnitCount != NOT_SET &&
-				labelUnit != NOT_SET && labelUnitCount != NOT_SET && labelSpan != NOT_SET && labelFormat != null) {
-			rrdGraphDef.setTimeAxis(minorGridUnit, minorGridUnitCount, majorGridUnit, majorGridUnitCount,
-					labelUnit, labelUnitCount, labelSpan, labelFormat);
-		}
-		else if (minorGridUnit != NOT_SET || minorGridUnitCount != NOT_SET ||
-				majorGridUnit != NOT_SET || majorGridUnitCount != NOT_SET ||
-				labelUnit != NOT_SET || labelUnitCount != NOT_SET || labelSpan != NOT_SET || labelFormat != null) {
-			throw new IllegalArgumentException("Incomplete time axis settings");
-		}
-	}
+        rrdGraphDef.setDrawXGrid(showGrid);
+        if (minorGridUnit != NOT_SET && minorGridUnitCount != NOT_SET &&
+                majorGridUnit != NOT_SET && majorGridUnitCount != NOT_SET &&
+                labelUnit != NOT_SET && labelUnitCount != NOT_SET && labelSpan != NOT_SET && labelFormat != null) {
+            rrdGraphDef.setTimeAxis(minorGridUnit, minorGridUnitCount, majorGridUnit, majorGridUnitCount,
+                    labelUnit, labelUnitCount, labelSpan, labelFormat);
+        }
+        else if (minorGridUnit != NOT_SET || minorGridUnitCount != NOT_SET ||
+                majorGridUnit != NOT_SET || majorGridUnitCount != NOT_SET ||
+                labelUnit != NOT_SET || labelUnitCount != NOT_SET || labelSpan != NOT_SET || labelFormat != null) {
+            throw new IllegalArgumentException("Incomplete time axis settings");
+        }
+    }
 
-	private static int resolveTimeUnit(String unit) {
-		if (unit.equalsIgnoreCase("second")) {
-			return RrdGraphConstants.SECOND;
-		}
-		else if (unit.equalsIgnoreCase("minute")) {
-			return RrdGraphConstants.MINUTE;
-		}
-		else if (unit.equalsIgnoreCase("hour")) {
-			return RrdGraphConstants.HOUR;
-		}
-		else if (unit.equalsIgnoreCase("day")) {
-			return RrdGraphConstants.DAY;
-		}
-		else if (unit.equalsIgnoreCase("week")) {
-			return RrdGraphConstants.WEEK;
-		}
-		else if (unit.equalsIgnoreCase("month")) {
-			return RrdGraphConstants.MONTH;
-		}
-		else if (unit.equalsIgnoreCase("year")) {
-			return RrdGraphConstants.YEAR;
-		}
-		throw new IllegalArgumentException("Unknown time unit specified: " + unit);
+    private static int resolveTimeUnit(String unit) {
+        if (unit.equalsIgnoreCase("second")) {
+            return RrdGraphConstants.SECOND;
+        }
+        else if (unit.equalsIgnoreCase("minute")) {
+            return RrdGraphConstants.MINUTE;
+        }
+        else if (unit.equalsIgnoreCase("hour")) {
+            return RrdGraphConstants.HOUR;
+        }
+        else if (unit.equalsIgnoreCase("day")) {
+            return RrdGraphConstants.DAY;
+        }
+        else if (unit.equalsIgnoreCase("week")) {
+            return RrdGraphConstants.WEEK;
+        }
+        else if (unit.equalsIgnoreCase("month")) {
+            return RrdGraphConstants.MONTH;
+        }
+        else if (unit.equalsIgnoreCase("year")) {
+            return RrdGraphConstants.YEAR;
+        }
+        throw new IllegalArgumentException("Unknown time unit specified: " + unit);
 	}
 }

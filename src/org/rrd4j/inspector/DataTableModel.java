@@ -1,28 +1,3 @@
-/* ============================================================
- * Rrd4j : Pure java implementation of RRDTool's functionality
- * ============================================================
- *
- * Project Info:  http://www.rrd4j.org
- * Project Lead:  Mathias Bogaert (m.bogaert@memenco.com)
- *
- * (C) Copyright 2003, by Sasa Markovic.
- *
- * Developers:    Sasa Markovic
- *
- *
- * This library is free software; you can redistribute it and/or modify it under the terms
- * of the GNU Lesser General Public License as published by the Free Software Foundation;
- * either version 2.1 of the License, or (at your option) any later version.
- *
- * This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
- * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License along with this
- * library; if not, write to the Free Software Foundation, Inc., 59 Temple Place, Suite 330,
- * Boston, MA 02111-1307, USA.
- */
-
 package org.rrd4j.inspector;
 
 import org.rrd4j.core.Archive;
@@ -34,105 +9,105 @@ import java.io.File;
 import java.util.Date;
 
 class DataTableModel extends AbstractTableModel {
-	private static final String[] COLUMN_NAMES = {"timestamp", "date", "value"};
+    private static final String[] COLUMN_NAMES = {"timestamp", "date", "value"};
 
-	private File file;
-	private Object[][] values;
-	private int dsIndex = -1, arcIndex = -1;
+    private File file;
+    private Object[][] values;
+    private int dsIndex = -1, arcIndex = -1;
 
-	public int getRowCount() {
-		if (values == null) {
-			return 0;
-		}
-		else {
-			return values.length;
-		}
-	}
+    public int getRowCount() {
+        if (values == null) {
+            return 0;
+        }
+        else {
+            return values.length;
+        }
+    }
 
-	public int getColumnCount() {
-		return COLUMN_NAMES.length;
-	}
+    public int getColumnCount() {
+        return COLUMN_NAMES.length;
+    }
 
-	public Object getValueAt(int rowIndex, int columnIndex) {
-		if (values == null) {
-			return "--";
-		}
-		return values[rowIndex][columnIndex];
-	}
+    public Object getValueAt(int rowIndex, int columnIndex) {
+        if (values == null) {
+            return "--";
+        }
+        return values[rowIndex][columnIndex];
+    }
 
-	public String getColumnName(int column) {
-		return COLUMN_NAMES[column];
-	}
+    public String getColumnName(int column) {
+        return COLUMN_NAMES[column];
+    }
 
-	public boolean isCellEditable(int rowIndex, int columnIndex) {
-		return columnIndex == 2;
-	}
+    public boolean isCellEditable(int rowIndex, int columnIndex) {
+        return columnIndex == 2;
+    }
 
-	public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-		assert columnIndex == 2: "Column " + columnIndex + " is not editable!";
-		double value;
-		try {
-			value = Double.parseDouble(aValue.toString());
-		}
-		catch (NumberFormatException nfe) {
-			value = Double.NaN;
-		}
-		if (dsIndex >= 0 && arcIndex >= 0 && file != null) {
-			try {
-				RrdDb rrd = new RrdDb(file.getAbsolutePath());
-				try {
-					Robin robin = rrd.getArchive(arcIndex).getRobin(dsIndex);
-					robin.setValue(rowIndex, value);
-					values[rowIndex][2] = InspectorModel.formatDouble(robin.getValue(rowIndex));
-				}
-				finally {
-					rrd.close();
-				}
-			}
-			catch (Exception e) {
-				Util.error(null, e);
-			}
-		}
-	}
+    public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
+        assert columnIndex == 2 : "Column " + columnIndex + " is not editable!";
+        double value;
+        try {
+            value = Double.parseDouble(aValue.toString());
+        }
+        catch (NumberFormatException nfe) {
+            value = Double.NaN;
+        }
+        if (dsIndex >= 0 && arcIndex >= 0 && file != null) {
+            try {
+                RrdDb rrd = new RrdDb(file.getAbsolutePath());
+                try {
+                    Robin robin = rrd.getArchive(arcIndex).getRobin(dsIndex);
+                    robin.setValue(rowIndex, value);
+                    values[rowIndex][2] = InspectorModel.formatDouble(robin.getValue(rowIndex));
+                }
+                finally {
+                    rrd.close();
+                }
+            }
+            catch (Exception e) {
+                Util.error(null, e);
+            }
+        }
+    }
 
-	void setFile(File newFile) {
-		file = newFile;
-		setIndex(-1, -1);
-	}
+    void setFile(File newFile) {
+        file = newFile;
+        setIndex(-1, -1);
+    }
 
-	void setIndex(int newDsIndex, int newArcIndex) {
-		if (dsIndex != newDsIndex || arcIndex != newArcIndex) {
-			dsIndex = newDsIndex;
-			arcIndex = newArcIndex;
-			values = null;
-			if (dsIndex >= 0 && arcIndex >= 0) {
-				try {
-					RrdDb rrd = new RrdDb(file.getAbsolutePath(), true);
-					try {
-						Archive arc = rrd.getArchive(arcIndex);
-						Robin robin = arc.getRobin(dsIndex);
-						long start = arc.getStartTime();
-						long step = arc.getArcStep();
-						double robinValues[] = robin.getValues();
-						values = new Object[robinValues.length][];
-						for (int i = 0; i < robinValues.length; i++) {
-							long timestamp = start + i * step;
-							String date = new Date(timestamp * 1000L).toString();
-							String value = InspectorModel.formatDouble(robinValues[i]);
-							values[i] = new Object[]{
-								"" + timestamp, date, value
-							};
-						}
-					}
-					finally {
-						rrd.close();
-					}
-				}
-				catch (Exception e) {
-					Util.error(null, e);
-				}
-			}
-			fireTableDataChanged();
-		}
-	}
+    void setIndex(int newDsIndex, int newArcIndex) {
+        if (dsIndex != newDsIndex || arcIndex != newArcIndex) {
+            dsIndex = newDsIndex;
+            arcIndex = newArcIndex;
+            values = null;
+            if (dsIndex >= 0 && arcIndex >= 0) {
+                try {
+                    RrdDb rrd = new RrdDb(file.getAbsolutePath(), true);
+                    try {
+                        Archive arc = rrd.getArchive(arcIndex);
+                        Robin robin = arc.getRobin(dsIndex);
+                        long start = arc.getStartTime();
+                        long step = arc.getArcStep();
+                        double robinValues[] = robin.getValues();
+                        values = new Object[robinValues.length][];
+                        for (int i = 0; i < robinValues.length; i++) {
+                            long timestamp = start + i * step;
+                            String date = new Date(timestamp * 1000L).toString();
+                            String value = InspectorModel.formatDouble(robinValues[i]);
+                            values[i] = new Object[]{
+                                    "" + timestamp, date, value
+                            };
+                        }
+                    }
+                    finally {
+                        rrd.close();
+                    }
+                }
+                catch (Exception e) {
+                    Util.error(null, e);
+                }
+            }
+            fireTableDataChanged();
+        }
+    }
 }

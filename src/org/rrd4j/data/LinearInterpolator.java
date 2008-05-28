@@ -1,27 +1,3 @@
-/* ============================================================
- * Rrd4j : Pure java implementation of RRDTool's functionality
- * ============================================================
- *
- * Project Info:  http://www.rrd4j.org
- * Project Lead:  Mathias Bogaert (m.bogaert@memenco.com)
- *
- * Developers:    Sasa Markovic
- *
- *
- * (C) Copyright 2003-2007, by Sasa Markovic.
- *
- * This library is free software; you can redistribute it and/or modify it under the terms
- * of the GNU Lesser General Public License as published by the Free Software Foundation;
- * either version 2.1 of the License, or (at your option) any later version.
- *
- * This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
- * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License along with this
- * library; if not, write to the Free Software Foundation, Inc., 59 Temple Place, Suite 330,
- * Boston, MA 02111-1307, USA.
- */
 package org.rrd4j.data;
 
 import org.rrd4j.core.Util;
@@ -75,9 +51,8 @@ public class LinearInterpolator extends Plottable {
      *
      * @param timestamps timestamps in seconds
      * @param values     corresponding datasource values
-     *
      * @throws IllegalArgumentException Thrown if supplied arrays do not contain at least two values, or if
-     *                      timestamps are not ordered, or array lengths are not equal.
+     *                                  timestamps are not ordered, or array lengths are not equal.
      */
     public LinearInterpolator(long[] timestamps, double[] values) {
         this.timestamps = timestamps;
@@ -90,9 +65,8 @@ public class LinearInterpolator extends Plottable {
      *
      * @param dates  Array of Date objects
      * @param values corresponding datasource values
-     *
      * @throws IllegalArgumentException Thrown if supplied arrays do not contain at least two values, or if
-     *                      timestamps are not ordered, or array lengths are not equal.
+     *                                  timestamps are not ordered, or array lengths are not equal.
      */
     public LinearInterpolator(Date[] dates, double[] values) {
         this.values = values;
@@ -108,9 +82,8 @@ public class LinearInterpolator extends Plottable {
      *
      * @param dates  array of GregorianCalendar objects
      * @param values corresponding datasource values
-     *
      * @throws IllegalArgumentException Thrown if supplied arrays do not contain at least two values, or if
-     *                      timestamps are not ordered, or array lengths are not equal.
+     *                                  timestamps are not ordered, or array lengths are not equal.
      */
     public LinearInterpolator(Calendar[] dates, double[] values) {
         this.values = values;
@@ -207,6 +180,7 @@ public class LinearInterpolator extends Plottable {
     /**
      * Method overriden from the base class. This method will be called by the framework. Call
      * this method only if you need interpolated values in your code.
+     *
      * @param timestamp timestamp in seconds
      * @return inteprolated datasource value
      */
@@ -248,5 +222,5 @@ public class LinearInterpolator extends Plottable {
         }
         // should not be here ever, but let's satisfy the compiler
         return Double.NaN;
-	}
+    }
 }

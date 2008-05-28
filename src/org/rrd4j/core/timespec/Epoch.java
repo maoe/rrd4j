@@ -34,117 +34,117 @@ import java.util.Date;
  * The current timestamp is displayed in the title bar :)<p>
  */
 public class Epoch extends JFrame {
-	private static final String[] supportedFormats = {
-		"MM/dd/yy HH:mm:ss", "dd.MM.yy HH:mm:ss", "yy-MM-dd HH:mm:ss", "MM/dd/yy HH:mm",
-		"dd.MM.yy HH:mm", "yy-MM-dd HH:mm", "MM/dd/yy", "dd.MM.yy", "yy-MM-dd", "HH:mm MM/dd/yy",
-		"HH:mm dd.MM.yy", "HH:mm yy-MM-dd", "HH:mm:ss MM/dd/yy", "HH:mm:ss dd.MM.yy", "HH:mm:ss yy-MM-dd"
-	};
+    private static final String[] supportedFormats = {
+            "MM/dd/yy HH:mm:ss", "dd.MM.yy HH:mm:ss", "yy-MM-dd HH:mm:ss", "MM/dd/yy HH:mm",
+            "dd.MM.yy HH:mm", "yy-MM-dd HH:mm", "MM/dd/yy", "dd.MM.yy", "yy-MM-dd", "HH:mm MM/dd/yy",
+            "HH:mm dd.MM.yy", "HH:mm yy-MM-dd", "HH:mm:ss MM/dd/yy", "HH:mm:ss dd.MM.yy", "HH:mm:ss yy-MM-dd"
+    };
 
-	private static final SimpleDateFormat[] parsers = new SimpleDateFormat[supportedFormats.length];
-	private static final String helpText;
+    private static final SimpleDateFormat[] parsers = new SimpleDateFormat[supportedFormats.length];
+    private static final String helpText;
 
-	private Timer timer = new Timer(1000, new ActionListener() {
-		public void actionPerformed(ActionEvent e) {
-			showTimestamp();
-		}
-	});
+    private Timer timer = new Timer(1000, new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+            showTimestamp();
+        }
+    });
 
-	static {
-		for (int i = 0; i < parsers.length; i++) {
-			parsers[i] = new SimpleDateFormat(supportedFormats[i]);
-			parsers[i].setLenient(true);
-		}
-		StringBuilder tooltipBuff = new StringBuilder("<html><b>Supported input formats:</b><br>");
-		for (int i = 0; i < supportedFormats.length; i++) {
-			tooltipBuff.append(supportedFormats[i] + "<br>");
-		}
-		tooltipBuff.append("<b>AT-style time specification</b><br>");
-		tooltipBuff.append("timestamp<br><br>");
-		tooltipBuff.append("Copyright (C) 2003-2007 Sasa Markovic, All Rights Reserved</html>");
-		helpText = tooltipBuff.toString();
-	}
+    static {
+        for (int i = 0; i < parsers.length; i++) {
+            parsers[i] = new SimpleDateFormat(supportedFormats[i]);
+            parsers[i].setLenient(true);
+        }
+        StringBuilder tooltipBuff = new StringBuilder("<html><b>Supported input formats:</b><br>");
+        for (int i = 0; i < supportedFormats.length; i++) {
+            tooltipBuff.append(supportedFormats[i] + "<br>");
+        }
+        tooltipBuff.append("<b>AT-style time specification</b><br>");
+        tooltipBuff.append("timestamp<br><br>");
+        tooltipBuff.append("Copyright (C) 2003-2008 Sasa Markovic, All Rights Reserved</html>");
+        helpText = tooltipBuff.toString();
+    }
 
-	private JLabel topLabel = new JLabel("Enter timestamp or readable date:");
-	private JTextField inputField = new JTextField(25);
-	private JButton convertButton = new JButton("Convert");
-	private JButton helpButton = new JButton("Help");
+    private JLabel topLabel = new JLabel("Enter timestamp or readable date:");
+    private JTextField inputField = new JTextField(25);
+    private JButton convertButton = new JButton("Convert");
+    private JButton helpButton = new JButton("Help");
 
-	private static final SimpleDateFormat OUTPUT_DATE_FORMAT =
-			new SimpleDateFormat("MM/dd/yy HH:mm:ss EEE");
+    private static final SimpleDateFormat OUTPUT_DATE_FORMAT =
+            new SimpleDateFormat("MM/dd/yy HH:mm:ss EEE");
 
-	Epoch() {
-		super("Epoch");
-		constructUI();
-		timer.start();
-	}
+    Epoch() {
+        super("Epoch");
+        constructUI();
+        timer.start();
+    }
 
-	private void constructUI() {
-		JPanel c = (JPanel) getContentPane();
-		c.setLayout(new BorderLayout(3, 3));
-		c.add(topLabel, BorderLayout.NORTH);
-		c.add(inputField, BorderLayout.WEST);
-		c.add(convertButton, BorderLayout.CENTER);
-		convertButton.setToolTipText(helpText);
-		convertButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				convert();
-			}
-		});
-		c.add(helpButton, BorderLayout.EAST);
-		helpButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				JOptionPane.showMessageDialog(helpButton, helpText, "Epoch Help", JOptionPane.INFORMATION_MESSAGE);
-			}
-		});
-		inputField.requestFocus();
-		getRootPane().setDefaultButton(convertButton);
-		setResizable(false);
-		setDefaultCloseOperation(EXIT_ON_CLOSE);
-		pack();
-		centerOnScreen();
-		setVisible(true);
-	}
+    private void constructUI() {
+        JPanel c = (JPanel) getContentPane();
+        c.setLayout(new BorderLayout(3, 3));
+        c.add(topLabel, BorderLayout.NORTH);
+        c.add(inputField, BorderLayout.WEST);
+        c.add(convertButton, BorderLayout.CENTER);
+        convertButton.setToolTipText(helpText);
+        convertButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                convert();
+            }
+        });
+        c.add(helpButton, BorderLayout.EAST);
+        helpButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                JOptionPane.showMessageDialog(helpButton, helpText, "Epoch Help", JOptionPane.INFORMATION_MESSAGE);
+            }
+        });
+        inputField.requestFocus();
+        getRootPane().setDefaultButton(convertButton);
+        setResizable(false);
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        pack();
+        centerOnScreen();
+        setVisible(true);
+    }
 
-	void centerOnScreen() {
-		Toolkit t = Toolkit.getDefaultToolkit();
-		Dimension screenSize = t.getScreenSize();
-		Dimension frameSize = getPreferredSize();
-		double x = (screenSize.getWidth() - frameSize.getWidth()) / 2;
-		double y = (screenSize.getHeight() - frameSize.getHeight()) / 2;
-		setLocation((int) x, (int) y);
-	}
+    void centerOnScreen() {
+        Toolkit t = Toolkit.getDefaultToolkit();
+        Dimension screenSize = t.getScreenSize();
+        Dimension frameSize = getPreferredSize();
+        double x = (screenSize.getWidth() - frameSize.getWidth()) / 2;
+        double y = (screenSize.getHeight() - frameSize.getHeight()) / 2;
+        setLocation((int) x, (int) y);
+    }
 
-	private void convert() {
-		String time = inputField.getText().trim();
-		if (time.length() > 0) {
-			// try simple timestamp
-			try {
-				long timestamp = Long.parseLong(time);
-				Date date = new Date(timestamp * 1000L);
-				formatDate(date);
-			}
-			catch (NumberFormatException nfe) {
-				// failed, try as a date
-				try {
-					inputField.setText("" + parseDate(time));
-				}
-				catch (Exception e) {
-					inputField.setText("Could not convert, sorry");
-				}
-			}
-		}
-	}
+    private void convert() {
+        String time = inputField.getText().trim();
+        if (time.length() > 0) {
+            // try simple timestamp
+            try {
+                long timestamp = Long.parseLong(time);
+                Date date = new Date(timestamp * 1000L);
+                formatDate(date);
+            }
+            catch (NumberFormatException nfe) {
+                // failed, try as a date
+                try {
+                    inputField.setText("" + parseDate(time));
+                }
+                catch (Exception e) {
+                    inputField.setText("Could not convert, sorry");
+                }
+            }
+        }
+    }
 
-	private void showTimestamp() {
-		long timestamp = Util.getTime();
-		setTitle(timestamp + " seconds since epoch");
-	}
+    private void showTimestamp() {
+        long timestamp = Util.getTime();
+        setTitle(timestamp + " seconds since epoch");
+    }
 
-	void formatDate(Date date) {
-		inputField.setText(OUTPUT_DATE_FORMAT.format(date));
-	}
+    void formatDate(Date date) {
+        inputField.setText(OUTPUT_DATE_FORMAT.format(date));
+    }
 
-	private long parseDate(String time) {
+    private long parseDate(String time) {
         for (SimpleDateFormat parser : parsers) {
             try {
                 return Util.getTimestamp(parser.parse(time));
@@ -152,14 +152,15 @@ public class Epoch extends JFrame {
             catch (ParseException e) {
             }
         }
-		return new TimeParser(time).parse().getTimestamp();
-	}
+        return new TimeParser(time).parse().getTimestamp();
+    }
 
     /**
-	 * Main method which runs this utility.
-	 * @param args Not used.
-	 */
-	public static void main(String[] args) {
-		new Epoch();
+     * Main method which runs this utility.
+     *
+     * @param args Not used.
+     */
+    public static void main(String[] args) {
+        new Epoch();
 	}
 }

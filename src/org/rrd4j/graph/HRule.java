@@ -8,7 +8,7 @@
  * Developers:    Sasa Markovic
  *
  *
- * (C) Copyright 2003-2007, by Sasa Markovic.
+ * (C) Copyright 2003-2008, by Sasa Markovic.
  *
  * This library is free software; you can redistribute it and/or modify it under the terms
  * of the GNU Lesser General Public License as published by the Free Software Foundation;
@@ -28,14 +28,14 @@ package org.rrd4j.graph;
 import java.awt.*;
 
 class HRule extends Rule {
-	final double value;
+    final double value;
 
-	HRule(double value, Paint color, LegendText legend, float width) {
-		super(color, legend, width);
-		this.value = value;
-	}
+    HRule(double value, Paint color, LegendText legend, float width) {
+        super(color, legend, width);
+        this.value = value;
+    }
 
-	void setLegendVisibility(double minval, double maxval, boolean forceLegend) {
-		legend.enabled &= (forceLegend || (value >= minval && value <= maxval));
-	}
+    void setLegendVisibility(double minval, double maxval, boolean forceLegend) {
+        legend.enabled &= (forceLegend || (value >= minval && value <= maxval));
+    }
 }

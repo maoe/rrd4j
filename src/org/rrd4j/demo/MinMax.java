@@ -12,7 +12,7 @@ class MinMax {
     public static void main(String[] args) throws IOException {
         long start = Util.getTime(), end = start + 300 * 300;
         String rrdFile = Util.getRrd4jDemoPath("minmax.rrd");
-		String pngFile = Util.getRrd4jDemoPath("minmax.png");
+        String pngFile = Util.getRrd4jDemoPath("minmax.png");
         // create
         RrdDef rrdDef = new RrdDef(rrdFile, start - 1, 300);
         rrdDef.addDatasource("a", DsType.GAUGE, 600, Double.NaN, Double.NaN);
@@ -21,17 +21,17 @@ class MinMax {
         rrdDef.addArchive(MAX, 0.5, 12, 300);
         RrdDb rrdDb = new RrdDb(rrdDef);
         // update
-        for(long t = start; t <  end; t += 300) {
+        for (long t = start; t < end; t += 300) {
             Sample sample = rrdDb.createSample(t);
             sample.setValue("a", Math.sin(t / 3000.0) * 50 + 50);
             sample.update();
         }
         // graph
         RrdGraphDef gDef = new RrdGraphDef();
-		gDef.setFilename(pngFile);
-		gDef.setWidth(450);
-		gDef.setHeight(250);
-		gDef.setImageFormat("png");
+        gDef.setFilename(pngFile);
+        gDef.setWidth(450);
+        gDef.setHeight(250);
+        gDef.setImageFormat("png");
         gDef.setTimeSpan(start, start + 86400);
         gDef.setTitle("RRDTool's MINMAX.pl demo");
         gDef.datasource("a", rrdFile, "a", AVERAGE);

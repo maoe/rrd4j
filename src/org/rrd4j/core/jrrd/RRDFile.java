@@ -23,147 +23,152 @@ import java.io.*;
  */
 public class RRDFile implements Constants {
 
-	boolean bigEndian;
-	int alignment;
-	RandomAccessFile ras;
-	byte[] buffer;
+    boolean bigEndian;
+    int alignment;
+    RandomAccessFile ras;
+    byte[] buffer;
 
-	RRDFile(String name) throws IOException {
-		this(new File(name));
-	}
+    RRDFile(String name) throws IOException {
+        this(new File(name));
+    }
 
-	RRDFile(File file) throws IOException {
+    RRDFile(File file) throws IOException {
 
-		ras = new RandomAccessFile(file, "r");
-		buffer = new byte[128];
+        ras = new RandomAccessFile(file, "r");
+        buffer = new byte[128];
 
-		initDataLayout(file);
-	}
+        initDataLayout(file);
+    }
 
-	private void initDataLayout(File file) throws IOException {
+    private void initDataLayout(File file) throws IOException {
 
-		if (file.exists()) {    // Load the data formats from the file
-			ras.read(buffer, 0, 24);
+        if (file.exists()) {    // Load the data formats from the file
+            ras.read(buffer, 0, 24);
 
-			int index;
+            int index;
 
-			if ((index = indexOf(FLOAT_COOKIE_BIG_ENDIAN, buffer)) != -1) {
-				bigEndian = true;
-			} else if ((index = indexOf(FLOAT_COOKIE_LITTLE_ENDIAN, buffer))
-					!= -1) {
-				bigEndian = false;
-			} else {
-				throw new IOException("Invalid RRD file");
-			}
+            if ((index = indexOf(FLOAT_COOKIE_BIG_ENDIAN, buffer)) != -1) {
+                bigEndian = true;
+            }
+            else if ((index = indexOf(FLOAT_COOKIE_LITTLE_ENDIAN, buffer))
+                    != -1) {
+                bigEndian = false;
+            }
+            else {
+                throw new IOException("Invalid RRD file");
+            }
 
-			switch (index) {
+            switch (index) {
 
-				case 12:
-					alignment = 4;
-					break;
+                case 12:
+                    alignment = 4;
+                    break;
 
-				case 16:
-					alignment = 8;
-					break;
+                case 16:
+                    alignment = 8;
+                    break;
 
-				default :
-					throw new RuntimeException("Unsupported architecture");
-			}
-		} else {                // Default to data formats for this hardware architecture
-		}
+                default:
+                    throw new RuntimeException("Unsupported architecture");
+            }
+        }
+        else {                // Default to data formats for this hardware architecture
+        }
 
-		ras.seek(0);    // Reset file pointer to start of file
-	}
+        ras.seek(0);    // Reset file pointer to start of file
+    }
 
-	private int indexOf(byte[] pattern, byte[] array) {
-		return (new String(array)).indexOf(new String(pattern));
-	}
+    private int indexOf(byte[] pattern, byte[] array) {
+        return (new String(array)).indexOf(new String(pattern));
+    }
 
-	boolean isBigEndian() {
-		return bigEndian;
-	}
+    boolean isBigEndian() {
+        return bigEndian;
+    }
 
-	int getAlignment() {
-		return alignment;
-	}
+    int getAlignment() {
+        return alignment;
+    }
 
-	double readDouble() throws IOException {
+    double readDouble() throws IOException {
 
-		//double value;
-		byte[] tx = new byte[8];
+        //double value;
+        byte[] tx = new byte[8];
 
-		ras.read(buffer, 0, 8);
+        ras.read(buffer, 0, 8);
 
-		if (bigEndian) {
-			tx = buffer;
-		} else {
-			for (int i = 0; i < 8; i++) {
-				tx[7 - i] = buffer[i];
-			}
-		}
+        if (bigEndian) {
+            tx = buffer;
+        }
+        else {
+            for (int i = 0; i < 8; i++) {
+                tx[7 - i] = buffer[i];
+            }
+        }
 
-		DataInputStream reverseDis =
-				new DataInputStream(new ByteArrayInputStream(tx));
+        DataInputStream reverseDis =
+                new DataInputStream(new ByteArrayInputStream(tx));
 
-		return reverseDis.readDouble();
-	}
+        return reverseDis.readDouble();
+    }
 
-	int readInt() throws IOException {
-		return readInt(false);
-	}
+    int readInt() throws IOException {
+        return readInt(false);
+    }
 
-	int readInt(boolean dump) throws IOException {
+    int readInt(boolean dump) throws IOException {
 
-		ras.read(buffer, 0, 4);
+        ras.read(buffer, 0, 4);
 
-		int value;
+        int value;
 
-		if (bigEndian) {
-			value = (0xFF & buffer[3]) | ((0xFF & buffer[2]) << 8)
-					| ((0xFF & buffer[1]) << 16) | ((0xFF & buffer[0]) << 24);
-		} else {
-			value = (0xFF & buffer[0]) | ((0xFF & buffer[1]) << 8)
-					| ((0xFF & buffer[2]) << 16) | ((0xFF & buffer[3]) << 24);
-		}
+        if (bigEndian) {
+            value = (0xFF & buffer[3]) | ((0xFF & buffer[2]) << 8)
+                    | ((0xFF & buffer[1]) << 16) | ((0xFF & buffer[0]) << 24);
+        }
+        else {
+            value = (0xFF & buffer[0]) | ((0xFF & buffer[1]) << 8)
+                    | ((0xFF & buffer[2]) << 16) | ((0xFF & buffer[3]) << 24);
+        }
 
-		return value;
-	}
+        return value;
+    }
 
-	String readString(int maxLength) throws IOException {
+    String readString(int maxLength) throws IOException {
 
-		ras.read(buffer, 0, maxLength);
+        ras.read(buffer, 0, maxLength);
 
-		return new String(buffer, 0, maxLength).trim();
-	}
+        return new String(buffer, 0, maxLength).trim();
+    }
 
-	void skipBytes(int n) throws IOException {
-		ras.skipBytes(n);
-	}
+    void skipBytes(int n) throws IOException {
+        ras.skipBytes(n);
+    }
 
-	int align(int boundary) throws IOException {
+    int align(int boundary) throws IOException {
 
-		int skip = (int) (boundary - (ras.getFilePointer() % boundary)) % boundary;
+        int skip = (int) (boundary - (ras.getFilePointer() % boundary)) % boundary;
 
-		if (skip != 0) {
-			ras.skipBytes(skip);
-		}
+        if (skip != 0) {
+            ras.skipBytes(skip);
+        }
 
-		return skip;
-	}
+        return skip;
+    }
 
-	int align() throws IOException {
-		return align(alignment);
-	}
+    int align() throws IOException {
+        return align(alignment);
+    }
 
-	long info() throws IOException {
-		return ras.getFilePointer();
-	}
+    long info() throws IOException {
+        return ras.getFilePointer();
+    }
 
-	long getFilePointer() throws IOException {
-		return ras.getFilePointer();
-	}
+    long getFilePointer() throws IOException {
+        return ras.getFilePointer();
+    }
 
-	void close() throws IOException {
-		ras.close();
-	}
+    void close() throws IOException {
+        ras.close();
+    }
 }

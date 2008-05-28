@@ -19,68 +19,68 @@ import java.io.PrintStream;
  */
 public class CDPStatusBlock {
 
-	long offset;
-	long size;
-	int unknownDatapoints;
-	double value;
+    long offset;
+    long size;
+    int unknownDatapoints;
+    double value;
 
-	CDPStatusBlock(RRDFile file) throws IOException {
+    CDPStatusBlock(RRDFile file) throws IOException {
 
-		offset = file.getFilePointer();
-		value = file.readDouble();
-		unknownDatapoints = file.readInt();
+        offset = file.getFilePointer();
+        value = file.readDouble();
+        unknownDatapoints = file.readInt();
 
-		// Skip rest of cdp_prep_t.scratch
-		file.skipBytes(68);
+        // Skip rest of cdp_prep_t.scratch
+        file.skipBytes(68);
 
-		size = file.getFilePointer() - offset;
-	}
+        size = file.getFilePointer() - offset;
+    }
 
-	/**
-	 * Returns the number of unknown primary data points that were integrated.
-	 *
-	 * @return the number of unknown primary data points that were integrated.
-	 */
-	public int getUnknownDatapoints() {
-		return unknownDatapoints;
-	}
+    /**
+     * Returns the number of unknown primary data points that were integrated.
+     *
+     * @return the number of unknown primary data points that were integrated.
+     */
+    public int getUnknownDatapoints() {
+        return unknownDatapoints;
+    }
 
-	/**
-	 * Returns the value of this consolidated data point.
-	 *
-	 * @return the value of this consolidated data point.
-	 */
-	public double getValue() {
-		return value;
-	}
+    /**
+     * Returns the value of this consolidated data point.
+     *
+     * @return the value of this consolidated data point.
+     */
+    public double getValue() {
+        return value;
+    }
 
-	void toXml(PrintStream s) {
+    void toXml(PrintStream s) {
 
-		s.print("\t\t\t<ds><value> ");
-		s.print(value);
-		s.print(" </value>  <unknown_datapoints> ");
-		s.print(unknownDatapoints);
-		s.println(" </unknown_datapoints></ds>");
-	}
+        s.print("\t\t\t<ds><value> ");
+        s.print(value);
+        s.print(" </value>  <unknown_datapoints> ");
+        s.print(unknownDatapoints);
+        s.println(" </unknown_datapoints></ds>");
+    }
 
-	/**
-	 * Returns a summary the contents of this CDP status block.
-	 *
-	 * @return a summary of the information contained in the CDP status block.
-	 */
-	public String toString() {
+    /**
+     * Returns a summary the contents of this CDP status block.
+     *
+     * @return a summary of the information contained in the CDP status block.
+     */
+    public String toString() {
 
-		StringBuilder sb = new StringBuilder("[CDPStatusBlock: OFFSET=0x");
+        StringBuilder sb = new StringBuilder("[CDPStatusBlock: OFFSET=0x");
 
-		sb.append(Long.toHexString(offset));
-		sb.append(", SIZE=0x");
-		sb.append(Long.toHexString(size));
-		sb.append(", unknownDatapoints=");
-		sb.append(unknownDatapoints);
-		sb.append(", value=");
-		sb.append(value);
-		sb.append("]");
+        sb.append(Long.toHexString(offset));
+        sb.append(", SIZE=0x");
+        sb.append(Long.toHexString(size));
+        sb.append(", unknownDatapoints=");
+        sb.append(unknownDatapoints);
+        sb.append(", value=");
+        sb.append(value);
+        sb.append("]");
 
-		return sb.toString();
-	}
+        return sb.toString();
+    }
 }

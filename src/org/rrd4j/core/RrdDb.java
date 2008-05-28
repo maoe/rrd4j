@@ -1,28 +1,3 @@
-/* ============================================================
- * Rrd4j : Pure java implementation of RRDTool's functionality
- * ============================================================
- *
- * Project Info:  http://www.rrd4j.org
- * Project Lead:  Mathias Bogaert (m.bogaert@memenco.com)
- *
- * (C) Copyright 2003-2007, by Sasa Markovic.
- *
- * Developers:    Sasa Markovic
- *
- *
- * This library is free software; you can redistribute it and/or modify it under the terms
- * of the GNU Lesser General Public License as published by the Free Software Foundation;
- * either version 2.1 of the License, or (at your option) any later version.
- *
- * This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
- * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License along with this
- * library; if not, write to the Free Software Foundation, Inc., 59 Temple Place, Suite 330,
- * Boston, MA 02111-1307, USA.
- */
-
 package org.rrd4j.core;
 
 import org.rrd4j.ConsolFun;
@@ -790,7 +765,7 @@ public class RrdDb implements RrdUpdater {
      * purposes or debugging.</p>
      *
      * @return Internal RRD state in XML format.
-     * @throws IOException  Thrown in case of I/O related error
+     * @throws IOException Thrown in case of I/O related error
      */
     public synchronized String getXml() throws IOException {
         ByteArrayOutputStream destination = new ByteArrayOutputStream(XML_BUFFER_CAPACITY);
@@ -802,7 +777,7 @@ public class RrdDb implements RrdUpdater {
      * This method is just an alias for {@link #getXml() getXml} method.
      *
      * @return Internal RRD state in XML format.
-     * @throws IOException  Thrown in case of I/O related error
+     * @throws IOException Thrown in case of I/O related error
      */
     public synchronized String exportXml() throws IOException {
         return getXml();
@@ -824,7 +799,7 @@ public class RrdDb implements RrdUpdater {
      * <code>rrdtool restore copy.rrd original.xml</code>
      *
      * @param filename Path to XML file which will be created.
-     * @throws IOException  Thrown in case of I/O related error.
+     * @throws IOException Thrown in case of I/O related error.
      */
     public synchronized void dumpXml(String filename) throws IOException {
         OutputStream outputStream = null;
@@ -842,7 +817,7 @@ public class RrdDb implements RrdUpdater {
     /**
      * This method is just an alias for {@link #dumpXml(String) dumpXml(String)} method.
      *
-     * @throws IOException  Thrown in case of I/O related error
+     * @throws IOException Thrown in case of I/O related error
      */
     public synchronized void exportXml(String filename) throws IOException {
         dumpXml(filename);
@@ -1071,7 +1046,7 @@ public class RrdDb implements RrdUpdater {
      *
      * @param dsName Datasource name
      * @return Last stored value for the given datasource
-     * @throws IOException  Thrown in case of I/O error
+     * @throws IOException              Thrown in case of I/O error
      * @throws IllegalArgumentException Thrown if no datasource in this RrdDb matches the given datasource name
      */
     public synchronized double getLastDatasourceValue(String dsName) throws IOException {
@@ -1129,7 +1104,7 @@ public class RrdDb implements RrdUpdater {
         System.out.println("Current time: " + time + ": " + new Date(time * 1000L));
         System.out.println("------------------------------------------------------------------");
         System.out.println("For the latest information visit: https://rrd4j.dev.java.net");
-        System.out.println("(C) 2003-2007 Sasa Markovic and Mathias Bogaert. All rights reserved.");
+        System.out.println("(C) 2003-2008 Sasa Markovic and Mathias Bogaert. All rights reserved.");
     }
 
 }

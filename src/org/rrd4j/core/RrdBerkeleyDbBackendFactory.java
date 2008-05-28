@@ -16,9 +16,11 @@ import java.util.concurrent.CopyOnWriteArraySet;
  *
  * @author <a href="mailto:m.bogaert@memenco.com">Mathias Bogaert</a>
  */
-public class RrdBerkeleyDbBackendFactory extends RrdBackendFactory  {
-    /** factory name, "BERKELEY" */
-	public static final String NAME = "BERKELEY";
+public class RrdBerkeleyDbBackendFactory extends RrdBackendFactory {
+    /**
+     * factory name, "BERKELEY"
+     */
+    public static final String NAME = "BERKELEY";
 
     private String homeDirectory = ".";
 
@@ -62,11 +64,12 @@ public class RrdBerkeleyDbBackendFactory extends RrdBackendFactory  {
 
             try {
                 rrdDatabase.get(null, theKey, theData, LockMode.DEFAULT);
-                return new RrdBerkeleyDbBackend(theData.getData(), path, rrdDatabase);
             }
             catch (DatabaseException de) {
                 throw new IOException("BerkeleyDB DatabaseException on " + path + "; " + de.getMessage());
             }
+
+            return new RrdBerkeleyDbBackend(theData.getData(), path, rrdDatabase);
         }
         else {
             return new RrdBerkeleyDbBackend(path, rrdDatabase);
