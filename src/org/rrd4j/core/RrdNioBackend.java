@@ -117,8 +117,10 @@ public class RrdNioBackend extends RrdFileBackend {
     public synchronized void close() throws IOException {
         // cancel synchronization
         try {
-            if (!readOnly) syncRunnableHandle.cancel(false);
-            sync();
+            if (!readOnly) {
+                syncRunnableHandle.cancel(false);
+                sync();
+            }
             unmapFile();
         }
         finally {
