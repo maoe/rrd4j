@@ -60,14 +60,7 @@ public abstract class RrdBackendFactory {
     }
 
     private static void selectDefaultFactory() {
-        String version = System.getProperty("java.version");
-        if (version == null || version.startsWith("1.3.") ||
-                version.startsWith("1.4.0") || version.startsWith("1.4.1")) {
-            setDefaultFactory("FILE");
-        }
-        else {
-            setDefaultFactory("NIO");
-        }
+        setDefaultFactory("NIO");
     }
 
     /**

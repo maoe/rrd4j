@@ -5,8 +5,7 @@ import java.io.RandomAccessFile;
 
 /**
  * Backend which is used to store RRD data to ordinary files on the disk. This was the
- * default factory before 1.4.0 version. This backend is based on the
- * RandomAccessFile class (java.io.* package).
+ * default factory before 1.4.0 version. This backend is based on the RandomAccessFile class (java.io.* package).
  */
 public class RrdFileBackend extends RrdBackend {
     /**
