@@ -350,7 +350,7 @@ public class RrdGraphDefTemplate extends XmlTemplate implements RrdGraphConstant
                 resolveVRule(childNode);
             }
             else if (nodeName.equals("comment")) {
-                rrdGraphDef.comment(getValue(childNode));
+                rrdGraphDef.comment(getValue(childNode, false));
             }
         }
     }
