@@ -18,8 +18,10 @@ public class Header implements RrdUpdater {
 
     static final String DEFAULT_SIGNATURE = "RRD4J, version 0.1";
     static final String RRDTOOL_VERSION = "0001";
+    static final private String VERSIONS[] = {"version 0.1", "version 0.2"};
 
     private RrdDb parentDb;
+    private int version = -1;
 
     private RrdString signature;
     private RrdLong step;
@@ -27,11 +29,16 @@ public class Header implements RrdUpdater {
     private RrdLong lastUpdateTime;
 
     Header(RrdDb parentDb, RrdDef rrdDef) throws IOException {
-        this(parentDb, rrdDef, DEFAULT_SIGNATURE);
-    }
-
-    Header(RrdDb parentDb, RrdDef rrdDef, String initSignature) throws IOException {
         this.parentDb = parentDb;
+
+        String initSignature = null;		
+        if(rrdDef != null) {
+            version = rrdDef.getVersion(); 
+            initSignature = SIGNATURE + ", " + VERSIONS[ version - 1];
+        }
+        else {
+            initSignature = DEFAULT_SIGNATURE;
+        }
 
         signature = new RrdString(this);             // NOT constant, may be cached
         step = new RrdLong(this, true);             // constant, may be cached
@@ -63,8 +70,7 @@ public class Header implements RrdUpdater {
 
     /**
      * Returns RRD signature. Initially, the returned string will be
-     * of the form <b><i>Rrd4j, version x.x</i></b>. Note: RRD format did not
-     * change since Rrd4j 1.0.0 release (and probably never will).
+     * of the form <b><i>Rrd4j, version x.x</i></b>.
      *
      * @return RRD signature
      * @throws IOException Thrown in case of I/O error
@@ -160,7 +166,7 @@ public class Header implements RrdUpdater {
                     "Cannot copy Header object to " + other.getClass().getName());
         }
         Header header = (Header) other;
-        header.signature.set(signature.get());
+        //header.signature.set(signature.get());
         header.lastUpdateTime.set(lastUpdateTime.get());
     }
 
@@ -172,6 +178,24 @@ public class Header implements RrdUpdater {
      */
     public RrdBackend getRrdBackend() {
         return parentDb.getRrdBackend();
+    }
+
+    /**
+     * Return the RRD version.
+     * 
+     * @return RRD version
+     * @throws IOException
+     */
+    public int getVersion() throws IOException {
+        if(version < 0) {
+            for(int i=0; i < VERSIONS.length; i++) {
+                if(signature.get().endsWith(VERSIONS[i])) {
+                    version = i + 1;
+                    break;
+                }
+            }
+        }
+        return version;
     }
 
     boolean isRrd4jHeader() throws IOException {

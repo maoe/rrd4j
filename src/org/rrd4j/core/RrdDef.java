@@ -23,6 +23,7 @@ import java.util.*;
  * <li> path to RRD that will be created
  * <li> starting timestamp
  * <li> step
+ * <li> version, 1 for linear disposition of archives, 2 for matrix disposition
  * <li> one or more datasource definitions
  * <li> one or more archive definitions
  * </ul>
@@ -44,9 +45,12 @@ public class RrdDef {
      */
     public static final long DEFAULT_INITIAL_SHIFT = -10L;
 
+    static public final int DEFAULTVERSION = 1;
+
     private String path;
     private long startTime = Util.getTime() + DEFAULT_INITIAL_SHIFT;
     private long step = DEFAULT_STEP;
+    private int version = DEFAULTVERSION;
 
     private List<DsDef> dsDefs = new ArrayList<DsDef>();
     private List<ArcDef> arcDefs = new ArrayList<ArcDef>();
@@ -97,7 +101,25 @@ public class RrdDef {
     }
 
     /**
-     * Returns path for the new RRD
+     * Creates new RRD definition object with the given path, starting timestamp,
+     * step and version.
+     *
+     * @param path Path to new RRD.
+     * @param startTime RRD starting timestamp.
+     * @param step RRD step.
+     * @param version RRD's file version.
+     */
+    public RrdDef(String path, long startTime, long step, int version) {
+        this(path, startTime, step);
+        if(startTime < 0) {
+            throw new IllegalArgumentException("Invalid RRD start time specified: " + startTime);
+        }
+        this.version = version;
+    }
+
+
+    /**
+     * Returns path for the new RR
      *
      * @return path to the new RRD which should be created
      */
@@ -121,6 +143,15 @@ public class RrdDef {
      */
     public long getStep() {
         return step;
+    }
+
+    /**
+     * Returns the RRD file version
+     * 
+     * @return the version
+     */
+    public int getVersion() {
+        return version;
     }
 
     /**
@@ -166,6 +197,15 @@ public class RrdDef {
      */
     public void setStep(long step) {
         this.step = step;
+    }
+
+    /**
+     * Sets RRD's file version.
+     * 
+     * @param version the version to set
+     */
+    public void setVersion(int version) {
+        this.version = version;
     }
 
     /**
@@ -422,6 +462,7 @@ public class RrdDef {
     public String dump() {
         StringBuilder buffer = new StringBuilder("create \"");
         buffer.append(path).append("\"");
+        buffer.append(" --version ").append(getVersion());
         buffer.append(" --start ").append(getStartTime());
         buffer.append(" --step ").append(getStep()).append(" ");
         for (DsDef dsDef : dsDefs) {

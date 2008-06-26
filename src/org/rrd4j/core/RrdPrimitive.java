@@ -68,6 +68,11 @@ abstract class RrdPrimitive {
         backend.writeDouble(pointer, value);
     }
 
+    final void writeDouble(int index,  double value) throws IOException {
+        long offset = pointer + index * RRD_PRIM_SIZES[RRD_DOUBLE];
+        backend.writeDouble(offset, value);
+    }
+
     final void writeDouble(int index, double value, int count) throws IOException {
         long offset = pointer + index * RRD_PRIM_SIZES[RRD_DOUBLE];
         backend.writeDouble(offset, value, count);

@@ -853,8 +853,9 @@ public class RrdDb implements RrdUpdater {
         // set header
         long startTime = header.getLastUpdateTime();
         long step = header.getStep();
+        int version = header.getVersion();
         String path = backend.getPath();
-        RrdDef rrdDef = new RrdDef(path, startTime, step);
+        RrdDef rrdDef = new RrdDef(path, startTime, step, version);
         // add datasources
         for (Datasource datasource : datasources) {
             DsDef dsDef = new DsDef(datasource.getDsName(),

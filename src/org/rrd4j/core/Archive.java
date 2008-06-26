@@ -19,22 +19,26 @@ public class Archive implements RrdUpdater {
     private final RrdDb parentDb;
 
     // definition
-    private final RrdString consolFun;
-    private final RrdDouble xff;
-    private final RrdInt steps;
-    private final RrdInt rows;
+    protected final RrdString consolFun;
+    protected final RrdDouble xff;
+    protected final RrdInt steps;
+    protected final RrdInt rows;
 
     // state
     private Robin[] robins;
     private ArcState[] states;
 
+    // state for version 2
+    private RrdInt[] pointers;
+    private RrdDoubleMatrix values;
+
     Archive(RrdDb parentDb, ArcDef arcDef) throws IOException {
-        boolean shouldInitialize = arcDef != null;
         this.parentDb = parentDb;
         consolFun = new RrdString(this, true);  // constant, may be cached
         xff = new RrdDouble(this);
         steps = new RrdInt(this, true);            // constant, may be cached
         rows = new RrdInt(this, true);            // constant, may be cached
+        boolean shouldInitialize = arcDef != null;
         if (shouldInitialize) {
             consolFun.set(arcDef.getConsolFun().name());
             xff.set(arcDef.getXff());
@@ -42,12 +46,27 @@ public class Archive implements RrdUpdater {
             rows.set(arcDef.getRows());
         }
         int n = parentDb.getHeader().getDsCount();
+        int numRows = rows.get();
         states = new ArcState[n];
-        robins = new Robin[n];
+        int version = parentDb.getHeader().getVersion();
+        if(version == 1) {
+            robins = new RobinArray[n];
         for (int i = 0; i < n; i++) {
             states[i] = new ArcState(this, shouldInitialize);
-            int numRows = rows.get();
-            robins[i] = new Robin(this, numRows, shouldInitialize);
+                robins[i] = new RobinArray(this, numRows, shouldInitialize);
+            }
+        }
+        else {
+            pointers = new RrdInt[n];
+            robins = new RobinMatrix[n];
+            for (int i = 0; i < n; i++) {
+                pointers[i]= new RrdInt(this);
+                states[i] = new ArcState(this, shouldInitialize);
+            }
+            values = new RrdDoubleMatrix(this, numRows, n);				
+            for(int i = 0; i < n; i++) {
+                robins[i] = new RobinMatrix(this, values, pointers[i], i, shouldInitialize);
+            }
         }
     }
 
