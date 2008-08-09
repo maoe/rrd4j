@@ -18,6 +18,13 @@ class ValueAxis implements RrdGraphConstants {
             new YLab(100.0, 1, 2, 5, 10),
             new YLab(200.0, 1, 5, 10, 20),
             new YLab(500.0, 1, 2, 4, 10),
+            new YLab(1000.0, 1, 2, 5, 10),
+            new YLab(2000.0, 1, 5, 10, 20),
+            new YLab(5000.0, 1, 2, 4, 10),
+            new YLab(10000.0, 1, 2, 5, 10),
+            new YLab(20000.0, 1, 5, 10, 20),
+            new YLab(50000.0, 1, 2, 4, 10),
+            new YLab(100000.0, 1, 2, 5, 10),
             new YLab(0.0, 0, 0, 0, 0)
     };
 
