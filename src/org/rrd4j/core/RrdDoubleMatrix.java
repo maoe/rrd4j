@@ -6,10 +6,12 @@ class RrdDoubleMatrix extends RrdPrimitive {
     private int rows;
     private int columns;
 
-    RrdDoubleMatrix(RrdUpdater updater, int row, int column) throws IOException {
+    RrdDoubleMatrix(RrdUpdater updater, int row, int column, boolean shouldInitialize) throws IOException {
         super(updater, RrdPrimitive.RRD_DOUBLE,row * column, false);
         this.rows = row;
         this.columns = column;
+        if(shouldInitialize)
+            writeDouble(0, Double.NaN, rows*columns);
     }
 
     void set(int column, int index, double value) throws IOException {

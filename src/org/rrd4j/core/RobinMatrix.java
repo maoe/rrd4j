@@ -21,16 +21,12 @@ public class RobinMatrix implements Robin {
     private int rows;
     private int column;
 
-    RobinMatrix(Archive parentArc, RrdDoubleMatrix values, RrdInt pointer, int column, boolean shouldInitialize) throws IOException {
+    RobinMatrix(Archive parentArc, RrdDoubleMatrix values, RrdInt pointer, int column) throws IOException {
         this.parentArc = parentArc;
         this.pointer = pointer; 
         this.values = values;
         this.rows = values.getRows();
         this.column = column;
-        if (shouldInitialize) {
-            pointer.set(0);
-            values.set(column, 0, Double.NaN, rows);
-        }
     }
 
     /**
