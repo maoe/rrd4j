@@ -26,6 +26,8 @@ class Aggregator {
             long left = Math.max(timestamps[i] - step, tStart);
             long right = Math.min(timestamps[i], tEnd);
             long delta = right - left;
+
+            // delta is only > 0 when the timestamp for a given buck is within the range of tStart and tEnd
             if (delta > 0) {
                 double value = values[i];
                 agg.min = Util.min(agg.min, value);
@@ -33,8 +35,10 @@ class Aggregator {
                 if (!firstFound) {
                     agg.first = value;
                     firstFound = true;
+                    agg.last = value;
+                } else if (delta >= step) {  // an entire bucket is included in this range
+                    agg.last = value;
                 }
-                agg.last = value;
                 if (!Double.isNaN(value)) {
                     agg.total = Util.sum(agg.total, delta * value);
                     totalSeconds += delta;
