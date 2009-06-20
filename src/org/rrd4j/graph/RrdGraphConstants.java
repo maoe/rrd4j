@@ -143,11 +143,11 @@ public interface RrdGraphConstants {
     /**
      * Default minor grid color
      */
-    Color DEFAULT_GRID_COLOR = new Color(140, 140, 140);
+    Color DEFAULT_GRID_COLOR = new Color(171, 171, 171, 95); 
     /**
      * Default major grid color
      */
-    Color DEFAULT_MGRID_COLOR = new Color(130, 30, 30);
+    Color DEFAULT_MGRID_COLOR = new Color(255, 91, 91, 95);
     /**
      * Default font color
      */
@@ -239,11 +239,11 @@ public interface RrdGraphConstants {
     /**
      * Default graph small font
      */
-    Font DEFAULT_SMALL_FONT = new Font(DEFAULT_FONT_NAME, Font.PLAIN, 10);
+    Font DEFAULT_SMALL_FONT = new Font("DejaVu Sans Mono", Font.PLAIN, 11); 
     /**
      * Default graph large font
      */
-    Font DEFAULT_LARGE_FONT = new Font(DEFAULT_FONT_NAME, Font.BOLD, 12);
+    Font DEFAULT_LARGE_FONT = new Font("Verdana", Font.BOLD, 12);
 
     /**
      * Used internally
@@ -301,8 +301,8 @@ public interface RrdGraphConstants {
 	/**
      * Stroke used to draw grid
      */
-	Stroke GRID_STROKE =
-			new BasicStroke(1, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 1, new float[] {1, 1}, 0);
+	Stroke GRID_STROKE = new BasicStroke(1);
+
 	/**
      * Stroke used to draw ticks
      */
