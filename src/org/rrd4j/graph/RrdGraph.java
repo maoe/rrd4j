@@ -1,11 +1,17 @@
 package org.rrd4j.graph;
 
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Paint;
+import java.awt.Stroke;
+import java.io.IOException;
+
+import javax.swing.ImageIcon;
+
 import org.rrd4j.core.Util;
 import org.rrd4j.data.DataProcessor;
-
-import javax.swing.*;
-import java.awt.*;
-import java.io.IOException;
 
 /**
  * Class which actually creates Rrd4j graphs (does the hard work).
@@ -118,7 +124,7 @@ public class RrdGraph implements RrdGraphConstants {
 
     private void gator() {
         if (!gdef.onlyGraph && gdef.showSignature) {
-            Font font = new Font(DEFAULT_FONT_NAME, Font.PLAIN, 9);
+        	Font font = FontConstructor.getFont(Font.PLAIN, 9);
             int x = (int) (im.xgif - 2 - worker.getFontAscent(font));
             int y = 4;
             worker.transform(x, y, Math.PI / 2);

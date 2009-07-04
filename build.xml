@@ -38,6 +38,7 @@
         <delete>
             <fileset dir="${basedir}">
                 <include name="${classes}/**/*.class"/>
+                <include name="${classes}/**/*ttf"/>
                 <include name="${doc}/**/*"/>
                 <include name="${dist}/**/*"/>
             </fileset>
@@ -50,6 +51,9 @@
                classpathref="class.path"
                compiler="modern"
                source="1.5"/>
+        <copy todir="${classes}">
+            <fileset dir="fonts"/>
+        </copy>
     </target>
 
     <target name="rrd4j" depends="compile">
@@ -66,6 +70,7 @@
             <include name="org/rrd4j/demo/**/*.class"/>
             <include name="org/rrd4j/graph/**/*.class"/>
             <include name="org/rrd4j/inspector/**/*.class"/>
+            <include name="*.ttf"/>
         </jar>
         <delete file="${lib}/${lib-convertor}"/>
         <jar jarfile="${lib}/${lib-convertor}" basedir="${classes}">
