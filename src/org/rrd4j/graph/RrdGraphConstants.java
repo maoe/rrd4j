@@ -236,32 +236,36 @@ public interface RrdGraphConstants {
 	/**
 	 * Font constructor, to use embedded fonts
 	 */
-	static class  FontConstructor {
+	static class FontConstructor {
 		static public Font getFont(int type, int size) {
 			String fontPath;
 			if(type == Font.BOLD)
-				fontPath="DejaVuSansMono-Bold.ttf";
+				fontPath="/DejaVuSansMono-Bold.ttf";
 			else
-				fontPath="DejaVuSansMono.ttf";
+				fontPath="/DejaVuSansMono.ttf";
 
 			InputStream fontstream = RrdGraphConstants.class.getResourceAsStream(fontPath);
 			try {
 				return Font.createFont(Font.TRUETYPE_FONT, fontstream).deriveFont(type, size);
 			} catch (FontFormatException e) {
-				return null;
+				throw new RuntimeException(e);
 			} catch (IOException e) {
-				return null;
+				throw new RuntimeException(e);
 			}
 		}
 	}
 	/**
 	 * Default graph small font
 	 */
-	Font DEFAULT_SMALL_FONT = FontConstructor.getFont(Font.PLAIN, 10);
+	static final Font DEFAULT_SMALL_FONT = FontConstructor.getFont(Font.PLAIN, 10);
 	/**
 	 * Default graph large font
 	 */
-	Font DEFAULT_LARGE_FONT = FontConstructor.getFont(Font.BOLD, 12);
+	static final Font DEFAULT_LARGE_FONT = FontConstructor.getFont(Font.BOLD, 12);
+	/**
+	 * Font for the Gator
+	 */
+	static final Font GATOR_FONT = FontConstructor.getFont(Font.PLAIN, 9);
 	/**
 	 * Used internally
 	 */

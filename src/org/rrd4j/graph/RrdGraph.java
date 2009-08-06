@@ -124,7 +124,7 @@ public class RrdGraph implements RrdGraphConstants {
 
     private void gator() {
         if (!gdef.onlyGraph && gdef.showSignature) {
-        	Font font = FontConstructor.getFont(Font.PLAIN, 9);
+        	Font font = GATOR_FONT;
             int x = (int) (im.xgif - 2 - worker.getFontAscent(font));
             int y = 4;
             worker.transform(x, y, Math.PI / 2);
