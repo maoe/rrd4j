@@ -51,7 +51,7 @@ public class RrdDbPoolNew extends RrdDbPool {
                             ref.db = null;
                         }
                         finally {
-                            pool.remove(ref);
+                            pool.remove(rrdDb.getCanonicalPath());
                             capacity.release();
                         }
                     }
