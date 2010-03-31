@@ -124,12 +124,14 @@ public class RrdGraph implements RrdGraphConstants {
 
     private void gator() {
         if (!gdef.onlyGraph && gdef.showSignature) {
+            worker.setTextAntiAliasing(gdef.textAntiAliasing);
         	Font font = GATOR_FONT;
             int x = (int) (im.xgif - 2 - worker.getFontAscent(font));
             int y = 4;
             worker.transform(x, y, Math.PI / 2);
             worker.drawString("Created with RRD4J", 0, 0, font, Color.LIGHT_GRAY);
             worker.reset();
+            worker.setTextAntiAliasing(false);
         }
     }
 
@@ -156,6 +158,7 @@ public class RrdGraph implements RrdGraphConstants {
 
     private void drawText() {
         if (!gdef.onlyGraph) {
+            worker.setTextAntiAliasing(gdef.textAntiAliasing);
             if (gdef.title != null) {
                 int x = im.xgif / 2 - (int) (worker.getStringWidth(gdef.title, gdef.largeFont) / 2);
                 int y = PADDING_TOP + (int) worker.getFontAscent(gdef.largeFont);
@@ -169,11 +172,13 @@ public class RrdGraph implements RrdGraphConstants {
                 worker.drawString(gdef.verticalLabel, 0, ascent, gdef.smallFont, gdef.colors[COLOR_FONT]);
                 worker.reset();
             }
+            worker.setTextAntiAliasing(false);
         }
     }
 
     private void drawGrid() {
         if (!gdef.onlyGraph) {
+            worker.setTextAntiAliasing(gdef.textAntiAliasing);
             Paint shade1 = gdef.colors[COLOR_SHADEA], shade2 = gdef.colors[COLOR_SHADEB];
             Stroke borderStroke = new BasicStroke(1);
             worker.drawLine(0, 0, im.xgif - 1, 0, shade1, borderStroke);
@@ -206,6 +211,7 @@ public class RrdGraph implements RrdGraphConstants {
                             gdef.largeFont, gdef.colors[COLOR_FONT]);
                 }
             }
+            worker.setTextAntiAliasing(false);
         }
     }
 
@@ -541,6 +547,7 @@ public class RrdGraph implements RrdGraphConstants {
 
     private void drawLegend() {
         if (!gdef.onlyGraph && !gdef.noLegend) {
+            worker.setTextAntiAliasing(gdef.textAntiAliasing);
             int ascent = (int) worker.getFontAscent(gdef.smallFont);
             int box = (int) getBox(), boxSpace = (int) (getBoxSpace());
             for (CommentText c : gdef.comments) {
@@ -557,6 +564,7 @@ public class RrdGraph implements RrdGraphConstants {
                     }
                 }
             }
+            worker.setTextAntiAliasing(false);
         }
     }
 

@@ -39,6 +39,7 @@ import java.util.List;
 public class RrdGraphDef implements RrdGraphConstants {
     boolean poolUsed = false; // ok
     boolean antiAliasing = false; // ok
+    boolean textAntiAliasing = false; // ok
     String filename = RrdGraphConstants.IN_MEMORY_IMAGE; // ok
     long startTime, endTime; // ok
     TimeAxisSetting timeAxisSetting = null; // ok
@@ -886,6 +887,15 @@ public class RrdGraphDef implements RrdGraphConstants {
      */
     public void setAntiAliasing(boolean antiAliasing) {
         this.antiAliasing = antiAliasing;
+    }
+
+    /**
+     * Controls if the text should be antialiased or not.
+     *
+     * @param textAntiAliasing use true to turn text-antialiasing on, false to turn it off (default)
+     */
+    public void setTextAntiAliasing(boolean textAntiAliasing) {
+        this.textAntiAliasing = textAntiAliasing;
     }
 
     /**

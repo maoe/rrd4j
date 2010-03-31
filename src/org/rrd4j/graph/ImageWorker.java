@@ -151,6 +151,11 @@ class ImageWorker {
                 enable ? RenderingHints.VALUE_ANTIALIAS_ON : RenderingHints.VALUE_ANTIALIAS_OFF);
     }
 
+    void setTextAntiAliasing(boolean enable) {
+        gd.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
+                enable ? RenderingHints.VALUE_TEXT_ANTIALIAS_ON : RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
+    }
+
     void dispose() {
         gd.dispose();
     }
