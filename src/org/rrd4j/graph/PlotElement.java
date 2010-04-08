@@ -8,4 +8,8 @@ class PlotElement {
     PlotElement(Paint color) {
         this.color = color;
     }
+
+    Paint getColor() {
+        return this.color;
+    }
 }

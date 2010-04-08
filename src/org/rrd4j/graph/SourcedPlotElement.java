@@ -14,6 +14,10 @@ class SourcedPlotElement extends PlotElement {
         this.srcName = srcName;
     }
 
+    String getSrcName () {
+        return this.srcName;
+    }
+
     void assignValues(DataProcessor dproc) {
         values = dproc.getValues(srcName);
     }
