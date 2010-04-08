@@ -853,30 +853,6 @@ public class RrdGraphDef implements RrdGraphConstants {
         }
     }
 
-    public void stack(Area area, String legend) {
-        String srcName = area.getSrcName();
-        Paint color = area.getColor();
-
-        if (plotElements.size() <= 0) {
-            area(srcName, color, legend);
-        }
-        else {
-            stack(srcName, color, legend);
-        }
-    }
-
-    public void stack(Line line, String legend) {
-        String srcName = line.getSrcName();
-        Paint color = line.getColor();
-
-        if (plotElements.size() <= 0) {
-            line(srcName, color, legend);
-        }
-        else {
-            stack(srcName, color, legend);
-        }
-    }
-
     /**
      * Sets visibility of the X-axis grid.
      *
